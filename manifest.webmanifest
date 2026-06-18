@@ -1,0 +1,19 @@
+{
+  "name": "9회말 연구소",
+  "short_name": "9회말",
+  "description": "실명, 로고, 공식 기록 없이 야구 팬의 감정을 공유 카드로 만드는 비공식 팬메이드 웹앱",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#081210",
+  "theme_color": "#081210",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

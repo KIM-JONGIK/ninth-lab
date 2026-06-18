@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="9회말 연구소는 실존 선수, 구단, 공식 기록 없이 야구 팬의 상황과 감정을 밈 카드로 만드는 비공식 팬메이드 서비스입니다."
+    />
+    <meta name="theme-color" content="#081210" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="9회말 연구소" />
+    <title>9회말 연구소</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css?v=12" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar" aria-label="서비스 소개">
+        <a class="brand" href="#generator" aria-label="9회말 연구소 홈">
+          <span class="brand-mark" aria-hidden="true">9</span>
+          <span>
+            <strong>9회말 연구소</strong>
+            <small>비공식 팬메이드 밈 카드</small>
+          </span>
+        </a>
+        <nav class="nav-links" aria-label="주요 메뉴">
+          <a href="#generator">만들기</a>
+          <a href="#today">오늘</a>
+          <a href="#live-jjal">라이브 짤</a>
+          <a href="#reaction-pulse">팬심 %</a>
+          <a href="#history">보관함</a>
+          <a href="#install">웹앱</a>
+          <a href="#rules">안전</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="app-hero" id="generator" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">공식 기록 없이 노는 야구 팬 실험실</p>
+            <h1 id="hero-title">오늘 야구 기분, 10초 만에 공유 카드로.</h1>
+            <p>
+              실명, 로고, 실제 경기 데이터 없이 상황과 감정만 골라 팬메이드 카드를 만듭니다.
+            </p>
+            <div class="safety-strip" role="note">
+              <span>비공식</span>
+              <span>창작 상황</span>
+              <span>실명·로고 금지</span>
+            </div>
+          </div>
+
+          <div class="builder" aria-label="밈 카드 생성기">
+            <form class="control-panel" id="cardForm">
+              <div class="section-heading">
+                <p>상황판</p>
+                <h2>카드 재료 고르기</h2>
+              </div>
+
+              <div class="starter-panel" aria-label="빠른 관전 타입 카드">
+                <div>
+                  <strong>10초 관전 타입</strong>
+                  <p>처음 왔다면 하나만 눌러 바로 공유 카드로 시작하세요.</p>
+                </div>
+                <div class="fan-type-grid" id="fanTypeGrid">
+                  <button type="button" data-fan-type="clutch">숨참기형</button>
+                  <button type="button" data-fan-type="dugout">작전판형</button>
+                  <button type="button" data-fan-type="snack">간식응원형</button>
+                  <button type="button" data-fan-type="afterwork">퇴근등판형</button>
+                </div>
+              </div>
+
+              <label class="field">
+                <span>오늘의 상황</span>
+                <select id="scenario" name="scenario">
+                  <option value="bottom9">9회말 심장 모드</option>
+                  <option value="rain">비 오는 날 야구 감성</option>
+                  <option value="commute">출근길 불펜진</option>
+                  <option value="extra">연장전 멘탈 케어</option>
+                  <option value="dugout">갑자기 명장 빙의</option>
+                  <option value="solo">혼자 보는 날</option>
+                  <option value="snack">응원 간식 타임</option>
+                  <option value="workday">퇴근 후 플레이볼</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>카드 톤</span>
+                <select id="tone" name="tone">
+                  <option value="hype">응원 과몰입</option>
+                  <option value="deadpan">무표정 자조</option>
+                  <option value="soft">다정한 멘탈 케어</option>
+                  <option value="chaos">작전 없는 작전</option>
+                </select>
+              </label>
+
+              <fieldset class="field">
+                <legend>공유 비율</legend>
+                <div class="segmented" role="radiogroup" aria-label="공유 카드 비율">
+                  <label>
+                    <input type="radio" name="ratio" value="square" checked />
+                    <span>정사각</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="ratio" value="story" />
+                    <span>스토리</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="ratio" value="wide" />
+                    <span>가로형</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <label class="field slider-field">
+                <span>과몰입 수치 <strong id="energyLabel">4</strong></span>
+                <input id="energy" name="energy" type="range" min="1" max="5" value="4" />
+              </label>
+
+              <label class="field">
+                <span>내 별명 <small>선택, 실명·구단명 제외</small></span>
+                <input
+                  id="nickname"
+                  name="nickname"
+                  maxlength="12"
+                  autocomplete="off"
+                  placeholder="예: 응원석 3열"
+                />
+              </label>
+
+              <div class="button-row is-four">
+                <button class="primary-action" id="generateBtn" type="button">새 카드 만들기</button>
+                <button class="ghost-action" id="nativeShareBtn" type="button">공유</button>
+                <button class="ghost-action" id="copyShareLinkBtn" type="button">링크 복사</button>
+                <button class="ghost-action" id="downloadBtn" type="button">PNG 저장</button>
+              </div>
+              <p class="form-note" id="safetyMessage">
+                실존 인물, 구단, 공식 기록을 특정하지 않는 문구만 생성합니다.
+              </p>
+            </form>
+
+            <section class="preview-panel" aria-labelledby="preview-title">
+              <div class="section-heading compact">
+                <p>공유 미리보기</p>
+                <h2 id="preview-title">오늘의 카드</h2>
+              </div>
+              <article class="share-card is-square" id="shareCard">
+                <img src="assets/stadium-night.png" alt="" aria-hidden="true" />
+                <div class="card-overlay">
+                  <p class="card-kicker" id="cardKicker">비공식 팬메이드</p>
+                  <h3 id="cardTitle">9회말 심장 모드</h3>
+                  <p id="cardPhrase">오늘 내 심장은 전광판보다 먼저 뛰었다.</p>
+                  <div class="card-tags" id="cardTags">
+                    <span>창작 상황</span>
+                    <span>공식 기록 아님</span>
+                  </div>
+                  <p class="card-footer" id="cardFooter">9회말 연구소 · Unofficial fan-made</p>
+                </div>
+              </article>
+              <div class="preview-actions" aria-label="미리보기 공유 동작">
+                <button class="primary-action small" id="previewShareBtn" type="button">카드 공유</button>
+                <button class="ghost-action small" id="previewCopyLinkBtn" type="button">링크 복사</button>
+                <button class="ghost-action small" id="previewRelayBtn" type="button">친구에게 묻기</button>
+                <button class="ghost-action small" id="previewDownloadBtn" type="button">PNG 저장</button>
+              </div>
+              <div class="share-ready" aria-label="공유 안전 점검">
+                <span>비공식 고지 포함</span>
+                <span>공식 기록 아님</span>
+                <span>실명·로고 미사용</span>
+              </div>
+              <div class="safe-check" id="safeCheck" aria-live="polite">
+                <strong>공유 전 점검</strong>
+                <ul id="safeCheckList"></ul>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="content-band daily-band" id="today" aria-labelledby="today-title">
+          <div class="daily-layout">
+            <div class="section-heading">
+              <p>오늘의 덕아웃</p>
+              <h2 id="today-title">하루마다 바뀌는 야구 감정</h2>
+            </div>
+            <article class="daily-card">
+              <p class="daily-date" id="dailyDate">오늘</p>
+              <strong id="dailyMoodTitle">경기 전 설렘</strong>
+              <p id="dailyMoodCopy">오늘도 마음 출석.</p>
+              <div class="daily-chips" id="dailyMoodChips"></div>
+              <div class="mission-box" aria-label="오늘의 덕아웃 출석">
+                <span id="attendanceStatus">덕아웃 출석 준비 중</span>
+                <div class="mission-choice" role="radiogroup" aria-label="오늘 야구 기분">
+                  <button class="is-selected" type="button" data-mission="before">경기 전</button>
+                  <button type="button" data-mission="during">보는 중</button>
+                  <button type="button" data-mission="after">끝난 뒤</button>
+                </div>
+                <button class="ghost-action small" id="dailyCheckInBtn" type="button">
+                  출석 카드 만들기
+                </button>
+              </div>
+              <button class="primary-action small" id="dailyApplyBtn" type="button">
+                오늘 기분으로 만들기
+              </button>
+              <div class="challenge-box" aria-label="오늘의 1장 챌린지">
+                <span id="challengeStatus">오늘의 1장 챌린지 준비 중</span>
+                <div class="challenge-meter" aria-hidden="true">
+                  <span id="challengeMeter"></span>
+                </div>
+                <small id="challengeHint">카드를 만들면 이 브라우저에만 진행도가 남습니다.</small>
+                <button class="ghost-action small" id="challengeRecapBtn" type="button">결산 0/3</button>
+              </div>
+            </article>
+            <div class="daily-list" aria-label="오늘의 팬 콘텐츠">
+              <article>
+                <h3>오늘의 한 줄</h3>
+                <p id="dailyPrompt">공 하나에 하루 기분이 바뀐 순간을 짧게 남기기.</p>
+                <button class="ghost-action small daily-card-action" type="button" data-daily-card="prompt">
+                  카드로 만들기
+                </button>
+              </article>
+              <article>
+                <h3>단톡방 질문</h3>
+                <p id="dailyQuestion">오늘 내 응원 에너지는 몇 회까지 버틸까?</p>
+                <button class="ghost-action small daily-card-action" type="button" data-daily-card="question">
+                  질문 카드
+                </button>
+              </article>
+              <article>
+                <h3>안전 해시태그</h3>
+                <p id="dailyHash">#비공식팬메이드 #창작상황 #공식기록아님</p>
+                <button class="ghost-action small daily-card-action" type="button" data-daily-card="safe">
+                  안전 카드
+                </button>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-band live-band" id="live-jjal" aria-labelledby="live-title">
+          <div class="section-heading">
+            <p>커뮤니티 반응용</p>
+            <h2 id="live-title">라이브 짤판</h2>
+          </div>
+          <div class="live-tool">
+            <div class="live-copy">
+              <p>
+                경기 보면서 바로 올릴 수 있는 짧은 이미지 짤입니다. 실제 중계 화면,
+                선수 사진, 구단 로고는 쓰지 않습니다.
+              </p>
+              <div class="live-actions">
+                <button class="primary-action small" id="applyJjalBtn" type="button">
+                  짤 카드 만들기
+                </button>
+                <button class="ghost-action small" id="copyJjalBtn" type="button">
+                  문구 복사
+                </button>
+              </div>
+            </div>
+
+            <div class="jjal-board" aria-label="라이브 짤 문구 선택">
+              <label class="field">
+                <span>짤 분위기</span>
+                <select id="jjalMood">
+                  <option value="pregame">경기 전 설렘</option>
+                  <option value="chance">찬스 감지</option>
+                  <option value="danger">위기 관리</option>
+                  <option value="shift">흐름 전환</option>
+                  <option value="clutch">숨참기 모드</option>
+                  <option value="almost">넘어간 줄 알았는데</option>
+                  <option value="defense">수비가 살렸다</option>
+                  <option value="walk">산책 출루</option>
+                  <option value="review">마음속 판독 중</option>
+                  <option value="weather">하늘도 야구 봄</option>
+                  <option value="afterglow">경기 후 여운</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>직접 문구 <small>선택, 34자 이내</small></span>
+                <input
+                  id="jjalCustom"
+                  maxlength="34"
+                  autocomplete="off"
+                  placeholder="예: 방금 내 심장만 홈까지 뜀"
+                />
+              </label>
+
+              <div class="quick-grid" id="quickJjalGrid" aria-label="빠른 짤 버튼"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-band pulse-band" id="reaction-pulse" aria-labelledby="pulse-title">
+          <div class="pulse-header">
+            <div class="section-heading">
+              <p>저작권 안전한 라이브 온도</p>
+              <h2 id="pulse-title">팬심 퍼센테이지</h2>
+            </div>
+            <p id="pulseLeader" class="pulse-leader">지금은 숨참기 모드가 가장 큽니다.</p>
+          </div>
+          <div class="pulse-layout">
+            <div>
+              <p class="pulse-copy">
+                공식 경기 데이터가 아니라, 앱 안의 반응 선택과 베이스 샘플로 만든 감정 분포입니다.
+                공식 집계, 순위, 경기 기록이 아니며 캡처 없이도 “다들 지금 무슨 기분인지”를
+                공유할 수 있게 보여줍니다.
+              </p>
+              <div class="pulse-actions" aria-label="내 반응 더하기">
+                <button class="pulse-vote" type="button" data-mood="clutch">숨참기</button>
+                <button class="pulse-vote" type="button" data-mood="almost">아깝다</button>
+                <button class="pulse-vote" type="button" data-mood="defense">수비 박수</button>
+                <button class="pulse-vote" type="button" data-mood="review">판독 대기</button>
+              </div>
+              <div class="relay-box" id="relayBox">
+                <strong id="relayPrompt">단톡방 반응 릴레이</strong>
+                <p class="relay-status" id="relayStatus" hidden>
+                  받은 질문에 답장 중입니다. 위 반응 버튼 하나를 누르면 카드가 만들어집니다.
+                </p>
+                <label class="field">
+                  <span>질문 템플릿</span>
+                  <select id="relayQuestion">
+                    <option value="temperature">지금 우리 단톡방 온도는?</option>
+                    <option value="onepick">지금 제일 가까운 반응은?</option>
+                    <option value="after">끝나고 남은 감정은?</option>
+                  </select>
+                </label>
+                <button class="ghost-action small" id="copyRelayLinkBtn" type="button">
+                  친구에게 묻기
+                </button>
+                <p id="relayHint">서버 없는 릴레이입니다. 답변은 이 브라우저에만 남습니다.</p>
+              </div>
+            </div>
+            <div class="pulse-list" id="reactionPulseList" aria-live="polite"></div>
+            <button class="ghost-action small pulse-toggle" id="pulseToggleBtn" type="button">
+              전체 보기
+            </button>
+          </div>
+          <p class="pulse-note">
+            베타 표기: 현재 수치는 개인정보를 모으지 않는 로컬 MVP용 감정 샘플이며 공식 데이터가 아닙니다.
+          </p>
+        </section>
+
+        <section class="content-band history-band" id="history" aria-labelledby="history-title">
+          <div class="history-header">
+            <div class="section-heading">
+              <p>경기 중 다시 쓰기</p>
+              <h2 id="history-title">최근 만든 카드 보관함</h2>
+            </div>
+            <div class="history-tools">
+              <button class="ghost-action small" id="weeklyRecapBtn" type="button">
+                주간 결산
+              </button>
+              <button class="ghost-action small" id="clearHistoryBtn" type="button">비우기</button>
+            </div>
+          </div>
+          <p class="history-copy">
+            이 브라우저에만 최근 카드가 저장됩니다. 로그인, 실명, 공식 경기 데이터 없이
+            방금 만든 반응을 다시 불러오거나 문구만 복사할 수 있습니다.
+          </p>
+          <div class="history-list" id="cardHistoryList" aria-live="polite"></div>
+          <button class="ghost-action small history-toggle" id="historyToggleBtn" type="button">
+            전체 보기
+          </button>
+        </section>
+
+        <section class="content-band" id="lineup" aria-labelledby="lineup-title">
+          <div class="section-heading">
+            <p>번외 놀이</p>
+            <h2 id="lineup-title">내 인생 타순</h2>
+          </div>
+          <div class="lineup-tool">
+            <div class="lineup-copy">
+              <p>
+                선수 대신 하루 루틴을 타순에 올려보세요. 공개 카드에는 실제 이름 없이
+                생활감만 남깁니다.
+              </p>
+              <button class="primary-action small" id="lineupBtn" type="button">
+                오늘의 타순 섞기
+              </button>
+            </div>
+            <ol class="lineup-list" id="lineupList" aria-live="polite"></ol>
+          </div>
+        </section>
+
+        <section class="content-band install-band" id="install" aria-labelledby="install-title">
+          <div class="section-heading">
+            <p>웹 먼저, 앱처럼</p>
+            <h2 id="install-title">설치 없이 열리고, 필요하면 홈 화면에</h2>
+          </div>
+          <div class="install-layout">
+            <article>
+              <h3>링크 공유</h3>
+              <p>카드 상태를 링크에 담아 친구가 같은 카드에서 바로 이어볼 수 있습니다.</p>
+            </article>
+            <article>
+              <h3>모바일 탭</h3>
+              <p>만들기, 오늘, 라이브, 보관함, 안전 화면을 엄지손가락 동선에 맞췄습니다.</p>
+            </article>
+            <article>
+              <h3>오프라인 준비</h3>
+              <p>한 번 연 뒤에는 기본 화면과 이미지 자산을 더 빠르게 다시 불러옵니다.</p>
+            </article>
+          </div>
+          <div class="install-actions">
+            <button class="primary-action small" id="installAppBtn" type="button">
+              홈 화면에 추가
+            </button>
+            <p id="installStatus">지원 브라우저에서는 앱처럼 설치할 수 있습니다.</p>
+          </div>
+        </section>
+
+        <section class="content-band rules-band" id="rules" aria-labelledby="rules-title">
+          <div class="section-heading">
+            <p>서비스 경계</p>
+            <h2 id="rules-title">안전하게 놀기 위한 약속</h2>
+          </div>
+          <div class="rules-grid">
+            <article>
+              <h3>사용하지 않아요</h3>
+              <p>실존 선수명, 구단명, 로고, 유니폼, 공식 경기 기록, 중계 캡처.</p>
+            </article>
+            <article>
+              <h3>만들어도 좋아요</h3>
+              <p>가상 상황, 팬의 감정, 응원 문구, 일상 타순, 야구 규칙에서 온 은유.</p>
+            </article>
+            <article>
+              <h3>공유 전 확인</h3>
+              <p>상대 팬덤·선수·심판을 공격하는 말, 부상·사생활 추측, 욕설은 피해주세요.</p>
+            </article>
+          </div>
+          <div class="report-panel" aria-labelledby="report-title">
+            <div>
+              <h3 id="report-title">권리·안전 검토 요청</h3>
+              <p>
+                공개 서버로 전송하지 않습니다. 우려 내용을 정리한 문구만 만들어 복사합니다.
+              </p>
+            </div>
+            <label class="field">
+              <span>검토 유형</span>
+              <select id="reportType">
+                <option value="rights">권리물처럼 보임</option>
+                <option value="privacy">실명·사생활 우려</option>
+                <option value="abuse">비방·혐오 표현 우려</option>
+                <option value="official">공식 서비스로 오해될 수 있음</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>메모 <small>선택, 실명·구단명 없이 상황만</small></span>
+              <textarea id="reportNote" maxlength="120" placeholder="예: 중계 캡처처럼 보이는 문구가 걱정됩니다."></textarea>
+            </label>
+            <button class="ghost-action small" id="copyReportBtn" type="button">
+              검토 문구 복사
+            </button>
+          </div>
+          <div class="data-panel" aria-labelledby="data-title">
+            <div>
+              <h3 id="data-title">내 데이터</h3>
+              <p>보관함, 팬심 반응, 덕아웃 출석은 이 브라우저 안에만 저장됩니다.</p>
+            </div>
+            <div class="data-stats" id="dataStats" aria-live="polite"></div>
+            <button class="ghost-action small danger-action" id="clearLocalDataBtn" type="button">
+              로컬 데이터 지우기
+            </button>
+          </div>
+          <p class="legal-note">
+            본 서비스는 비공식 팬 서비스이며, 특정 리그·구단·선수와 제휴하거나
+            보증받지 않았습니다. 앱 내 팀, 선수, 경기, 기록은 모두 창작·가상 콘텐츠입니다.
+          </p>
+          <div class="legal-links" aria-label="법적 안내">
+            <a href="legal/privacy.html">개인정보 안내</a>
+            <a href="legal/terms.html">이용·권리 기준</a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <nav class="app-tabbar" aria-label="빠른 탭">
+      <a href="#generator" data-tab-target="generator">만들기</a>
+      <a href="#today" data-tab-target="today">오늘</a>
+      <a href="#live-jjal" data-tab-target="live-jjal">라이브</a>
+      <a href="#reaction-pulse" data-tab-target="reaction-pulse">팬심</a>
+      <a href="#history" data-tab-target="history">보관함</a>
+      <a href="#rules" data-tab-target="rules">안전</a>
+    </nav>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="app.js?v=12"></script>
+  </body>
+</html>

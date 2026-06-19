@@ -72,6 +72,9 @@ const copyFeedbackBtn = document.querySelector("#copyFeedbackBtn");
 const dataStats = document.querySelector("#dataStats");
 const clearLocalDataBtn = document.querySelector("#clearLocalDataBtn");
 const fanTypeGrid = document.querySelector("#fanTypeGrid");
+const quickStartCardBtn = document.querySelector("#quickStartCardBtn");
+const quickStartJjalBtn = document.querySelector("#quickStartJjalBtn");
+const quickStartCaptionBtn = document.querySelector("#quickStartCaptionBtn");
 const appTabs = document.querySelectorAll(".app-tabbar a");
 
 const scenarios = {
@@ -1188,6 +1191,26 @@ function applyFanType(typeKey) {
   document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
 }
 
+function quickStartCard() {
+  const typeKey = pick(Object.keys(fanTypes));
+  applyFanType(typeKey);
+}
+
+function quickStartJjal() {
+  const moodKey = pick(["pregame", "chance", "clutch", "almost", "defense", "afterglow"]);
+  jjalMoodSelect.value = moodKey;
+  jjalCustomInput.value = "";
+  applyJjal(moodKey);
+  saveCurrentCard();
+  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  showToast("바로 공유할 라이브 짤을 만들었습니다.");
+}
+
+async function quickStartCaption() {
+  applyFanType("clutch");
+  await copyCurrentCaption();
+}
+
 function renderShareCard() {
   cardKicker.textContent = currentState.kicker || "비공식 팬메이드";
   cardTitle.textContent = currentState.title || scenarios[currentState.scenario].label;
@@ -2274,6 +2297,16 @@ fanTypeGrid.addEventListener("click", (event) => {
   const button = event.target.closest("[data-fan-type]");
   if (!button) return;
   applyFanType(button.dataset.fanType);
+});
+
+quickStartCardBtn.addEventListener("click", quickStartCard);
+
+quickStartJjalBtn.addEventListener("click", quickStartJjal);
+
+quickStartCaptionBtn.addEventListener("click", () => {
+  quickStartCaption().catch(() => {
+    showToast("캡션까지 만드는 흐름을 완료하지 못했습니다.");
+  });
 });
 
 quickJjalGrid.addEventListener("click", (event) => {

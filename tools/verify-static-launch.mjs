@@ -82,6 +82,8 @@ assert(index.includes("비공식 팬메이드"), "index.html must keep unofficia
 assert(index.includes("공식 기록 아님"), "index.html must keep official-record disclaimer visible");
 assert(index.includes("id=\"previewRelayBtn\""), "preview relay entrypoint is missing");
 assert(index.includes("id=\"previewCaptionBtn\""), "preview caption copy entrypoint is missing");
+assert(index.includes("id=\"quickStartCardBtn\""), "quick start card entrypoint is missing");
+assert(index.includes("id=\"quickStartCaptionBtn\""), "quick start caption entrypoint is missing");
 assert(index.includes("id=\"copyFeedbackBtn\""), "beta feedback copy entrypoint is missing");
 assert(index.includes("id=\"copyInviteBtn\""), "beta invite copy entrypoint is missing");
 assert(index.includes("id=\"copyLaunchChecklistBtn\""), "launch checklist copy entrypoint is missing");

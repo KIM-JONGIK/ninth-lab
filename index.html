@@ -13,7 +13,7 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=15" />
+    <link rel="stylesheet" href="styles.css?v=16" />
   </head>
   <body>
     <div class="page-shell">
@@ -69,6 +69,17 @@
                   <button type="button" data-fan-type="dugout">작전판형</button>
                   <button type="button" data-fan-type="snack">간식응원형</button>
                   <button type="button" data-fan-type="afterwork">퇴근등판형</button>
+                </div>
+                <div class="starter-shortcuts" aria-label="첫 방문 빠른 시작">
+                  <button class="primary-action small" id="quickStartCardBtn" type="button">
+                    바로 1장
+                  </button>
+                  <button class="ghost-action small" id="quickStartJjalBtn" type="button">
+                    라이브 짤
+                  </button>
+                  <button class="ghost-action small" id="quickStartCaptionBtn" type="button">
+                    캡션까지
+                  </button>
                 </div>
               </div>
 
@@ -558,6 +569,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=15"></script>
+    <script src="app.js?v=16"></script>
   </body>
 </html>

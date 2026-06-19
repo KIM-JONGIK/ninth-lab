@@ -453,6 +453,19 @@ a {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.starter-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.starter-shortcuts .primary-action.small,
+.starter-shortcuts .ghost-action.small {
+  width: 100%;
+  min-width: 0;
+  margin-top: 0;
+}
+
 .preview-panel {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -1791,6 +1804,7 @@ a {
   .lineup-list,
   .quick-grid,
   .fan-type-grid,
+  .starter-shortcuts,
   .pulse-actions,
   .history-list {
     grid-template-columns: 1fr;

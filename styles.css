@@ -1325,6 +1325,7 @@ a {
 }
 
 .report-panel,
+.feedback-panel,
 .data-panel {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) minmax(180px, 240px) minmax(220px, 1.2fr) auto;
@@ -1342,6 +1343,7 @@ a {
 }
 
 .report-panel h3,
+.feedback-panel h3,
 .data-panel h3 {
   margin: 0 0 8px;
   color: #fffdf4;
@@ -1349,6 +1351,7 @@ a {
 }
 
 .report-panel p,
+.feedback-panel p,
 .data-panel p {
   margin: 0;
   color: #dce8dc;
@@ -1358,6 +1361,7 @@ a {
 }
 
 .report-panel .ghost-action.small,
+.feedback-panel .ghost-action.small,
 .data-panel .ghost-action.small {
   min-width: 126px;
   margin-top: 0;
@@ -1562,6 +1566,7 @@ a {
   .history-header,
   .lineup-tool,
   .report-panel,
+  .feedback-panel,
   .data-panel,
   .rules-grid {
     grid-template-columns: 1fr;
@@ -1595,6 +1600,7 @@ a {
   }
 
   .report-panel .ghost-action.small,
+  .feedback-panel .ghost-action.small,
   .data-panel .ghost-action.small {
     width: 100%;
   }

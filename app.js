@@ -62,6 +62,9 @@ const installStatus = document.querySelector("#installStatus");
 const reportTypeSelect = document.querySelector("#reportType");
 const reportNoteInput = document.querySelector("#reportNote");
 const copyReportBtn = document.querySelector("#copyReportBtn");
+const feedbackTypeSelect = document.querySelector("#feedbackType");
+const feedbackNoteInput = document.querySelector("#feedbackNote");
+const copyFeedbackBtn = document.querySelector("#copyFeedbackBtn");
 const dataStats = document.querySelector("#dataStats");
 const clearLocalDataBtn = document.querySelector("#clearLocalDataBtn");
 const fanTypeGrid = document.querySelector("#fanTypeGrid");
@@ -544,6 +547,13 @@ const reportTypes = {
   privacy: "실명·사생활 우려",
   abuse: "비방·혐오 표현 우려",
   official: "공식 서비스로 오해될 수 있음",
+};
+
+const feedbackTypes = {
+  share: "공유가 불편함",
+  content: "문구가 더 필요함",
+  mobile: "모바일 사용성",
+  idea: "새 기능 제안",
 };
 
 const reactionPulseBase = {
@@ -1647,6 +1657,25 @@ async function copyReportText() {
   showToast("검토 요청 문구를 복사했습니다.");
 }
 
+async function copyFeedbackText() {
+  const type = feedbackTypes[feedbackTypeSelect.value] || feedbackTypes.share;
+  const rawNote = cleanShareText(feedbackNoteInput.value, 160);
+  const note = rawNote && !textLooksUnsafe(rawNote) ? rawNote : "개인정보나 권리물 언급 없이 사용성 의견을 남깁니다.";
+  const cardText = [currentState.title || "현재 카드", currentState.phrase || "문구 없음"].join(" / ");
+  const safeCardText = exportTextLooksUnsafe(cardText) ? "현재 카드 정보 제외" : cardText;
+  const text = [
+    "[9회말 연구소 베타 피드백]",
+    `유형: ${type}`,
+    `의견: ${note}`,
+    `카드: ${safeCardText}`,
+    `브라우저 저장 카드: ${readHistory().length}장`,
+    "전송 방식: 사용자가 복사해 직접 전달하는 서버 없는 베타 피드백입니다.",
+  ].join("\n");
+
+  await copyTextToClipboard(text);
+  showToast("베타 피드백 문구를 복사했습니다.");
+}
+
 function applyRelayAnswer(moodKey) {
   const mood = jjalMoods[moodKey] || jjalMoods.clutch;
   const question = relayQuestions[activeRelayQuestion] || "친구가 덕아웃 질문을 던졌어요.";
@@ -2284,6 +2313,12 @@ pulseToggleBtn.addEventListener("click", () => {
 copyReportBtn.addEventListener("click", () => {
   copyReportText().catch(() => {
     showToast("검토 문구를 복사하지 못했습니다.");
+  });
+});
+
+copyFeedbackBtn.addEventListener("click", () => {
+  copyFeedbackText().catch(() => {
+    showToast("피드백 문구를 복사하지 못했습니다.");
   });
 });
 

@@ -13,7 +13,7 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=13" />
+    <link rel="stylesheet" href="styles.css?v=14" />
   </head>
   <body>
     <div class="page-shell">
@@ -454,6 +454,30 @@
               검토 문구 복사
             </button>
           </div>
+          <div class="feedback-panel" aria-labelledby="feedback-title">
+            <div>
+              <h3 id="feedback-title">베타 피드백</h3>
+              <p>
+                공개 서버로 전송하지 않고 사용성 의견을 전달할 문구만 만듭니다.
+              </p>
+            </div>
+            <label class="field">
+              <span>피드백 유형</span>
+              <select id="feedbackType">
+                <option value="share">공유가 불편함</option>
+                <option value="content">문구가 더 필요함</option>
+                <option value="mobile">모바일 사용성</option>
+                <option value="idea">새 기능 제안</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>의견 <small>선택, 개인정보 제외</small></span>
+              <textarea id="feedbackNote" maxlength="160" placeholder="예: 캡션 복사 후 바로 PNG 저장까지 이어지면 좋겠습니다."></textarea>
+            </label>
+            <button class="ghost-action small" id="copyFeedbackBtn" type="button">
+              피드백 문구 복사
+            </button>
+          </div>
           <div class="data-panel" aria-labelledby="data-title">
             <div>
               <h3 id="data-title">내 데이터</h3>
@@ -487,6 +511,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=13"></script>
+    <script src="app.js?v=14"></script>
   </body>
 </html>

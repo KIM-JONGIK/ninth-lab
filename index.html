@@ -13,7 +13,7 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=14" />
+    <link rel="stylesheet" href="styles.css?v=15" />
   </head>
   <body>
     <div class="page-shell">
@@ -32,6 +32,7 @@
           <a href="#reaction-pulse">팬심 %</a>
           <a href="#history">보관함</a>
           <a href="#install">웹앱</a>
+          <a href="#launch">런칭</a>
           <a href="#rules">안전</a>
         </nav>
       </header>
@@ -411,6 +412,52 @@
           </div>
         </section>
 
+        <section class="content-band launch-band" id="launch" aria-labelledby="launch-title">
+          <div class="section-heading">
+            <p>공개 베타 준비</p>
+            <h2 id="launch-title">링크 돌리기 전 운영 체크</h2>
+          </div>
+          <div class="launch-grid" aria-label="런칭 준비 상태">
+            <article>
+              <span class="launch-status">완료</span>
+              <h3>정적 웹 MVP</h3>
+              <p>카드 생성, 저장, 공유, 피드백 복사까지 서버 없이 동작합니다.</p>
+            </article>
+            <article>
+              <span class="launch-status">완료</span>
+              <h3>권리 보호선</h3>
+              <p>실명, 로고, 중계자료, 공식 기록으로 보일 수 있는 표현을 막습니다.</p>
+            </article>
+            <article>
+              <span class="launch-status is-waiting">대기</span>
+              <h3>계정 연결 배포</h3>
+              <p>GitHub와 Netlify 로그인이 끝나면 공개 링크로 전환합니다.</p>
+            </article>
+          </div>
+          <div class="launch-tool" aria-labelledby="invite-title">
+            <div>
+              <h3 id="invite-title">베타 초대 문구</h3>
+              <p id="invitePreview" class="invite-preview" aria-live="polite"></p>
+            </div>
+            <label class="field">
+              <span>초대 톤</span>
+              <select id="inviteTone">
+                <option value="casual">친구 단톡방</option>
+                <option value="community">커뮤니티 글</option>
+                <option value="tester">테스터 모집</option>
+              </select>
+            </label>
+            <div class="launch-actions">
+              <button class="primary-action small" id="copyInviteBtn" type="button">
+                초대 문구 복사
+              </button>
+              <button class="ghost-action small" id="copyLaunchChecklistBtn" type="button">
+                체크리스트 복사
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section class="content-band rules-band" id="rules" aria-labelledby="rules-title">
           <div class="section-heading">
             <p>서비스 경계</p>
@@ -511,6 +558,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=14"></script>
+    <script src="app.js?v=15"></script>
   </body>
 </html>

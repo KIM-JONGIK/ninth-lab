@@ -59,6 +59,10 @@ const challengeRecapBtn = document.querySelector("#challengeRecapBtn");
 const missionChoice = document.querySelector(".mission-choice");
 const installAppBtn = document.querySelector("#installAppBtn");
 const installStatus = document.querySelector("#installStatus");
+const inviteToneSelect = document.querySelector("#inviteTone");
+const invitePreview = document.querySelector("#invitePreview");
+const copyInviteBtn = document.querySelector("#copyInviteBtn");
+const copyLaunchChecklistBtn = document.querySelector("#copyLaunchChecklistBtn");
 const reportTypeSelect = document.querySelector("#reportType");
 const reportNoteInput = document.querySelector("#reportNote");
 const copyReportBtn = document.querySelector("#copyReportBtn");
@@ -556,6 +560,24 @@ const feedbackTypes = {
   idea: "새 기능 제안",
 };
 
+const inviteTemplates = {
+  casual: [
+    "야구 감정 카드 만드는 비공식 팬메이드 웹앱 베타 열어봤어.",
+    "실명, 로고, 중계 캡처 없이 그냥 오늘 기분만 카드로 만들 수 있음.",
+    "하나 만들어보고 이상한 점 있으면 피드백 문구 복사해서 보내줘.",
+  ],
+  community: [
+    "9회말 연구소 베타 테스트 중입니다.",
+    "실존 선수·구단·중계자료 없이 야구 팬 감정 카드와 라이브 반응 짤을 만드는 비공식 팬메이드 도구입니다.",
+    "공유 편의, 문구 톤, 모바일 사용성 피드백을 받고 있습니다.",
+  ],
+  tester: [
+    "야구 팬 공유 카드 MVP 베타 테스터를 찾습니다.",
+    "카드 생성, PNG 저장, 캡션 복사, 팬심 퍼센테이지, 서버 없는 피드백 흐름을 확인해주세요.",
+    "권리물이나 개인정보를 넣지 않는 안전한 사용 흐름을 우선 검증합니다.",
+  ],
+};
+
 const reactionPulseBase = {
   pregame: 8,
   chance: 12,
@@ -1009,6 +1031,43 @@ function relayUrl() {
   const url = new URL(window.location.href);
   url.hash = `${ASK_PREFIX}${encodeBase64Url(JSON.stringify({ question }))}`;
   return url.href;
+}
+
+function betaHomeUrl() {
+  const url = new URL(window.location.href);
+  url.hash = "";
+  return url.href;
+}
+
+function buildInviteText() {
+  const lines = inviteTemplates[inviteToneSelect.value] || inviteTemplates.casual;
+  return ["[9회말 연구소 베타]", ...lines, betaHomeUrl()].join("\n");
+}
+
+function renderInvitePreview() {
+  invitePreview.textContent = buildInviteText();
+}
+
+async function copyInviteText() {
+  const ok = await copyTextToClipboard(buildInviteText());
+  showToast(ok ? "베타 초대 문구를 복사했습니다." : "초대 문구를 복사하지 못했습니다.");
+}
+
+async function copyLaunchChecklist() {
+  const text = [
+    "[9회말 연구소 공개 베타 체크리스트]",
+    "완료: 정적 웹 MVP",
+    "완료: 권리·개인정보 보호 고지",
+    "완료: 카드 공유 링크, PNG 저장, 캡션 복사",
+    "완료: 권리·안전 검토 요청 문구 복사",
+    "완료: 베타 피드백 문구 복사",
+    "대기: GitHub 저장소 원격 연결",
+    "대기: Netlify 계정 연결 배포",
+    "권장: 첫 테스트 10명에게 초대 문구 전달",
+    betaHomeUrl(),
+  ].join("\n");
+  const ok = await copyTextToClipboard(text);
+  showToast(ok ? "런칭 체크리스트를 복사했습니다." : "체크리스트를 복사하지 못했습니다.");
 }
 
 function setRelayQuestion(questionKey) {
@@ -2322,6 +2381,20 @@ copyFeedbackBtn.addEventListener("click", () => {
   });
 });
 
+inviteToneSelect.addEventListener("change", renderInvitePreview);
+
+copyInviteBtn.addEventListener("click", () => {
+  copyInviteText().catch(() => {
+    showToast("초대 문구를 복사하지 못했습니다.");
+  });
+});
+
+copyLaunchChecklistBtn.addEventListener("click", () => {
+  copyLaunchChecklist().catch(() => {
+    showToast("체크리스트를 복사하지 못했습니다.");
+  });
+});
+
 clearLocalDataBtn.addEventListener("click", () => {
   if (clearLocalDataArmed) {
     clearLocalData();
@@ -2352,6 +2425,7 @@ renderQuickJjals();
 reactionVotes = readReactionVotes();
 renderReactionPulse();
 renderDailyDeck();
+renderInvitePreview();
 selectMission(readAttendance().mission);
 updateAttendanceStatus();
 setupInstallFlow();

@@ -83,6 +83,8 @@ assert(index.includes("공식 기록 아님"), "index.html must keep official-re
 assert(index.includes("id=\"previewRelayBtn\""), "preview relay entrypoint is missing");
 assert(index.includes("id=\"previewCaptionBtn\""), "preview caption copy entrypoint is missing");
 assert(index.includes("id=\"copyFeedbackBtn\""), "beta feedback copy entrypoint is missing");
+assert(index.includes("id=\"copyInviteBtn\""), "beta invite copy entrypoint is missing");
+assert(index.includes("id=\"copyLaunchChecklistBtn\""), "launch checklist copy entrypoint is missing");
 assert(index.includes("id=\"challengeRecapBtn\""), "daily challenge recap button is missing");
 
 assert(headers.includes("X-Content-Type-Options: nosniff"), "_headers missing X-Content-Type-Options");

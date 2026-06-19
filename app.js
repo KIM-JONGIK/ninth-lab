@@ -25,6 +25,7 @@ const pulseToggleBtn = document.querySelector("#pulseToggleBtn");
 const pulseLeader = document.querySelector("#pulseLeader");
 const relayQuestionSelect = document.querySelector("#relayQuestion");
 const copyRelayLinkBtn = document.querySelector("#copyRelayLinkBtn");
+const makePollCardBtn = document.querySelector("#makePollCardBtn");
 const relayBox = document.querySelector("#relayBox");
 const relayPrompt = document.querySelector("#relayPrompt");
 const relayStatus = document.querySelector("#relayStatus");
@@ -316,6 +317,7 @@ const unsafePattern =
   /(선수|감독|심판|구단|구단명|팀명|로고|엠블럼|심볼|유니폼|팀컬러|등번호|실명|본명|별명\s*공개|부상|사생활|열애|가족|주소|학교|중계|중계화면|방송화면|방송|캡처|캡쳐|스크린샷|움짤|클립|영상|하이라이트|리플레이|비디오판독|선수사진|프로필사진|공식|오피셜|제휴|인증|협찬|후원|승인|라이선스|라이센스|독점|협회|리그|kbo|kbop|mlb|npb|퓨처스|메이저리그|기록|스코어|박스스코어|경기결과|문자중계|기록실|순위|전적|승률|게임차|연승|연패|매직넘버|타율|평균자책점|방어율|era|ops|war|whip|홈런|타점|안타|도루|세이브|홀드|탈삼진|삼진|qs|lg|엘지|두산|kia|기아|삼성|롯데|한화|ssg|키움|nc|kt|트윈스|베어스|타이거즈|라이온즈|자이언츠|이글스|랜더스|히어로즈|다이노스|위즈|류현진|김광현|양현종|최정|이정후|김혜성|강백호|구자욱|박병호|오타니|저지|트라웃|다르빗슈|욕설|비하|조롱|죽어|꺼져|패드립|얼굴|사진)/i;
 const officialScorePattern = /(\d+\s*[:대-]\s*\d+)|(\d+\s*(승|패|세이브|홀드|홈런|타점|안타|삼진|득점|실점))/i;
 const SHARE_DISCLOSURE = "비공식 팬메이드 · 선수/구단/리그와 무관 · 중계자료 없음 · 공식 기록 아님";
+const PUBLIC_BETA_URL = "https://ninth-lab-jkim0428.netlify.app/";
 
 const jjalMoods = {
   pregame: {
@@ -599,6 +601,8 @@ const relayReplies = {
   defense: "내 반응은 수비 박수. 말은 줄이고 박수는 길게 간다.",
   review: "마음속 판독 대기. 모두가 조용히 확대 중이다.",
 };
+
+const relayPollMoods = ["clutch", "almost", "defense", "review"];
 
 const reportTypes = {
   rights: "권리물처럼 보임",
@@ -1089,6 +1093,9 @@ function relayUrl() {
 
 function betaHomeUrl() {
   const url = new URL(window.location.href);
+  if (["localhost", "127.0.0.1", ""].includes(url.hostname) || url.protocol === "file:") {
+    return PUBLIC_BETA_URL;
+  }
   url.hash = "";
   return url.href;
 }
@@ -1115,13 +1122,43 @@ async function copyLaunchChecklist() {
     "완료: 카드 공유 링크, PNG 저장, 캡션 복사",
     "완료: 권리·안전 검토 요청 문구 복사",
     "완료: 베타 피드백 문구 복사",
-    "대기: GitHub 저장소 원격 연결",
-    "대기: Netlify 계정 연결 배포",
+    "완료: GitHub 저장소 원격 연결",
+    "완료: Netlify 자동 배포",
+    "완료: 공개 배포물 내부 파일 차단",
     "권장: 첫 테스트 10명에게 초대 문구 전달",
+    "권장: 피드백 문구 3개 이상 회수",
     betaHomeUrl(),
   ].join("\n");
   const ok = await copyTextToClipboard(text);
   showToast(ok ? "런칭 체크리스트를 복사했습니다." : "체크리스트를 복사하지 못했습니다.");
+}
+
+function applyRelayQuestionCard() {
+  const questionKey = relayQuestions[relayQuestionSelect.value]
+    ? relayQuestionSelect.value
+    : "temperature";
+  const question = relayQuestions[questionKey];
+  const options = relayPollMoods.map((key, index) => `${index + 1}. ${jjalMoods[key].label}`);
+
+  currentState = {
+    scenario: "dugout",
+    tone: "hype",
+    energy: 4,
+    ratio: "wide",
+    nickname: "",
+    title: question,
+    kicker: "단톡방 4지선다",
+    phrase: options.join("  "),
+    tags: ["서버 없는 질문", "채팅 답변", "비공식"],
+    moodKey: "",
+    jjal: false,
+  };
+
+  syncControlsFromState();
+  renderShareCard();
+  saveCurrentCard();
+  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  showToast("단톡방 4지선다 질문 카드가 만들어졌습니다.");
 }
 
 function setRelayQuestion(questionKey) {
@@ -2309,6 +2346,8 @@ copyRelayLinkBtn.addEventListener("click", () => {
     showToast("질문 링크를 복사하지 못했습니다. 다시 시도해주세요.");
   });
 });
+
+makePollCardBtn.addEventListener("click", applyRelayQuestionCard);
 
 generateBtn.addEventListener("click", () => {
   generateCard();

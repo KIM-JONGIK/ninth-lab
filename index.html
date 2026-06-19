@@ -13,7 +13,7 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=18" />
+    <link rel="stylesheet" href="styles.css?v=20" />
   </head>
   <body>
     <div class="page-shell">
@@ -338,9 +338,14 @@
                     <option value="after">끝나고 남은 감정은?</option>
                   </select>
                 </label>
-                <button class="ghost-action small" id="copyRelayLinkBtn" type="button">
-                  친구에게 묻기
-                </button>
+                <div class="relay-actions">
+                  <button class="ghost-action small" id="copyRelayLinkBtn" type="button">
+                    친구에게 묻기
+                  </button>
+                  <button class="ghost-action small" id="makePollCardBtn" type="button">
+                    질문 카드
+                  </button>
+                </div>
                 <p id="relayHint">서버 없는 릴레이입니다. 답변은 이 브라우저에만 남습니다.</p>
               </div>
             </div>
@@ -440,9 +445,9 @@
               <p>실명, 로고, 중계자료, 공식 기록으로 보일 수 있는 표현을 막습니다.</p>
             </article>
             <article>
-              <span class="launch-status is-waiting">대기</span>
-              <h3>계정 연결 배포</h3>
-              <p>GitHub와 Netlify 로그인이 끝나면 공개 링크로 전환합니다.</p>
+              <span class="launch-status">완료</span>
+              <h3>무료 공개 배포</h3>
+              <p>GitHub에 올리면 Netlify 공개 링크가 자동으로 갱신됩니다.</p>
             </article>
           </div>
           <div class="launch-tool" aria-labelledby="invite-title">
@@ -574,6 +579,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=18"></script>
+    <script src="app.js?v=20"></script>
   </body>
 </html>

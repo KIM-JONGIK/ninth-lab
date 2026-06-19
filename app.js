@@ -70,6 +70,7 @@ const feedbackTypeSelect = document.querySelector("#feedbackType");
 const feedbackNoteInput = document.querySelector("#feedbackNote");
 const copyFeedbackBtn = document.querySelector("#copyFeedbackBtn");
 const dataStats = document.querySelector("#dataStats");
+const copyBetaReportBtn = document.querySelector("#copyBetaReportBtn");
 const clearLocalDataBtn = document.querySelector("#clearLocalDataBtn");
 const fanTypeGrid = document.querySelector("#fanTypeGrid");
 const quickStartCardBtn = document.querySelector("#quickStartCardBtn");
@@ -1808,6 +1809,35 @@ async function copyFeedbackText() {
   showToast("베타 피드백 문구를 복사했습니다.");
 }
 
+function nextBetaAction({ cardCount, reactionTotal, attendance }) {
+  if (cardCount < 1) return "첫 방문자가 바로 1장 버튼으로 카드를 만들 수 있는지 확인";
+  if (cardCount < 3) return "카드 3장까지 만들어 주간 결산 흐름 확인";
+  if (reactionTotal < 5) return "팬심 퍼센테이지 버튼을 눌러 반응 샘플 확인";
+  if (!attendance.lastDate) return "덕아웃 출석 버튼으로 재방문 흐름 확인";
+  return "초대 문구를 10명에게 보내고 피드백 문구 회수";
+}
+
+async function copyBetaReportText() {
+  const items = readHistory();
+  const attendance = readAttendance();
+  const reactionTotal = Object.values(readReactionVotes()).reduce((total, value) => total + Number(value || 0), 0);
+  const topReaction = getReactionTotals()[0];
+  const report = [
+    "[9회말 연구소 로컬 베타 리포트]",
+    `생성일: ${dateKey()}`,
+    `보관함 카드: ${items.length}장`,
+    `오늘 만든 카드: ${countCardsMadeToday(items)}장`,
+    `팬심 반응: ${reactionTotal}회`,
+    `가장 큰 감정 샘플: ${topReaction.label} ${topReaction.percent}%`,
+    `덕아웃 출석: ${attendance.streak || 0}일`,
+    `다음 액션: ${nextBetaAction({ cardCount: items.length, reactionTotal, attendance })}`,
+    "범위: 이 브라우저에만 저장된 로컬 상태 기준입니다.",
+  ].join("\n");
+
+  const ok = await copyTextToClipboard(report);
+  showToast(ok ? "로컬 베타 리포트를 복사했습니다." : "베타 리포트를 복사하지 못했습니다.");
+}
+
 function applyRelayAnswer(moodKey) {
   const mood = jjalMoods[moodKey] || jjalMoods.clutch;
   const question = relayQuestions[activeRelayQuestion] || "친구가 덕아웃 질문을 던졌어요.";
@@ -2461,6 +2491,12 @@ copyReportBtn.addEventListener("click", () => {
 copyFeedbackBtn.addEventListener("click", () => {
   copyFeedbackText().catch(() => {
     showToast("피드백 문구를 복사하지 못했습니다.");
+  });
+});
+
+copyBetaReportBtn.addEventListener("click", () => {
+  copyBetaReportText().catch(() => {
+    showToast("베타 리포트를 복사하지 못했습니다.");
   });
 });
 

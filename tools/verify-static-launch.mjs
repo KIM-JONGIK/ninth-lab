@@ -88,6 +88,7 @@ assert(index.includes("id=\"quickStartCaptionBtn\""), "quick start caption entry
 assert(index.includes("id=\"copyFeedbackBtn\""), "beta feedback copy entrypoint is missing");
 assert(index.includes("id=\"copyInviteBtn\""), "beta invite copy entrypoint is missing");
 assert(index.includes("id=\"copyLaunchChecklistBtn\""), "launch checklist copy entrypoint is missing");
+assert(index.includes("id=\"copyBetaReportBtn\""), "local beta report entrypoint is missing");
 assert(index.includes("id=\"challengeRecapBtn\""), "daily challenge recap button is missing");
 assert(app.includes("오늘 마음이 제일 크게 움직인 순간"), "expanded daily prompt pool is missing");
 assert(app.includes("박수부터 나가고 이유는 나중"), "expanded live reaction pool is missing");

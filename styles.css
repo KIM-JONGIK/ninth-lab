@@ -1482,6 +1482,16 @@ a {
   font-size: 1.08rem;
 }
 
+.data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.data-actions .ghost-action.small {
+  margin-top: 0;
+}
+
 .danger-action {
   border-color: rgba(217, 93, 57, 0.46);
   color: #ffd9ce;
@@ -1695,7 +1705,8 @@ a {
   .feedback-panel .ghost-action.small,
   .data-panel .ghost-action.small,
   .launch-actions .primary-action.small,
-  .launch-actions .ghost-action.small {
+  .launch-actions .ghost-action.small,
+  .data-actions .ghost-action.small {
     width: 100%;
   }
 

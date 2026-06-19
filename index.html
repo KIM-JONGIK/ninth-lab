@@ -13,7 +13,7 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=17" />
+    <link rel="stylesheet" href="styles.css?v=18" />
   </head>
   <body>
     <div class="page-shell">
@@ -542,9 +542,14 @@
               <p>보관함, 팬심 반응, 덕아웃 출석은 이 브라우저 안에만 저장됩니다.</p>
             </div>
             <div class="data-stats" id="dataStats" aria-live="polite"></div>
-            <button class="ghost-action small danger-action" id="clearLocalDataBtn" type="button">
-              로컬 데이터 지우기
-            </button>
+            <div class="data-actions">
+              <button class="ghost-action small" id="copyBetaReportBtn" type="button">
+                베타 리포트 복사
+              </button>
+              <button class="ghost-action small danger-action" id="clearLocalDataBtn" type="button">
+                로컬 데이터 지우기
+              </button>
+            </div>
           </div>
           <p class="legal-note">
             본 서비스는 비공식 팬 서비스이며, 특정 리그·구단·선수와 제휴하거나
@@ -569,6 +574,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=17"></script>
+    <script src="app.js?v=18"></script>
   </body>
 </html>

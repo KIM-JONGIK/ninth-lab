@@ -13,7 +13,7 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=21" />
+    <link rel="stylesheet" href="styles.css?v=23" />
   </head>
   <body>
     <div class="page-shell">
@@ -125,6 +125,32 @@
                 </div>
               </fieldset>
 
+              <fieldset class="field background-field">
+                <legend>카드 배경</legend>
+                <div class="background-swatches" role="radiogroup" aria-label="카드 배경">
+                  <label>
+                    <input type="radio" name="background" value="stadium" checked />
+                    <span class="background-swatch swatch-stadium">야간</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="background" value="clay" />
+                    <span class="background-swatch swatch-clay">흙먼지</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="background" value="rain" />
+                    <span class="background-swatch swatch-rain">우천</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="background" value="dugout" />
+                    <span class="background-swatch swatch-dugout">더그아웃</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="background" value="neon" />
+                    <span class="background-swatch swatch-neon">네온</span>
+                  </label>
+                </div>
+              </fieldset>
+
               <label class="field slider-field">
                 <span>과몰입 수치 <strong id="energyLabel">4</strong></span>
                 <input id="energy" name="energy" type="range" min="1" max="5" value="4" />
@@ -157,19 +183,22 @@
                 <p>공유 미리보기</p>
                 <h2 id="preview-title">오늘의 카드</h2>
               </div>
-              <article class="share-card is-square" id="shareCard">
-                <img src="assets/stadium-night.png" alt="" aria-hidden="true" />
-                <div class="card-overlay">
-                  <p class="card-kicker" id="cardKicker">비공식 팬메이드</p>
-                  <h3 id="cardTitle">9회말 심장 모드</h3>
-                  <p id="cardPhrase">오늘 내 심장은 전광판보다 먼저 뛰었다.</p>
-                  <div class="card-tags" id="cardTags">
-                    <span>창작 상황</span>
-                    <span>공식 기록 아님</span>
+              <div class="card-stage">
+                <article class="share-card is-square bg-stadium" id="shareCard">
+                  <img src="assets/stadium-night.png" alt="" aria-hidden="true" />
+                  <div class="card-backdrop" aria-hidden="true"></div>
+                  <div class="card-overlay">
+                    <p class="card-kicker" id="cardKicker">비공식 팬메이드</p>
+                    <h3 id="cardTitle">9회말 심장 모드</h3>
+                    <p id="cardPhrase">오늘 내 심장은 전광판보다 먼저 뛰었다.</p>
+                    <div class="card-tags" id="cardTags">
+                      <span>창작 상황</span>
+                      <span>공식 기록 아님</span>
+                    </div>
+                    <p class="card-footer" id="cardFooter">9회말 연구소 · Unofficial fan-made</p>
                   </div>
-                  <p class="card-footer" id="cardFooter">9회말 연구소 · Unofficial fan-made</p>
-                </div>
-              </article>
+                </article>
+              </div>
               <div class="preview-actions" aria-label="미리보기 공유 동작">
                 <button class="primary-action small" id="previewShareBtn" type="button">카드 공유</button>
                 <button class="ghost-action small" id="previewCopyLinkBtn" type="button">링크 복사</button>
@@ -582,6 +611,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=21"></script>
+    <script src="app.js?v=23"></script>
   </body>
 </html>

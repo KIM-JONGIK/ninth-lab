@@ -20,6 +20,7 @@ const copyJjalBtn = document.querySelector("#copyJjalBtn");
 const jjalMoodSelect = document.querySelector("#jjalMood");
 const jjalCustomInput = document.querySelector("#jjalCustom");
 const quickJjalGrid = document.querySelector("#quickJjalGrid");
+const backgroundInputs = document.querySelectorAll('input[name="background"]');
 const reactionPulseList = document.querySelector("#reactionPulseList");
 const pulseToggleBtn = document.querySelector("#pulseToggleBtn");
 const pulseLeader = document.querySelector("#pulseLeader");
@@ -694,6 +695,7 @@ let currentState = {
   ratio: "square",
   nickname: "",
   phrase: scenarios.bottom9.phrases.hype[0],
+  background: "stadium",
   moodKey: "",
   jjal: false,
   timelineItems: [],
@@ -716,6 +718,14 @@ const missionLabels = {
 };
 
 const timelineSlots = ["경기 전", "보는 중", "끝난 뒤"];
+
+const cardBackgrounds = {
+  stadium: "야간 구장",
+  clay: "흙먼지",
+  rain: "우천",
+  dugout: "더그아웃",
+  neon: "네온 라인",
+};
 
 const missionPhrases = {
   before: "시작 전부터 마음은 이미 자리에 앉았다.",
@@ -740,6 +750,15 @@ function pickDifferent(items, previousText) {
 function getSelectedRatio() {
   const checked = document.querySelector('input[name="ratio"]:checked');
   return checked ? checked.value : "square";
+}
+
+function normalizeBackground(value) {
+  return cardBackgrounds[value] ? value : "stadium";
+}
+
+function getSelectedBackground() {
+  const checked = document.querySelector('input[name="background"]:checked');
+  return normalizeBackground(checked?.value || currentState.background);
 }
 
 function cleanNickname(value) {
@@ -959,6 +978,7 @@ function checkInDailyMission() {
     tone: "soft",
     energy: 3,
     ratio: "story",
+    background: getSelectedBackground(),
     nickname: "",
     title: `${streak}일째 마음 출석`,
     kicker: "오늘의 덕아웃",
@@ -1023,6 +1043,7 @@ function cardPayload() {
     phrase: currentState.phrase || "",
     title: currentState.title || "",
     kicker: currentState.kicker || "",
+    background: normalizeBackground(currentState.background),
     tags: (currentState.tags || []).slice(0, 4),
     moodKey: currentState.moodKey || "",
     jjal: Boolean(currentState.jjal),
@@ -1041,6 +1062,7 @@ function stateFromPayload(payload) {
   const tone = tones[payload.tone] ? payload.tone : "hype";
   const energy = Math.min(5, Math.max(1, Number(payload.energy) || 4));
   const ratio = ["square", "story", "wide"].includes(payload.ratio) ? payload.ratio : "square";
+  const background = normalizeBackground(payload.background);
   const moodKey = jjalMoods[payload.moodKey] ? payload.moodKey : "";
   const scenario = scenarios[scenarioKey];
   const mood = moodKey ? jjalMoods[moodKey] : null;
@@ -1077,6 +1099,7 @@ function stateFromPayload(payload) {
     nickname,
     phrase,
     title,
+    background,
     kicker: timelineItems.length
       ? cleanShareText(payload.kicker, 28) || "3컷 감정 타임라인"
       : mood
@@ -1094,6 +1117,10 @@ function stateFromPayload(payload) {
 function syncControlsFromState() {
   const ratioInput = document.querySelector(`input[name="ratio"][value="${currentState.ratio}"]`);
   if (ratioInput) ratioInput.checked = true;
+  const backgroundInput = document.querySelector(
+    `input[name="background"][value="${normalizeBackground(currentState.background)}"]`,
+  );
+  if (backgroundInput) backgroundInput.checked = true;
   scenarioSelect.value = currentState.scenario;
   toneSelect.value = currentState.tone;
   energyInput.value = String(currentState.energy);
@@ -1183,6 +1210,7 @@ function applyRelayQuestionCard() {
     tone: "hype",
     energy: 4,
     ratio: "wide",
+    background: getSelectedBackground(),
     nickname: "",
     title: question,
     kicker: "단톡방 4지선다",
@@ -1267,6 +1295,7 @@ function generateCard() {
     tone,
     energy,
     ratio,
+    background: getSelectedBackground(),
     nickname: safeNickname,
     phrase,
     title: scenario.label,
@@ -1296,6 +1325,7 @@ function applyFanType(typeKey) {
     tone: type.tone,
     energy: type.energy,
     ratio: type.ratio,
+    background: getSelectedBackground(),
     nickname: "",
     phrase: type.phrase,
     title: type.title,
@@ -1339,6 +1369,7 @@ async function quickStartCaption() {
 
 function renderShareCard() {
   const timelineItems = timelineItemsForState();
+  const background = normalizeBackground(currentState.background);
   cardKicker.textContent = currentState.kicker || "비공식 팬메이드";
   cardTitle.textContent = currentState.title || scenarios[currentState.scenario].label;
   cardPhrase.textContent = currentState.phrase;
@@ -1370,6 +1401,10 @@ function renderShareCard() {
   shareCard.classList.toggle("is-square", currentState.ratio === "square");
   shareCard.classList.toggle("is-jjal", Boolean(currentState.jjal));
   shareCard.classList.toggle("is-timeline", Boolean(timelineItems.length));
+  Object.keys(cardBackgrounds).forEach((key) => {
+    shareCard.classList.toggle(`bg-${key}`, key === background);
+  });
+  shareCard.dataset.background = background;
   renderSafetyChecklist();
 }
 
@@ -1458,6 +1493,7 @@ function applyJjal(moodKey = jjalMoodSelect.value, forcedPhrase = "") {
     tone: mood.tone,
     energy: mood.energy,
     ratio: "wide",
+    background: getSelectedBackground(),
     nickname: "",
     title: mood.title,
     kicker: "LIVE FAN-MADE · 캡처 없이 만든 짤",
@@ -1592,6 +1628,7 @@ function cardSnapshot() {
     tone: currentState.tone || "hype",
     energy: currentState.energy || 4,
     ratio: currentState.ratio || "square",
+    background: normalizeBackground(currentState.background),
     nickname: currentState.nickname || "",
     phrase: currentState.phrase || scenario.phrases.hype[0],
     title: currentState.title || scenario.label,
@@ -1620,6 +1657,7 @@ function restoreHistoryCard(item) {
     tone: item.tone || "hype",
     energy: Number(item.energy) || 4,
     ratio: item.ratio || "square",
+    background: normalizeBackground(item.background),
     nickname: item.nickname || "",
     phrase: item.phrase || scenarios.bottom9.phrases.hype[0],
     title: item.title || scenario.label,
@@ -1682,7 +1720,7 @@ function renderCardHistory() {
       article.dataset.id = item.id;
 
       const preview = document.createElement("button");
-      preview.className = `history-preview ${historyPreviewClass(item.ratio)}`;
+      preview.className = `history-preview ${historyPreviewClass(item.ratio)} bg-${normalizeBackground(item.background)}`;
       preview.type = "button";
       preview.dataset.action = "restore";
       preview.setAttribute(
@@ -1997,6 +2035,7 @@ function buildEmotionTimeline() {
     tone: "soft",
     energy: 4,
     ratio: "story",
+    background: getSelectedBackground(),
     nickname: "",
     title: "오늘 야구 기분 3컷",
     kicker: "3컷 감정 타임라인",
@@ -2032,6 +2071,7 @@ function buildWeeklyRecap() {
     tone: "soft",
     energy: 3,
     ratio: "story",
+    background: getSelectedBackground(),
     nickname: "",
     title: "이번 주 나는 끝까지 봤다",
     kicker: "주간 감정 결산",
@@ -2119,6 +2159,106 @@ function coverDraw(ctx, image, width, height) {
   const x = (width - drawWidth) / 2;
   const y = (height - drawHeight) / 2;
   ctx.drawImage(image, x, y, drawWidth, drawHeight);
+}
+
+function drawCardBase(ctx, image, width, height, background) {
+  const key = normalizeBackground(background);
+  if (key === "stadium") {
+    coverDraw(ctx, image, width, height);
+    return;
+  }
+
+  const palettes = {
+    clay: [
+      [0, "#4b2d20"],
+      [0.48, "#945934"],
+      [1, "#1d2f27"],
+    ],
+    rain: [
+      [0, "#08151c"],
+      [0.52, "#214a58"],
+      [1, "#14231f"],
+    ],
+    dugout: [
+      [0, "#0d241f"],
+      [0.54, "#264d37"],
+      [1, "#16201c"],
+    ],
+    neon: [
+      [0, "#11151f"],
+      [0.5, "#183c3d"],
+      [1, "#321733"],
+    ],
+  };
+  const gradient = ctx.createLinearGradient(0, 0, width, height);
+  palettes[key].forEach(([stop, color]) => gradient.addColorStop(stop, color));
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+
+  const glow = ctx.createRadialGradient(width * 0.72, height * 0.22, 0, width * 0.72, height * 0.22, width * 0.58);
+  glow.addColorStop(0, key === "neon" ? "rgba(91, 199, 216, 0.42)" : "rgba(247, 213, 106, 0.22)");
+  glow.addColorStop(1, "rgba(255, 255, 255, 0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.save();
+  if (key === "clay") {
+    ctx.strokeStyle = "rgba(255, 230, 169, 0.2)";
+    ctx.lineWidth = Math.max(4, width * 0.006);
+    ctx.beginPath();
+    ctx.moveTo(width * 0.5, height * 0.2);
+    ctx.lineTo(width * 0.78, height * 0.5);
+    ctx.lineTo(width * 0.5, height * 0.78);
+    ctx.lineTo(width * 0.22, height * 0.5);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255, 253, 244, 0.08)";
+    for (let y = height * 0.18; y < height; y += height * 0.12) {
+      ctx.beginPath();
+      ctx.moveTo(width * 0.08, y);
+      ctx.lineTo(width * 0.92, y + height * 0.05);
+      ctx.stroke();
+    }
+  }
+
+  if (key === "rain") {
+    ctx.strokeStyle = "rgba(211, 236, 240, 0.18)";
+    ctx.lineWidth = Math.max(2, width * 0.003);
+    for (let x = -width * 0.2; x < width * 1.1; x += width * 0.075) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + width * 0.22, height);
+      ctx.stroke();
+    }
+  }
+
+  if (key === "dugout") {
+    ctx.strokeStyle = "rgba(255, 253, 244, 0.15)";
+    ctx.lineWidth = Math.max(3, width * 0.004);
+    for (let y = height * 0.22; y < height * 0.86; y += height * 0.16) {
+      ctx.beginPath();
+      ctx.moveTo(width * 0.08, y);
+      ctx.lineTo(width * 0.92, y);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(8, 18, 16, 0.35)";
+    roundRect(ctx, width * 0.1, height * 0.62, width * 0.8, height * 0.18, width * 0.03);
+    ctx.fill();
+  }
+
+  if (key === "neon") {
+    ctx.strokeStyle = "rgba(91, 199, 216, 0.38)";
+    ctx.lineWidth = Math.max(4, width * 0.006);
+    ctx.beginPath();
+    ctx.arc(width * 0.78, height * 0.24, width * 0.18, 0.25, 1.75);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(247, 213, 106, 0.26)";
+    ctx.beginPath();
+    ctx.moveTo(width * 0.1, height * 0.78);
+    ctx.bezierCurveTo(width * 0.32, height * 0.58, width * 0.6, height * 0.9, width * 0.92, height * 0.65);
+    ctx.stroke();
+  }
+  ctx.restore();
 }
 
 function wrapText(ctx, text, maxWidth, maxLines) {
@@ -2270,7 +2410,7 @@ async function downloadCard() {
     currentState.kicker ||
     (currentState.nickname ? `${currentState.nickname}의 오늘 야구 온도` : "비공식 팬메이드");
 
-  coverDraw(ctx, image, width, height);
+  drawCardBase(ctx, image, width, height, currentState.background);
 
   const horizontalGradient = ctx.createLinearGradient(0, 0, width, 0);
   horizontalGradient.addColorStop(0, "rgba(3, 12, 10, 0.92)");
@@ -2400,6 +2540,7 @@ function applyDailyContentCard(kind) {
     tone: kind === "question" ? "hype" : "soft",
     energy: kind === "question" ? 4 : 3,
     ratio: next.ratio,
+    background: getSelectedBackground(),
     nickname: "",
     title: next.title,
     kicker: next.kicker,
@@ -2639,6 +2780,10 @@ cardHistoryList.addEventListener("click", (event) => {
     showToast("보관함 카드를 열었습니다.");
   }
   if (action === "remix") {
+    const backgroundInput = document.querySelector(
+      `input[name="background"][value="${normalizeBackground(item.background)}"]`,
+    );
+    if (backgroundInput) backgroundInput.checked = true;
     if (item.jjal && item.moodKey) {
       const mood = jjalMoods[item.moodKey] || jjalMoods.clutch;
       applyJjal(item.moodKey, pickDifferent(mood.phrases, item.phrase));
@@ -2760,6 +2905,13 @@ energyInput.addEventListener("input", () => {
 
 document.querySelectorAll('input[name="ratio"]').forEach((input) => {
   input.addEventListener("change", generateCard);
+});
+
+backgroundInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    currentState.background = getSelectedBackground();
+    renderShareCard();
+  });
 });
 
 scenarioSelect.addEventListener("change", generateCard);

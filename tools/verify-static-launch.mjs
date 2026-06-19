@@ -31,6 +31,7 @@ const requiredFiles = [
   "_headers",
   "netlify.toml",
   "docs/free-web-launch.md",
+  "docs/deploy-runbook.md",
 ];
 
 requiredFiles.forEach(assertFile);
@@ -43,6 +44,7 @@ const notFound = readText("404.html");
 const headers = readText("_headers");
 const netlifyConfig = readText("netlify.toml");
 const launchGuide = readText("docs/free-web-launch.md");
+const deployRunbook = readText("docs/deploy-runbook.md");
 const app = readText("app.js");
 
 const cssVersion = index.match(/styles\.css\?v=(\d+)/)?.[1];
@@ -103,6 +105,8 @@ assert(launchGuide.includes("무료 정적 호스팅"), "launch guide must expla
 assert(launchGuide.includes("_headers"), "launch guide must mention _headers deployment file");
 assert(launchGuide.includes("netlify.toml"), "launch guide must mention netlify.toml deployment file");
 assert(launchGuide.includes("비공식 팬메이드"), "launch guide must keep unofficial disclosure in checklist");
+assert(deployRunbook.includes("gh auth login"), "deploy runbook must include GitHub CLI login");
+assert(deployRunbook.includes("npx netlify-cli login"), "deploy runbook must include Netlify CLI login");
 
 if (errors.length) {
   console.error("Static launch verification failed:");

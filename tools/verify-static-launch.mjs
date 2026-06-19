@@ -43,6 +43,7 @@ const notFound = readText("404.html");
 const headers = readText("_headers");
 const netlifyConfig = readText("netlify.toml");
 const launchGuide = readText("docs/free-web-launch.md");
+const app = readText("app.js");
 
 const cssVersion = index.match(/styles\.css\?v=(\d+)/)?.[1];
 const appVersion = index.match(/app\.js\?v=(\d+)/)?.[1];
@@ -88,6 +89,8 @@ assert(index.includes("id=\"copyFeedbackBtn\""), "beta feedback copy entrypoint 
 assert(index.includes("id=\"copyInviteBtn\""), "beta invite copy entrypoint is missing");
 assert(index.includes("id=\"copyLaunchChecklistBtn\""), "launch checklist copy entrypoint is missing");
 assert(index.includes("id=\"challengeRecapBtn\""), "daily challenge recap button is missing");
+assert(app.includes("오늘 마음이 제일 크게 움직인 순간"), "expanded daily prompt pool is missing");
+assert(app.includes("박수부터 나가고 이유는 나중"), "expanded live reaction pool is missing");
 
 assert(headers.includes("X-Content-Type-Options: nosniff"), "_headers missing X-Content-Type-Options");
 assert(headers.includes("Permissions-Policy:"), "_headers missing Permissions-Policy");

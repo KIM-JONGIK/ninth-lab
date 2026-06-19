@@ -9,6 +9,7 @@ const copyShareLinkBtn = document.querySelector("#copyShareLinkBtn");
 const downloadBtn = document.querySelector("#downloadBtn");
 const previewShareBtn = document.querySelector("#previewShareBtn");
 const previewCopyLinkBtn = document.querySelector("#previewCopyLinkBtn");
+const previewCaptionBtn = document.querySelector("#previewCaptionBtn");
 const previewRelayBtn = document.querySelector("#previewRelayBtn");
 const previewDownloadBtn = document.querySelector("#previewDownloadBtn");
 const lineupBtn = document.querySelector("#lineupBtn");
@@ -1508,7 +1509,7 @@ function restoreDeletedHistoryItem() {
 
 async function copyHistoryItem(item) {
   restoreHistoryCard(item);
-  await copyJjalText();
+  await copyCurrentCaption();
 }
 
 async function copyJjalText() {
@@ -1519,6 +1520,53 @@ async function copyJjalText() {
   }${leaderText} (${SHARE_DISCLOSURE})`;
   await copyTextToClipboard(text);
   showToast("커뮤니티용 문구를 복사했습니다.");
+}
+
+function hashtagFromTag(tag) {
+  const compact = stripSafeDisclosureTerms(tag)
+    .replace(/[^0-9A-Za-z가-힣\s]/g, "")
+    .replace(/\s+/g, "")
+    .trim()
+    .slice(0, 18);
+  if (!compact || textLooksUnsafe(compact)) return "";
+  return `#${compact}`;
+}
+
+function buildCommunityCaption() {
+  const title = cleanShareText(currentState.title || "오늘의 야구 기분", 40);
+  const phrase = cleanShareText(currentState.phrase || "", 90);
+  const tags = (currentState.tags || [])
+    .map(hashtagFromTag)
+    .filter(Boolean)
+    .slice(0, 3);
+  const hashtags = tags.length ? tags : ["#팬심카드", "#야구기분", "#창작상황"];
+
+  return [
+    "[9회말 연구소]",
+    title,
+    phrase ? `"${phrase}"` : "",
+    hashtags.join(" "),
+    SHARE_DISCLOSURE,
+    "이미지는 앱에서 직접 만든 창작 카드입니다.",
+    shareUrl(),
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+async function copyCurrentCaption() {
+  if (!canShareCurrentCard()) return;
+  const caption = buildCommunityCaption();
+  const safetyText = caption
+    .split("\n")
+    .filter((line) => !/^https?:\/\//i.test(line))
+    .join(" ");
+  if (exportTextLooksUnsafe(safetyText)) {
+    showToast("캡션에 위험 표현이 남아 있어 복사를 막았습니다.");
+    return;
+  }
+  const ok = await copyTextToClipboard(caption);
+  showToast(ok ? "커뮤니티용 캡션을 복사했습니다." : "캡션을 복사하지 못했습니다.");
 }
 
 async function copyCurrentShareLink() {
@@ -2044,6 +2092,12 @@ previewShareBtn.addEventListener("click", () => {
 previewCopyLinkBtn.addEventListener("click", () => {
   copyCurrentShareLink().catch(() => {
     showToast("링크를 복사하지 못했습니다. 다시 시도해주세요.");
+  });
+});
+
+previewCaptionBtn.addEventListener("click", () => {
+  copyCurrentCaption().catch(() => {
+    showToast("캡션을 복사하지 못했습니다. 다시 시도해주세요.");
   });
 });
 

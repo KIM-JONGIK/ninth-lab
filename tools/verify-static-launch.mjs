@@ -81,6 +81,7 @@ assert(index.includes("legal/terms.html"), "index.html must link to terms page")
 assert(index.includes("비공식 팬메이드"), "index.html must keep unofficial fan-made disclosure visible");
 assert(index.includes("공식 기록 아님"), "index.html must keep official-record disclaimer visible");
 assert(index.includes("id=\"previewRelayBtn\""), "preview relay entrypoint is missing");
+assert(index.includes("id=\"previewCaptionBtn\""), "preview caption copy entrypoint is missing");
 assert(index.includes("id=\"challengeRecapBtn\""), "daily challenge recap button is missing");
 
 assert(headers.includes("X-Content-Type-Options: nosniff"), "_headers missing X-Content-Type-Options");

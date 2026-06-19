@@ -67,6 +67,7 @@
 ## 무료 웹 베타
 
 - 이 앱은 정적 파일만으로 동작하므로 무료 정적 호스팅에서 작은 공개 베타를 시작할 수 있습니다.
+- 현재 Netlify 공개 베타 URL은 `https://ninth-lab-jkim0428.netlify.app`입니다.
 - 추천 순서는 Cloudflare Pages 또는 Netlify로 무료 서브도메인 배포 후 반응 확인입니다.
 - GitHub Pages와 Vercel Hobby도 가능하지만, 현재 앱은 서버 기능이 필요 없으므로 정적 배포만 사용합니다.
 - `_headers`는 Cloudflare Pages/Netlify용 기본 보안·캐시 헤더입니다. GitHub Pages에서는 무시될 수 있습니다.

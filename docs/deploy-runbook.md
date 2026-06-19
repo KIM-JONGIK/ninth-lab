@@ -4,6 +4,12 @@
 
 `9회말 연구소` is a static site. The deploy root is the repository root, and `netlify.toml` sets `publish = "."`.
 
+Current manual Netlify beta URL:
+
+```text
+https://ninth-lab-jkim0428.netlify.app
+```
+
 ## Check readiness
 
 ```powershell

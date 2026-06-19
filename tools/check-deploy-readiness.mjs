@@ -77,6 +77,14 @@ addCheck(
   "Restore netlify.toml before deploying.",
 );
 
+const publicBuildScripts = existsSync(join(root, "tools/build-public.mjs")) && existsSync(join(root, "tools/verify-public-build.mjs"));
+addCheck(
+  "public deploy build",
+  publicBuildScripts,
+  publicBuildScripts ? "public build and verification scripts present" : "public build scripts missing",
+  "Restore tools/build-public.mjs and tools/verify-public-build.mjs.",
+);
+
 const workflowPath = ".github/workflows/netlify-deploy.yml";
 const workflowExists = existsSync(join(root, workflowPath));
 const workflow = workflowExists ? read(workflowPath) : "";
@@ -87,11 +95,14 @@ addCheck(
     && workflow.includes("- main")
     && workflow.includes("workflow_dispatch:")
     && workflow.includes("tools/verify-static-launch.mjs")
+    && workflow.includes("tools/build-public.mjs")
+    && workflow.includes("tools/verify-public-build.mjs")
     && workflow.includes("netlify-cli deploy")
+    && workflow.includes("--dir dist")
     && workflow.includes("secrets.NETLIFY_AUTH_TOKEN")
     && workflow.includes("secrets.NETLIFY_SITE_ID"),
   workflowExists ? `${workflowPath} present` : `${workflowPath} missing`,
-  "Add .github/workflows/netlify-deploy.yml with main push, static verification, and Netlify CLI deploy.",
+  "Add .github/workflows/netlify-deploy.yml with main push, source verification, public build, public build verification, and Netlify CLI deploy.",
 );
 
 if (repoFullName) {

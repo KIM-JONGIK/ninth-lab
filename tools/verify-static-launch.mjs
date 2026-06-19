@@ -32,6 +32,8 @@ const requiredFiles = [
   "netlify.toml",
   ".netlifyignore",
   ".github/workflows/netlify-deploy.yml",
+  "tools/build-public.mjs",
+  "tools/verify-public-build.mjs",
   "docs/free-web-launch.md",
   "docs/deploy-runbook.md",
 ];
@@ -47,6 +49,8 @@ const headers = readText("_headers");
 const netlifyConfig = readText("netlify.toml");
 const netlifyIgnore = readText(".netlifyignore");
 const deployWorkflow = readText(".github/workflows/netlify-deploy.yml");
+const publicBuild = readText("tools/build-public.mjs");
+const publicBuildVerify = readText("tools/verify-public-build.mjs");
 const launchGuide = readText("docs/free-web-launch.md");
 const deployRunbook = readText("docs/deploy-runbook.md");
 const app = readText("app.js");
@@ -102,25 +106,34 @@ assert(app.includes("박수부터 나가고 이유는 나중"), "expanded live r
 assert(headers.includes("X-Content-Type-Options: nosniff"), "_headers missing X-Content-Type-Options");
 assert(headers.includes("Permissions-Policy:"), "_headers missing Permissions-Policy");
 assert(headers.includes("/service-worker.js") && headers.includes("Cache-Control: no-cache"), "_headers must no-cache service worker");
-assert(netlifyConfig.includes('publish = "."'), "netlify.toml must publish the static root directory");
+assert(netlifyConfig.includes('publish = "dist"'), "netlify.toml must publish the generated public dist directory");
+assert(netlifyConfig.includes("node tools/build-public.mjs"), "netlify.toml must build the public dist directory");
 assert(netlifyConfig.includes("/service-worker.js"), "netlify.toml must include service-worker cache headers");
 assert(netlifyIgnore.includes(".github/"), ".netlifyignore must exclude GitHub workflow files from public upload");
 assert(netlifyIgnore.includes(".netlify/"), ".netlifyignore must exclude local Netlify state from public upload");
 assert(netlifyIgnore.includes("tools/"), ".netlifyignore must exclude local tooling from public upload");
+assert(publicBuild.includes('"index.html"'), "public build script must copy index.html");
+assert(publicBuild.includes('"legal"'), "public build script must copy legal pages");
+assert(publicBuildVerify.includes("forbidden"), "public build verification must check forbidden internal files");
 
 assert(launchGuide.includes("무료 정적 호스팅"), "launch guide must explain free static hosting");
 assert(launchGuide.includes("_headers"), "launch guide must mention _headers deployment file");
 assert(launchGuide.includes("netlify.toml"), "launch guide must mention netlify.toml deployment file");
+assert(launchGuide.includes("dist/"), "launch guide must mention public dist deploy output");
 assert(launchGuide.includes("NETLIFY_AUTH_TOKEN"), "launch guide must mention Netlify token secret");
 assert(launchGuide.includes("비공식 팬메이드"), "launch guide must keep unofficial disclosure in checklist");
 assert(deployRunbook.includes("GitHub Actions"), "deploy runbook must describe GitHub Actions deploys");
+assert(deployRunbook.includes("dist/"), "deploy runbook must describe public dist deploy output");
 assert(deployRunbook.includes("NETLIFY_AUTH_TOKEN"), "deploy runbook must mention Netlify token secret");
 assert(deployRunbook.includes("NETLIFY_SITE_ID"), "deploy runbook must mention Netlify site ID secret");
 assert(deployRunbook.includes("KIM-JONGIK/ninth-lab"), "deploy runbook must point at the current GitHub repo");
 assert(deployWorkflow.includes("branches:") && deployWorkflow.includes("- main"), "deploy workflow must run from main branch pushes");
 assert(deployWorkflow.includes("workflow_dispatch:"), "deploy workflow must allow manual dispatch");
 assert(deployWorkflow.includes("tools/verify-static-launch.mjs"), "deploy workflow must verify static files before deploy");
+assert(deployWorkflow.includes("tools/build-public.mjs"), "deploy workflow must build public deploy directory");
+assert(deployWorkflow.includes("tools/verify-public-build.mjs"), "deploy workflow must verify public deploy directory");
 assert(deployWorkflow.includes("netlify-cli deploy"), "deploy workflow must deploy through Netlify CLI");
+assert(deployWorkflow.includes("--dir dist"), "deploy workflow must deploy only the public dist directory");
 assert(deployWorkflow.includes("secrets.NETLIFY_AUTH_TOKEN"), "deploy workflow must read Netlify token from GitHub Secrets");
 assert(deployWorkflow.includes("secrets.NETLIFY_SITE_ID"), "deploy workflow must read Netlify site ID from GitHub Secrets");
 

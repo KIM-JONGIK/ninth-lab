@@ -23,10 +23,11 @@
 ## 출시 전 체크리스트
 
 - `index.html`, `styles.css`, `app.js`, `manifest.webmanifest`, `service-worker.js`, `assets/`, `legal/`, `404.html`, `robots.txt`, `_headers`, `netlify.toml`이 배포 루트에 있어야 합니다.
+- 공개 배포물은 `tools/build-public.mjs`가 만드는 `dist/` 폴더만 사용하고, `docs/`, `tools/`, `README.md`, `.github/`는 공개 업로드에 포함하지 않습니다.
 - `legal/privacy.html`과 `legal/terms.html` 링크가 실제 배포 URL에서 열려야 합니다.
 - 서비스 워커 캐시 이름과 HTML의 `?v=` 버전이 함께 올라가야 합니다.
 - `_headers`가 적용되는 호스팅에서는 `service-worker.js`와 HTML은 `no-cache`, 이미지 자산은 장기 캐시로 동작해야 합니다.
-- Netlify에 배포할 때는 `netlify.toml`의 `publish = "."` 설정으로 빌드 없이 루트 정적 파일을 공개합니다.
+- Netlify에 배포할 때는 `netlify.toml`의 `publish = "dist"` 설정으로 공개 빌드 결과만 올립니다.
 - Netlify 자동 배포는 GitHub Actions에서 실행하고, 토큰은 `NETLIFY_AUTH_TOKEN`, 사이트 ID는 `NETLIFY_SITE_ID` GitHub Secrets에만 저장합니다.
 - `.netlifyignore`로 `.github/`, `.netlify/`, `docs/`, `tools/`, 로컬 환경 파일을 공개 업로드에서 제외합니다.
 - `#card=`와 `#ask=` 링크가 채팅 앱에서 잘리지 않는지 확인합니다.

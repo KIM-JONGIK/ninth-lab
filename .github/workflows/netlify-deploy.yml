@@ -27,8 +27,14 @@ jobs:
       - name: Verify static launch files
         run: node tools/verify-static-launch.mjs
 
+      - name: Build public deploy directory
+        run: node tools/build-public.mjs
+
+      - name: Verify public deploy directory
+        run: node tools/verify-public-build.mjs
+
       - name: Deploy static site to Netlify
-        run: npx --yes netlify-cli deploy --prod --dir . --site "$NETLIFY_SITE_ID" --auth "$NETLIFY_AUTH_TOKEN"
+        run: npx --yes netlify-cli deploy --prod --dir dist --site "$NETLIFY_SITE_ID" --auth "$NETLIFY_AUTH_TOKEN"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

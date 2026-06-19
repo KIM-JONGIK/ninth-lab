@@ -2,7 +2,7 @@
 
 ## Current target
 
-`9회말 연구소` is a static site. The deploy root is the repository root, and `netlify.toml` sets `publish = "."`.
+`9회말 연구소` is a static site. The source root is the repository root. The public deploy output is generated into `dist/`, and `netlify.toml` sets `publish = "dist"`.
 
 Current Netlify beta URL:
 
@@ -54,10 +54,10 @@ git push -u origin main
 
 ## Automatic Netlify deploy
 
-The workflow checks out the repo, runs `node tools/verify-static-launch.mjs`, then deploys the static root to Netlify with:
+The workflow checks out the repo, verifies source files, builds the public `dist/` directory, verifies that only public files are present, then deploys to Netlify with:
 
 ```text
-npx --yes netlify-cli deploy --prod --dir .
+npx --yes netlify-cli deploy --prod --dir dist
 ```
 
 The token and site ID come only from GitHub Actions Secrets.
@@ -71,7 +71,7 @@ gh run watch --repo KIM-JONGIK/ninth-lab <run-id> --exit-status
 
 ## Local-only files
 
-`.netlify/`, `.env*`, `node_modules/`, logs, docs, tools, and GitHub workflow files are not part of the public Netlify upload. Keep deploy tokens in GitHub Secrets only, not in repository files.
+`.netlify/`, `.env*`, `node_modules/`, logs, docs, tools, repository docs, and GitHub workflow files are not copied into `dist/`. Keep deploy tokens in GitHub Secrets only, not in repository files.
 
 ## Known blocker
 

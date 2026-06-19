@@ -102,11 +102,14 @@ assert(index.includes("id=\"copyInviteBtn\""), "beta invite copy entrypoint is m
 assert(index.includes("id=\"copyLaunchChecklistBtn\""), "launch checklist copy entrypoint is missing");
 assert(index.includes("id=\"copyBetaReportBtn\""), "local beta report entrypoint is missing");
 assert(index.includes("id=\"challengeRecapBtn\""), "daily challenge recap button is missing");
+assert(index.includes("id=\"timelineBtn\""), "timeline card entrypoint is missing");
 assert(app.includes("오늘 마음이 제일 크게 움직인 순간"), "expanded daily prompt pool is missing");
 assert(app.includes("박수부터 나가고 이유는 나중"), "expanded live reaction pool is missing");
 assert(app.includes("PUBLIC_BETA_URL"), "invite copy must use the public beta URL outside production");
 assert(app.includes("Netlify 자동 배포"), "launch checklist must reflect automatic Netlify deploy");
 assert(app.includes("단톡방 4지선다"), "relay poll card flow is missing");
+assert(app.includes("3컷 감정 타임라인"), "emotion timeline card flow is missing");
+assert(app.includes("drawTimelineDownload"), "timeline PNG renderer is missing");
 
 assert(headers.includes("X-Content-Type-Options: nosniff"), "_headers missing X-Content-Type-Options");
 assert(headers.includes("Permissions-Policy:"), "_headers missing Permissions-Policy");

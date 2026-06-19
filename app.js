@@ -32,6 +32,7 @@ const relayStatus = document.querySelector("#relayStatus");
 const relayHint = document.querySelector("#relayHint");
 const cardHistoryList = document.querySelector("#cardHistoryList");
 const clearHistoryBtn = document.querySelector("#clearHistoryBtn");
+const timelineBtn = document.querySelector("#timelineBtn");
 const weeklyRecapBtn = document.querySelector("#weeklyRecapBtn");
 const historyToggleBtn = document.querySelector("#historyToggleBtn");
 const safetyMessage = document.querySelector("#safetyMessage");
@@ -695,6 +696,7 @@ let currentState = {
   phrase: scenarios.bottom9.phrases.hype[0],
   moodKey: "",
   jjal: false,
+  timelineItems: [],
 };
 
 let reactionVotes = {};
@@ -712,6 +714,8 @@ const missionLabels = {
   during: "보는 중",
   after: "끝난 뒤",
 };
+
+const timelineSlots = ["경기 전", "보는 중", "끝난 뒤"];
 
 const missionPhrases = {
   before: "시작 전부터 마음은 이미 자리에 앉았다.",
@@ -782,6 +786,25 @@ function cleanShareText(value, maxLength = 80) {
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, maxLength);
+}
+
+function sanitizeTimelineItems(items) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .slice(0, 3)
+    .map((item, index) => {
+      const slot = cleanShareText(item?.slot || timelineSlots[index] || `${index + 1}컷`, 12);
+      const title = cleanShareText(item?.title || "오늘의 야구 기분", 28);
+      const phrase = cleanShareText(item?.phrase || "마음만 남긴 창작 카드", 54);
+      const tag = cleanShareText(item?.tag || "비공식", 16);
+      if (exportTextLooksUnsafe(`${slot} ${title} ${phrase} ${tag}`)) return null;
+      return { slot, title, phrase, tag };
+    })
+    .filter(Boolean);
+}
+
+function timelineItemsForState() {
+  return sanitizeTimelineItems(currentState.timelineItems);
 }
 
 function todaySeed() {
@@ -1003,6 +1026,7 @@ function cardPayload() {
     tags: (currentState.tags || []).slice(0, 4),
     moodKey: currentState.moodKey || "",
     jjal: Boolean(currentState.jjal),
+    timelineItems: timelineItemsForState(),
   };
 }
 
@@ -1030,9 +1054,20 @@ function stateFromPayload(payload) {
   const nickname = nicknameLooksUnsafe(payload.nickname || "") ? "" : cleanNickname(payload.nickname || "");
   const titleCandidate = cleanShareText(payload.title, 36);
   const title = titleCandidate && !textLooksUnsafe(titleCandidate) ? titleCandidate : mood ? mood.title : scenario.label;
-  const tags = mood
-    ? [mood.label, mood.tag, "중계 캡처 아님"]
-    : [tones[tone], energyLabels[energy], scenario.tag, "창작 상황"];
+  const timelineItems = sanitizeTimelineItems(payload.timelineItems);
+  const payloadTags = Array.isArray(payload.tags)
+    ? payload.tags
+        .map((tag) => cleanShareText(tag, 16))
+        .filter((tag) => tag && !exportTextLooksUnsafe(tag))
+        .slice(0, 4)
+    : [];
+  const tags = timelineItems.length
+    ? payloadTags.length
+      ? payloadTags
+      : ["3컷 타임라인", "감정 로그", "비공식"]
+    : mood
+      ? [mood.label, mood.tag, "중계 캡처 아님"]
+      : [tones[tone], energyLabels[energy], scenario.tag, "창작 상황"];
 
   return {
     scenario: scenarioKey,
@@ -1042,14 +1077,17 @@ function stateFromPayload(payload) {
     nickname,
     phrase,
     title,
-    kicker: mood
-      ? "LIVE FAN-MADE · 캡처 없이 만든 짤"
-      : nickname
-        ? `${nickname}의 오늘 야구 온도`
-        : "비공식 팬메이드",
+    kicker: timelineItems.length
+      ? cleanShareText(payload.kicker, 28) || "3컷 감정 타임라인"
+      : mood
+        ? "LIVE FAN-MADE · 캡처 없이 만든 짤"
+        : nickname
+          ? `${nickname}의 오늘 야구 온도`
+          : "비공식 팬메이드",
     tags,
     moodKey,
     jjal: Boolean(payload.jjal && mood),
+    timelineItems,
   };
 }
 
@@ -1300,10 +1338,30 @@ async function quickStartCaption() {
 }
 
 function renderShareCard() {
+  const timelineItems = timelineItemsForState();
   cardKicker.textContent = currentState.kicker || "비공식 팬메이드";
   cardTitle.textContent = currentState.title || scenarios[currentState.scenario].label;
   cardPhrase.textContent = currentState.phrase;
   cardFooter.textContent = `9회말 연구소 · ${SHARE_DISCLOSURE}`;
+
+  shareCard.querySelector(".timeline-strip")?.remove();
+  if (timelineItems.length) {
+    const strip = document.createElement("div");
+    strip.className = "timeline-strip";
+    strip.setAttribute("aria-label", "3컷 감정 타임라인");
+    timelineItems.forEach((item) => {
+      const article = document.createElement("article");
+      const slot = document.createElement("span");
+      const title = document.createElement("strong");
+      const phrase = document.createElement("p");
+      slot.textContent = item.slot;
+      title.textContent = item.title;
+      phrase.textContent = item.phrase;
+      article.append(slot, title, phrase);
+      strip.append(article);
+    });
+    cardTags.before(strip);
+  }
 
   cardTags.replaceChildren(...(currentState.tags || ["창작 상황"]).map(tagNode));
 
@@ -1311,6 +1369,7 @@ function renderShareCard() {
   shareCard.classList.toggle("is-wide", currentState.ratio === "wide");
   shareCard.classList.toggle("is-square", currentState.ratio === "square");
   shareCard.classList.toggle("is-jjal", Boolean(currentState.jjal));
+  shareCard.classList.toggle("is-timeline", Boolean(timelineItems.length));
   renderSafetyChecklist();
 }
 
@@ -1318,8 +1377,11 @@ function renderSafetyChecklist() {
   const phrase = currentState.phrase || "";
   const title = currentState.title || "";
   const tags = (currentState.tags || []).join(" ");
-  const cardText = `${title} ${phrase} ${tags}`;
-  const creativeText = `${title} ${phrase}`;
+  const timelineText = timelineItemsForState()
+    .map((item) => `${item.slot} ${item.title} ${item.phrase} ${item.tag}`)
+    .join(" ");
+  const cardText = `${title} ${phrase} ${tags} ${timelineText}`;
+  const creativeText = `${title} ${phrase} ${timelineText}`;
   const safeItems = [
     textLooksUnsafe(creativeText)
       ? "위험 표현이 감지되면 기본 창작 문구로 대체됩니다."
@@ -1347,6 +1409,7 @@ function canShareCurrentCard() {
     currentState.kicker || "",
     currentState.nickname || "",
     ...(currentState.tags || []),
+    ...timelineItemsForState().flatMap((item) => [item.slot, item.title, item.phrase, item.tag]),
     pulseLeader.textContent || "",
   ].join(" ");
   if (exportTextLooksUnsafe(exportText)) {
@@ -1536,6 +1599,7 @@ function cardSnapshot() {
     tags: (currentState.tags || ["창작 상황", "공식 기록 아님"]).slice(0, 4),
     moodKey: currentState.moodKey || "",
     jjal: Boolean(currentState.jjal),
+    timelineItems: timelineItemsForState(),
   };
 }
 
@@ -1563,6 +1627,7 @@ function restoreHistoryCard(item) {
     tags: Array.isArray(item.tags) ? item.tags.slice(0, 4) : ["창작 상황"],
     moodKey: item.moodKey || "",
     jjal: Boolean(item.jjal),
+    timelineItems: sanitizeTimelineItems(item.timelineItems),
   };
 
   const ratioInput = document.querySelector(`input[name="ratio"][value="${currentState.ratio}"]`);
@@ -1627,7 +1692,11 @@ function renderCardHistory() {
 
       const previewKicker = document.createElement("span");
       previewKicker.className = "history-kicker";
-      previewKicker.textContent = item.jjal ? "LIVE FAN-MADE" : "FAN-MADE";
+      previewKicker.textContent = sanitizeTimelineItems(item.timelineItems).length
+        ? "3-CUT TIMELINE"
+        : item.jjal
+          ? "LIVE FAN-MADE"
+          : "FAN-MADE";
 
       const previewTitle = document.createElement("strong");
       previewTitle.textContent = item.title;
@@ -1715,6 +1784,7 @@ function hashtagFromTag(tag) {
 function buildCommunityCaption() {
   const title = cleanShareText(currentState.title || "오늘의 야구 기분", 40);
   const phrase = cleanShareText(currentState.phrase || "", 90);
+  const timelineLines = timelineItemsForState().map((item) => `${item.slot}: ${item.title}`);
   const tags = (currentState.tags || [])
     .map(hashtagFromTag)
     .filter(Boolean)
@@ -1725,6 +1795,7 @@ function buildCommunityCaption() {
     "[9회말 연구소]",
     title,
     phrase ? `"${phrase}"` : "",
+    timelineLines.length ? timelineLines.join(" / ") : "",
     hashtags.join(" "),
     SHARE_DISCLOSURE,
     "이미지는 앱에서 직접 만든 창작 카드입니다.",
@@ -1889,12 +1960,58 @@ function applyRelayAnswer(moodKey) {
   showToast("답장 카드가 만들어졌습니다.");
 }
 
+function timelineSourceHistory() {
+  return readHistory().filter((item) => !sanitizeTimelineItems(item.timelineItems).length);
+}
+
 function syncWeeklyRecapButton() {
   const count = readHistory().length;
+  const timelineCount = timelineSourceHistory().length;
+  timelineBtn.disabled = timelineCount < 3;
+  timelineBtn.textContent = timelineCount < 3 ? `타임라인 ${timelineCount}/3` : "3컷 타임라인";
   weeklyRecapBtn.disabled = count < 3;
   weeklyRecapBtn.textContent = count < 3 ? `결산 ${count}/3` : "주간 결산";
   challengeRecapBtn.disabled = count < 3;
   challengeRecapBtn.textContent = count < 3 ? `결산 ${count}/3` : "주간 결산 만들기";
+}
+
+function buildEmotionTimeline() {
+  const source = timelineSourceHistory().slice(0, 3);
+  if (source.length < 3) {
+    showToast("카드 3장을 모으면 3컷 감정 타임라인을 만들 수 있습니다.");
+    return;
+  }
+
+  const timelineItems = source
+    .slice()
+    .reverse()
+    .map((item, index) => ({
+      slot: timelineSlots[index],
+      title: cleanShareText(item.title || "오늘의 야구 기분", 28),
+      phrase: cleanShareText(item.phrase || "마음만 남긴 창작 카드", 54),
+      tag: cleanShareText((item.tags || [item.kicker || "비공식"])[0], 16),
+    }));
+
+  currentState = {
+    scenario: "solo",
+    tone: "soft",
+    energy: 4,
+    ratio: "story",
+    nickname: "",
+    title: "오늘 야구 기분 3컷",
+    kicker: "3컷 감정 타임라인",
+    phrase: "경기 전부터 끝난 뒤까지, 이름 없이 마음만 모았습니다.",
+    tags: ["3컷 타임라인", "감정 로그", "비공식"],
+    moodKey: "",
+    jjal: false,
+    timelineItems,
+  };
+
+  syncControlsFromState();
+  renderShareCard();
+  saveCurrentCard();
+  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  showToast("3컷 감정 타임라인 카드가 만들어졌습니다.");
 }
 
 function buildWeeklyRecap() {
@@ -2068,6 +2185,70 @@ function drawPill(ctx, text, x, y, scale) {
   return width;
 }
 
+function drawTimelineDownload(ctx, { width, height, scale, pad, bottom, kicker, title, phrase, timelineItems }) {
+  const maxWidth = Math.min(width - pad * 2, 860 * scale);
+  const top = pad + 20 * scale;
+  const titleSize = Math.round(64 * scale);
+  const phraseSize = Math.round(32 * scale);
+  let y = top;
+
+  ctx.fillStyle = "#f7d56a";
+  ctx.font = `900 ${Math.round(26 * scale)}px "Malgun Gothic", sans-serif`;
+  ctx.fillText(kicker, pad, y);
+  y += 58 * scale;
+
+  ctx.fillStyle = "#fffdf4";
+  ctx.font = `900 ${titleSize}px "Malgun Gothic", sans-serif`;
+  const titleLines = wrapText(ctx, title, maxWidth, 2);
+  drawTextBlock(ctx, titleLines, pad, y, titleSize * 1.05);
+  y += titleLines.length * titleSize * 1.05 + 22 * scale;
+
+  ctx.fillStyle = "#f1f8ec";
+  ctx.font = `800 ${phraseSize}px "Malgun Gothic", sans-serif`;
+  const phraseLines = wrapText(ctx, phrase, maxWidth, 2);
+  drawTextBlock(ctx, phraseLines, pad, y, phraseSize * 1.3);
+  y += phraseLines.length * phraseSize * 1.3 + 30 * scale;
+
+  const panelGap = 16 * scale;
+  const availableHeight = bottom - y - 150 * scale;
+  const panelHeight = Math.max(112 * scale, Math.min(180 * scale, (availableHeight - panelGap * 2) / 3));
+
+  timelineItems.forEach((item, index) => {
+    const panelY = y + index * (panelHeight + panelGap);
+    roundRect(ctx, pad, panelY, maxWidth, panelHeight, 18 * scale);
+    ctx.fillStyle = "rgba(3, 11, 9, 0.68)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.22)";
+    ctx.lineWidth = 2 * scale;
+    ctx.stroke();
+
+    ctx.fillStyle = "#f7d56a";
+    ctx.font = `900 ${Math.round(22 * scale)}px "Malgun Gothic", sans-serif`;
+    ctx.fillText(item.slot, pad + 22 * scale, panelY + 34 * scale);
+
+    ctx.fillStyle = "#fffdf4";
+    ctx.font = `900 ${Math.round(30 * scale)}px "Malgun Gothic", sans-serif`;
+    ctx.fillText(item.title, pad + 22 * scale, panelY + 72 * scale);
+
+    ctx.fillStyle = "#dce8dc";
+    ctx.font = `800 ${Math.round(23 * scale)}px "Malgun Gothic", sans-serif`;
+    const lines = wrapText(ctx, item.phrase, maxWidth - 44 * scale, 2);
+    drawTextBlock(ctx, lines, pad + 22 * scale, panelY + 108 * scale, 29 * scale);
+  });
+
+  let tagX = pad;
+  const tagY = bottom - 92 * scale;
+  const tags = currentState.tags?.slice(0, 3) || ["3컷 타임라인", "감정 로그", "비공식"];
+  tags.forEach((tag) => {
+    const tagWidth = drawPill(ctx, tag, tagX, tagY, scale);
+    tagX += tagWidth + 10 * scale;
+  });
+
+  ctx.fillStyle = "rgba(255, 253, 244, 0.82)";
+  ctx.font = `800 ${Math.round(22 * scale)}px "Malgun Gothic", sans-serif`;
+  ctx.fillText(`9회말 연구소 · ${SHARE_DISCLOSURE}`, pad, bottom);
+}
+
 async function downloadCard() {
   if (!canShareCurrentCard()) return;
   const ratioSizes = {
@@ -2110,42 +2291,47 @@ async function downloadCard() {
   const isStory = currentState.ratio === "story";
   const titleSize = Math.round((isStory ? 82 : 76) * scale);
   const phraseSize = Math.round((isStory ? 42 : 38) * scale);
+  const timelineItems = timelineItemsForState();
 
-  ctx.fillStyle = "#f7d56a";
-  ctx.font = `900 ${Math.round(28 * scale)}px "Malgun Gothic", sans-serif`;
-  ctx.fillText(kicker, pad, bottom - 410 * scale);
+  if (timelineItems.length) {
+    drawTimelineDownload(ctx, { width, height, scale, pad, bottom, kicker, title, phrase, timelineItems });
+  } else {
+    ctx.fillStyle = "#f7d56a";
+    ctx.font = `900 ${Math.round(28 * scale)}px "Malgun Gothic", sans-serif`;
+    ctx.fillText(kicker, pad, bottom - 410 * scale);
 
-  ctx.fillStyle = "#fffdf4";
-  ctx.font = `900 ${titleSize}px "Malgun Gothic", sans-serif`;
-  const titleLines = wrapText(ctx, title, maxWidth, 3);
-  const titleY = bottom - 335 * scale;
-  drawTextBlock(ctx, titleLines, pad, titleY, titleSize * 1.05);
+    ctx.fillStyle = "#fffdf4";
+    ctx.font = `900 ${titleSize}px "Malgun Gothic", sans-serif`;
+    const titleLines = wrapText(ctx, title, maxWidth, 3);
+    const titleY = bottom - 335 * scale;
+    drawTextBlock(ctx, titleLines, pad, titleY, titleSize * 1.05);
 
-  ctx.fillStyle = "#f1f8ec";
-  ctx.font = `800 ${phraseSize}px "Malgun Gothic", sans-serif`;
-  const phraseY = titleY + titleLines.length * titleSize * 1.05 + 28 * scale;
-  const phraseLines = wrapText(ctx, phrase, maxWidth, 3);
-  drawTextBlock(ctx, phraseLines, pad, phraseY, phraseSize * 1.35);
+    ctx.fillStyle = "#f1f8ec";
+    ctx.font = `800 ${phraseSize}px "Malgun Gothic", sans-serif`;
+    const phraseY = titleY + titleLines.length * titleSize * 1.05 + 28 * scale;
+    const phraseLines = wrapText(ctx, phrase, maxWidth, 3);
+    drawTextBlock(ctx, phraseLines, pad, phraseY, phraseSize * 1.35);
 
-  const tags = currentState.tags?.slice(0, 3) || [
-    tones[currentState.tone],
-    energyLabels[currentState.energy],
-    "창작 상황",
-  ];
-  let tagX = pad;
-  let tagY = bottom - 92 * scale;
-  tags.forEach((tag) => {
-    const tagWidth = drawPill(ctx, tag, tagX, tagY, scale);
-    tagX += tagWidth + 10 * scale;
-    if (tagX > width - pad - 160 * scale) {
-      tagX = pad;
-      tagY += 52 * scale;
-    }
-  });
+    const tags = currentState.tags?.slice(0, 3) || [
+      tones[currentState.tone],
+      energyLabels[currentState.energy],
+      "창작 상황",
+    ];
+    let tagX = pad;
+    let tagY = bottom - 92 * scale;
+    tags.forEach((tag) => {
+      const tagWidth = drawPill(ctx, tag, tagX, tagY, scale);
+      tagX += tagWidth + 10 * scale;
+      if (tagX > width - pad - 160 * scale) {
+        tagX = pad;
+        tagY += 52 * scale;
+      }
+    });
 
-  ctx.fillStyle = "rgba(255, 253, 244, 0.82)";
-  ctx.font = `800 ${Math.round(22 * scale)}px "Malgun Gothic", sans-serif`;
-  ctx.fillText(`9회말 연구소 · ${SHARE_DISCLOSURE}`, pad, bottom);
+    ctx.fillStyle = "rgba(255, 253, 244, 0.82)";
+    ctx.font = `800 ${Math.round(22 * scale)}px "Malgun Gothic", sans-serif`;
+    ctx.fillText(`9회말 연구소 · ${SHARE_DISCLOSURE}`, pad, bottom);
+  }
 
   const filename = `9th-lab-${currentState.ratio}-${Date.now()}.png`;
   const blob = await new Promise((resolve, reject) => {
@@ -2493,6 +2679,8 @@ clearHistoryBtn.addEventListener("click", () => {
   renderCardHistory();
   showToast("보관함을 비웠습니다.");
 });
+
+timelineBtn.addEventListener("click", buildEmotionTimeline);
 
 weeklyRecapBtn.addEventListener("click", buildWeeklyRecap);
 

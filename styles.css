@@ -652,6 +652,66 @@ a {
   margin: 18px 0 14px;
 }
 
+.timeline-strip {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 4px;
+}
+
+.timeline-strip article {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(3, 11, 9, 0.56);
+  padding: 10px;
+}
+
+.timeline-strip span,
+.timeline-strip strong,
+.timeline-strip p {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.timeline-strip span {
+  color: var(--gold);
+  font-size: clamp(0.64rem, 1.9vw, 0.78rem);
+  font-weight: 900;
+}
+
+.timeline-strip strong {
+  margin-top: 4px;
+  color: #fffdf4;
+  font-size: clamp(0.82rem, 2.5vw, 1rem);
+  line-height: 1.2;
+}
+
+.timeline-strip p {
+  display: -webkit-box;
+  margin: 5px 0 0;
+  overflow: hidden;
+  color: #dce8dc;
+  font-size: clamp(0.72rem, 2.1vw, 0.9rem);
+  font-weight: 750;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.share-card.is-timeline .card-overlay h3 {
+  max-width: 18ch;
+  font-size: clamp(1.35rem, 5.5vw, 3.2rem);
+}
+
+.share-card.is-timeline .card-overlay > p:not(.card-kicker):not(.card-footer) {
+  max-width: 28ch;
+  font-size: clamp(0.86rem, 2.8vw, 1.28rem);
+}
+
+.share-card.is-timeline .card-tags {
+  margin-top: 12px;
+}
+
 .card-footer {
   color: rgba(255, 253, 244, 0.78);
   font-size: clamp(0.68rem, 1.8vw, 0.82rem);

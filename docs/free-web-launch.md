@@ -27,6 +27,8 @@
 - 서비스 워커 캐시 이름과 HTML의 `?v=` 버전이 함께 올라가야 합니다.
 - `_headers`가 적용되는 호스팅에서는 `service-worker.js`와 HTML은 `no-cache`, 이미지 자산은 장기 캐시로 동작해야 합니다.
 - Netlify에 배포할 때는 `netlify.toml`의 `publish = "."` 설정으로 빌드 없이 루트 정적 파일을 공개합니다.
+- Netlify 자동 배포는 GitHub Actions에서 실행하고, 토큰은 `NETLIFY_AUTH_TOKEN`, 사이트 ID는 `NETLIFY_SITE_ID` GitHub Secrets에만 저장합니다.
+- `.netlifyignore`로 `.github/`, `.netlify/`, `docs/`, `tools/`, 로컬 환경 파일을 공개 업로드에서 제외합니다.
 - `#card=`와 `#ask=` 링크가 채팅 앱에서 잘리지 않는지 확인합니다.
 - 첫 공개 문구에는 `비공식 팬메이드`, `중계자료 없음`, `공식 기록 아님`을 유지합니다.
 - 광고, 업체 홍보, 중고거래 탭은 공개 베타에는 숨깁니다.

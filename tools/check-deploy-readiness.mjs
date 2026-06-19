@@ -1,5 +1,5 @@
-import { execFileSync, execSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const root = process.cwd();
@@ -21,24 +21,19 @@ function run(command, args) {
   }
 }
 
-function runShell(command) {
-  try {
-    const output = execSync(command, {
-      cwd: root,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    return { ok: true, output };
-  } catch (error) {
-    return {
-      ok: false,
-      output: `${error.stdout || ""}${error.stderr || ""}${error.message || ""}`,
-    };
-  }
-}
-
 function addCheck(name, ok, detail, fix = "") {
   checks.push({ name, ok, detail, fix });
+}
+
+function read(path) {
+  return readFileSync(join(root, path), "utf8");
+}
+
+function parseGithubRepo(remoteUrl) {
+  const trimmed = remoteUrl.trim();
+  const match = trimmed.match(/github\.com[:/](?<owner>[^/]+)\/(?<repo>[^/.]+)(?:\.git)?$/i);
+  if (!match?.groups) return "";
+  return `${match.groups.owner}/${match.groups.repo}`;
 }
 
 const staticVerify = run(process.execPath, ["tools/verify-static-launch.mjs"]);
@@ -58,11 +53,12 @@ addCheck(
 );
 
 const remote = run("git", ["remote", "get-url", "origin"]);
+const repoFullName = remote.ok ? parseGithubRepo(remote.output) : "";
 addCheck(
-  "git remote origin",
-  remote.ok && remote.output.trim().length > 0,
-  remote.ok ? remote.output.trim() : "origin remote missing",
-  "After GitHub login: gh repo create ninth-lab --public --source=. --remote=origin --push",
+  "GitHub remote origin",
+  remote.ok && repoFullName.length > 0,
+  remote.ok ? `${remote.output.trim()} (${repoFullName || "not a GitHub remote"})` : "origin remote missing",
+  "Set the current repo remote: git remote add origin https://github.com/KIM-JONGIK/ninth-lab.git",
 );
 
 const ghAuth = run("gh", ["auth", "status"]);
@@ -81,13 +77,41 @@ addCheck(
   "Restore netlify.toml before deploying.",
 );
 
-const netlifyStatus = runShell("npx netlify-cli status");
+const workflowPath = ".github/workflows/netlify-deploy.yml";
+const workflowExists = existsSync(join(root, workflowPath));
+const workflow = workflowExists ? read(workflowPath) : "";
 addCheck(
-  "Netlify CLI auth",
-  netlifyStatus.ok && !/not logged|please log in/i.test(netlifyStatus.output),
-  netlifyStatus.ok ? netlifyStatus.output.trim().split("\n")[0] : "netlify status failed",
-  "Run: npx netlify-cli login",
+  "GitHub Actions Netlify workflow",
+  workflowExists
+    && workflow.includes("push:")
+    && workflow.includes("- main")
+    && workflow.includes("workflow_dispatch:")
+    && workflow.includes("tools/verify-static-launch.mjs")
+    && workflow.includes("netlify-cli deploy")
+    && workflow.includes("secrets.NETLIFY_AUTH_TOKEN")
+    && workflow.includes("secrets.NETLIFY_SITE_ID"),
+  workflowExists ? `${workflowPath} present` : `${workflowPath} missing`,
+  "Add .github/workflows/netlify-deploy.yml with main push, static verification, and Netlify CLI deploy.",
 );
+
+if (repoFullName) {
+  const secrets = run("gh", ["secret", "list", "--repo", repoFullName]);
+  const hasAuthToken = /\bNETLIFY_AUTH_TOKEN\b/.test(secrets.output);
+  const hasSiteId = /\bNETLIFY_SITE_ID\b/.test(secrets.output);
+  addCheck(
+    "GitHub Actions secrets",
+    secrets.ok && hasAuthToken && hasSiteId,
+    secrets.ok ? `NETLIFY_AUTH_TOKEN=${hasAuthToken ? "present" : "missing"}, NETLIFY_SITE_ID=${hasSiteId ? "present" : "missing"}` : "could not list GitHub Actions secrets",
+    "Set secrets: gh secret set NETLIFY_AUTH_TOKEN --repo KIM-JONGIK/ninth-lab and gh secret set NETLIFY_SITE_ID --repo KIM-JONGIK/ninth-lab",
+  );
+} else {
+  addCheck(
+    "GitHub Actions secrets",
+    false,
+    "GitHub repo remote could not be inferred",
+    "Set origin to the GitHub repo before checking Actions secrets.",
+  );
+}
 
 console.log("Deploy readiness checks");
 for (const check of checks) {
@@ -97,8 +121,8 @@ for (const check of checks) {
 
 const failed = checks.filter((check) => !check.ok);
 if (failed.length) {
-  console.log(`\n${failed.length} item(s) must be resolved before GitHub-connected Netlify deploy.`);
+  console.log(`\n${failed.length} item(s) must be resolved before GitHub Actions Netlify deploy.`);
   process.exit(1);
 }
 
-console.log("\nReady for GitHub-connected Netlify deploy.");
+console.log("\nReady for GitHub Actions Netlify deploy.");

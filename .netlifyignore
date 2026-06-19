@@ -1,0 +1,10 @@
+.git/
+.github/
+.netlify/
+node_modules/
+docs/
+tools/
+README.md
+*.log
+.env
+.env.*

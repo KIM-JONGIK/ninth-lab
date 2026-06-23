@@ -21,6 +21,7 @@ const jjalMoodSelect = document.querySelector("#jjalMood");
 const jjalCustomInput = document.querySelector("#jjalCustom");
 const quickJjalGrid = document.querySelector("#quickJjalGrid");
 const backgroundInputs = document.querySelectorAll('input[name="background"]');
+const reactionPulseSection = document.querySelector("#reaction-pulse");
 const reactionPulseList = document.querySelector("#reactionPulseList");
 const pulseToggleBtn = document.querySelector("#pulseToggleBtn");
 const pulseLeader = document.querySelector("#pulseLeader");
@@ -80,6 +81,9 @@ const quickStartCardBtn = document.querySelector("#quickStartCardBtn");
 const quickStartJjalBtn = document.querySelector("#quickStartJjalBtn");
 const quickStartCaptionBtn = document.querySelector("#quickStartCaptionBtn");
 const appTabs = document.querySelectorAll(".app-tabbar a");
+const STADIUM_IMAGE_SRC = "assets/stadium-night.png";
+const smoothCenterScroll = { block: "center", behavior: "smooth" };
+const smoothStartScroll = { block: "start", behavior: "smooth" };
 
 const scenarios = {
   bottom9: {
@@ -477,6 +481,7 @@ const jjalMoods = {
     ],
   },
 };
+const jjalMoodKeys = Object.keys(jjalMoods);
 
 const quickJjals = [
   ["pregame", "아직 시작도 안 했는데 긴장됨"],
@@ -590,6 +595,7 @@ const fanTypes = {
     tags: ["관전 타입", "일상 야구", "비공식", "창작 상황"],
   },
 };
+const fanTypeKeys = Object.keys(fanTypes);
 
 const relayQuestions = {
   temperature: "지금 우리 단톡방 온도는?",
@@ -710,6 +716,7 @@ let pendingHistoryUndo = null;
 let pulseExpanded = false;
 let historyExpanded = false;
 let clearLocalDataArmed = false;
+const imageLoadCache = new Map();
 
 const missionLabels = {
   before: "경기 전",
@@ -725,6 +732,29 @@ const cardBackgrounds = {
   rain: "우천",
   dugout: "더그아웃",
   neon: "네온 라인",
+};
+const cardBackgroundKeys = Object.keys(cardBackgrounds);
+const cardBackgroundPalettes = {
+  clay: [
+    [0, "#4b2d20"],
+    [0.48, "#945934"],
+    [1, "#1d2f27"],
+  ],
+  rain: [
+    [0, "#08151c"],
+    [0.52, "#214a58"],
+    [1, "#14231f"],
+  ],
+  dugout: [
+    [0, "#0d241f"],
+    [0.54, "#264d37"],
+    [1, "#16201c"],
+  ],
+  neon: [
+    [0, "#11151f"],
+    [0.5, "#183c3d"],
+    [1, "#321733"],
+  ],
 };
 
 const missionPhrases = {
@@ -745,6 +775,14 @@ function pickDifferent(items, previousText) {
   const previous = normalizePhrase(previousText);
   const candidates = items.filter((item) => normalizePhrase(item) !== previous);
   return pick(candidates.length ? candidates : items);
+}
+
+function scrollShareCardIntoView() {
+  shareCard.scrollIntoView(smoothCenterScroll);
+}
+
+function scrollReactionPulseIntoView() {
+  reactionPulseSection.scrollIntoView(smoothStartScroll);
 }
 
 function getSelectedRatio() {
@@ -992,13 +1030,12 @@ function checkInDailyMission() {
   renderShareCard();
   saveCurrentCard();
   updateAttendanceStatus();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   showToast("오늘의 덕아웃 출석을 저장했습니다.");
 }
 
 function renderDailyDeck() {
-  const moodKeys = Object.keys(jjalMoods);
-  todayMoodKey = pickSeeded(moodKeys, 2);
+  todayMoodKey = pickSeeded(jjalMoodKeys, 2);
   const mood = jjalMoods[todayMoodKey];
   const dailyPhrase = pickSeeded(mood.phrases, 5);
   const date = new Date();
@@ -1223,7 +1260,7 @@ function applyRelayQuestionCard() {
   syncControlsFromState();
   renderShareCard();
   saveCurrentCard();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   showToast("단톡방 4지선다 질문 카드가 만들어졌습니다.");
 }
 
@@ -1252,7 +1289,7 @@ function restoreRelayFromHash() {
     const payload = JSON.parse(decodeBase64Url(encoded));
     const question = relayQuestions[payload.question] ? payload.question : "temperature";
     setRelayQuestion(question);
-    document.querySelector("#reaction-pulse").scrollIntoView({ block: "start" });
+    scrollReactionPulseIntoView();
     showToast("친구의 덕아웃 질문을 열었습니다.");
     return true;
   } catch {
@@ -1344,11 +1381,11 @@ function applyFanType(typeKey) {
   } else {
     showToast(`${type.label} 카드가 만들어졌습니다.`);
   }
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
 }
 
 function quickStartCard() {
-  const typeKey = pick(Object.keys(fanTypes));
+  const typeKey = pick(fanTypeKeys);
   applyFanType(typeKey);
 }
 
@@ -1358,7 +1395,7 @@ function quickStartJjal() {
   jjalCustomInput.value = "";
   applyJjal(moodKey);
   saveCurrentCard();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   showToast("바로 공유할 라이브 짤을 만들었습니다.");
 }
 
@@ -1401,7 +1438,7 @@ function renderShareCard() {
   shareCard.classList.toggle("is-square", currentState.ratio === "square");
   shareCard.classList.toggle("is-jjal", Boolean(currentState.jjal));
   shareCard.classList.toggle("is-timeline", Boolean(timelineItems.length));
-  Object.keys(cardBackgrounds).forEach((key) => {
+  cardBackgroundKeys.forEach((key) => {
     shareCard.classList.toggle(`bg-${key}`, key === background);
   });
   shareCard.dataset.background = background;
@@ -1994,7 +2031,7 @@ function applyRelayAnswer(moodKey) {
   currentState.tags = ["답장 카드", mood.tag, "서버 없는 릴레이"];
   renderShareCard();
   saveCurrentCard();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   showToast("답장 카드가 만들어졌습니다.");
 }
 
@@ -2049,7 +2086,7 @@ function buildEmotionTimeline() {
   syncControlsFromState();
   renderShareCard();
   saveCurrentCard();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   showToast("3컷 감정 타임라인 카드가 만들어졌습니다.");
 }
 
@@ -2084,7 +2121,7 @@ function buildWeeklyRecap() {
   syncControlsFromState();
   renderShareCard();
   saveCurrentCard();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   showToast("주간 감정 결산 카드가 만들어졌습니다.");
 }
 
@@ -2144,12 +2181,18 @@ function showToast(message, action = null) {
 }
 
 function loadImage(src) {
-  return new Promise((resolve, reject) => {
+  if (imageLoadCache.has(src)) return imageLoadCache.get(src);
+  const promise = new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(image);
-    image.onerror = reject;
+    image.onerror = (error) => {
+      imageLoadCache.delete(src);
+      reject(error);
+    };
     image.src = src;
   });
+  imageLoadCache.set(src, promise);
+  return promise;
 }
 
 function coverDraw(ctx, image, width, height) {
@@ -2168,30 +2211,8 @@ function drawCardBase(ctx, image, width, height, background) {
     return;
   }
 
-  const palettes = {
-    clay: [
-      [0, "#4b2d20"],
-      [0.48, "#945934"],
-      [1, "#1d2f27"],
-    ],
-    rain: [
-      [0, "#08151c"],
-      [0.52, "#214a58"],
-      [1, "#14231f"],
-    ],
-    dugout: [
-      [0, "#0d241f"],
-      [0.54, "#264d37"],
-      [1, "#16201c"],
-    ],
-    neon: [
-      [0, "#11151f"],
-      [0.5, "#183c3d"],
-      [1, "#321733"],
-    ],
-  };
   const gradient = ctx.createLinearGradient(0, 0, width, height);
-  palettes[key].forEach(([stop, color]) => gradient.addColorStop(stop, color));
+  cardBackgroundPalettes[key].forEach(([stop, color]) => gradient.addColorStop(stop, color));
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
@@ -2401,16 +2422,17 @@ async function downloadCard() {
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
-  const image = await loadImage("assets/stadium-night.png");
+  const background = normalizeBackground(currentState.background);
+  const image = background === "stadium" ? await loadImage(STADIUM_IMAGE_SRC) : null;
   const scale = width / 1200;
-  const scenario = scenarios[currentState.scenario];
+  const scenario = scenarios[currentState.scenario] || scenarios.bottom9;
   const title = currentState.title || scenario.label;
   const phrase = currentState.phrase;
   const kicker =
     currentState.kicker ||
     (currentState.nickname ? `${currentState.nickname}의 오늘 야구 온도` : "비공식 팬메이드");
 
-  drawCardBase(ctx, image, width, height, currentState.background);
+  drawCardBase(ctx, image, width, height, background);
 
   const horizontalGradient = ctx.createLinearGradient(0, 0, width, 0);
   horizontalGradient.addColorStop(0, "rgba(3, 12, 10, 0.92)");
@@ -2502,7 +2524,7 @@ function applyDailyMood() {
   jjalCustomInput.value = phrase;
   applyJjal(todayMoodKey, phrase);
   saveCurrentCard();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   showToast("오늘의 야구 기분을 카드로 만들었습니다.");
 }
 
@@ -2553,7 +2575,7 @@ function applyDailyContentCard(kind) {
   syncControlsFromState();
   renderShareCard();
   saveCurrentCard();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   showToast(next.toast);
 }
 
@@ -2683,7 +2705,7 @@ generateBtn.addEventListener("click", () => {
   } else {
     showToast("새 카드가 만들어졌습니다. 보관함 저장은 건너뛰었습니다.");
   }
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
 });
 
 downloadBtn.addEventListener("click", () => {
@@ -2721,7 +2743,7 @@ installAppBtn.addEventListener("click", () => {
 
 applyJjalBtn.addEventListener("click", () => {
   applyJjal();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   if (saveCurrentCard()) {
     showToast("라이브 짤을 보관함에 저장했습니다.");
   } else {
@@ -2762,7 +2784,7 @@ quickJjalGrid.addEventListener("click", (event) => {
   jjalCustomInput.value = button.dataset.phrase;
   applyJjal(button.dataset.mood, button.dataset.phrase);
   saveCurrentCard();
-  document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+  scrollShareCardIntoView();
   showToast("빠른 짤을 카드에 올렸습니다.");
 });
 
@@ -2776,7 +2798,7 @@ cardHistoryList.addEventListener("click", (event) => {
   const action = target.dataset.action;
   if (action === "restore") {
     restoreHistoryCard(item);
-    document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+    scrollShareCardIntoView();
     showToast("보관함 카드를 열었습니다.");
   }
   if (action === "remix") {
@@ -2797,7 +2819,7 @@ cardHistoryList.addEventListener("click", (event) => {
       generateCard();
     }
     saveCurrentCard();
-    document.querySelector("#shareCard").scrollIntoView({ block: "center", behavior: "smooth" });
+    scrollShareCardIntoView();
     showToast("같은 톤으로 새 카드가 만들어졌습니다.");
   }
   if (action === "copy") {
@@ -2933,7 +2955,7 @@ if (!restoredCard) {
   const restoredRelay = restoreRelayFromHash();
   generateCard();
   if (restoredRelay) {
-    document.querySelector("#reaction-pulse").scrollIntoView({ block: "start" });
+    scrollReactionPulseIntoView();
   }
 }
 renderCardHistory();

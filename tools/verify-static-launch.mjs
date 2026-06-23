@@ -116,6 +116,8 @@ assert(app.includes("drawTimelineDownload"), "timeline PNG renderer is missing")
 assert(app.includes("cardBackgrounds"), "card background state map is missing");
 assert(app.includes("drawCardBase"), "card background PNG renderer is missing");
 assert(app.includes("backgroundInputs"), "card background control events are missing");
+assert(app.includes("scrollShareCardIntoView"), "shared card scroll helper is missing");
+assert(app.includes("imageLoadCache"), "PNG image load cache is missing");
 
 assert(headers.includes("X-Content-Type-Options: nosniff"), "_headers missing X-Content-Type-Options");
 assert(headers.includes("Permissions-Policy:"), "_headers missing Permissions-Policy");

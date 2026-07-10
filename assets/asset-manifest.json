@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "updated_at": "2026-07-10",
+  "assets": [
+    {
+      "path": "assets/stadium-night.png",
+      "sha256": "842279ead8dd64a8f36f190e2c2cd730d3a8b884270fbd1816276b1ad8c8acc0",
+      "dimensions": "1693x929",
+      "source_type": "ai-generated",
+      "generator": "OpenAI image generation",
+      "generation_id": "ig_0e220ed0509e8e55016a2cf43448b8819180cb35383ea19727",
+      "generated_at": "2026-06-13T06:10:47Z",
+      "constraints": [
+        "fictional baseball field",
+        "no identifiable people or player likenesses",
+        "no team, league, or brand marks",
+        "no uniforms, readable text, or watermark",
+        "no real stadium reference"
+      ]
+    },
+    {
+      "path": "assets/app-icon.svg",
+      "sha256": "736097a5872a85cdb0a3e2537de7112690c3ca06c73a50c6afb5f14061ff76cc",
+      "dimensions": "512x512 viewBox",
+      "source_type": "project-authored-vector",
+      "constraints": [
+        "generic number 9 mark",
+        "no team, league, or brand marks"
+      ]
+    }
+  ]
+}

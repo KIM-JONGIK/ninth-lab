@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 개인정보 안내
+    url: https://ninth-lab-jkim0428.netlify.app/legal/privacy.html
+    about: 로컬 저장, 공유 링크, 정적 호스팅 처리 범위를 먼저 확인합니다.

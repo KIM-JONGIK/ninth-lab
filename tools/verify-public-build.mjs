@@ -23,6 +23,7 @@ const required = [
   "404.html",
   "_headers",
   "assets/app-icon.svg",
+  "assets/asset-manifest.json",
   "assets/stadium-night.png",
   "legal/privacy.html",
   "legal/terms.html",

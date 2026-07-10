@@ -27,6 +27,12 @@ jobs:
       - name: Verify static launch files
         run: node tools/verify-static-launch.mjs
 
+      - name: Verify content safety
+        run: node tools/verify-content-safety.mjs
+
+      - name: Verify visual asset provenance
+        run: node tools/verify-asset-provenance.mjs
+
       - name: Build public deploy directory
         run: node tools/build-public.mjs
 

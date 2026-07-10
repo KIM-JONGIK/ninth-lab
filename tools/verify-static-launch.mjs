@@ -23,6 +23,7 @@ const requiredFiles = [
   "manifest.webmanifest",
   "service-worker.js",
   "assets/app-icon.svg",
+  "assets/asset-manifest.json",
   "assets/stadium-night.png",
   "legal/privacy.html",
   "legal/terms.html",
@@ -32,7 +33,11 @@ const requiredFiles = [
   "netlify.toml",
   ".netlifyignore",
   ".github/workflows/netlify-deploy.yml",
+  ".github/ISSUE_TEMPLATE/rights-removal.yml",
+  ".github/ISSUE_TEMPLATE/config.yml",
   "tools/build-public.mjs",
+  "tools/verify-content-safety.mjs",
+  "tools/verify-asset-provenance.mjs",
   "tools/verify-public-build.mjs",
   "docs/free-web-launch.md",
   "docs/deploy-runbook.md",
@@ -89,6 +94,7 @@ for (const path of cachedFiles) {
 
 assert(index.includes("legal/privacy.html"), "index.html must link to privacy page");
 assert(index.includes("legal/terms.html"), "index.html must link to terms page");
+assert(index.includes("rights-removal.yml"), "index.html must link to the rights and removal request channel");
 assert(index.includes("비공식 팬메이드"), "index.html must keep unofficial fan-made disclosure visible");
 assert(index.includes("공식 기록 아님"), "index.html must keep official-record disclaimer visible");
 assert(index.includes("무료 공개 배포"), "launch center must show current public deploy status");
@@ -97,6 +103,11 @@ assert(index.includes("id=\"makePollCardBtn\""), "relay poll card entrypoint is 
 assert(index.includes("id=\"previewCaptionBtn\""), "preview caption copy entrypoint is missing");
 assert(index.includes("id=\"quickStartCardBtn\""), "quick start card entrypoint is missing");
 assert(index.includes("id=\"quickStartCaptionBtn\""), "quick start caption entrypoint is missing");
+assert(index.includes("id=\"cardFormat\""), "meme grammar selector is missing");
+assert(index.includes("id=\"rerollBtn\""), "phrase reroll entrypoint is missing");
+assert(index.includes("id=\"surpriseMeBtn\""), "random content mix entrypoint is missing");
+assert(index.includes("id=\"quickJjalToggleBtn\""), "quick reaction disclosure toggle is missing");
+assert(index.includes("id=\"more\""), "collapsed utility section is missing");
 assert(index.includes("id=\"copyFeedbackBtn\""), "beta feedback copy entrypoint is missing");
 assert(index.includes("id=\"copyInviteBtn\""), "beta invite copy entrypoint is missing");
 assert(index.includes("id=\"copyLaunchChecklistBtn\""), "launch checklist copy entrypoint is missing");
@@ -108,6 +119,10 @@ assert(index.includes("card-stage"), "sticky card stage wrapper is missing");
 assert(index.includes("card-backdrop"), "card backdrop layer is missing");
 assert(app.includes("오늘 마음이 제일 크게 움직인 순간"), "expanded daily prompt pool is missing");
 assert(app.includes("박수부터 나가고 이유는 나중"), "expanded live reaction pool is missing");
+assert(app.includes("시작 전 마음 예열"), "pregame scenario content pack is missing");
+assert(app.includes("끝난 뒤 복기 모드"), "aftergame scenario content pack is missing");
+assert(app.includes("cardFormats"), "meme grammar state map is missing");
+assert(app.includes("renderContentInventory"), "content source inventory is missing");
 assert(app.includes("PUBLIC_BETA_URL"), "invite copy must use the public beta URL outside production");
 assert(app.includes("Netlify 자동 배포"), "launch checklist must reflect automatic Netlify deploy");
 assert(app.includes("단톡방 4지선다"), "relay poll card flow is missing");
@@ -118,6 +133,12 @@ assert(app.includes("drawCardBase"), "card background PNG renderer is missing");
 assert(app.includes("backgroundInputs"), "card background control events are missing");
 assert(app.includes("scrollShareCardIntoView"), "shared card scroll helper is missing");
 assert(app.includes("imageLoadCache"), "PNG image load cache is missing");
+assert(app.includes("compactSafetyText"), "spaced-text safety normalization is missing");
+assert(app.includes("playerNumberPattern"), "player-number identification guard is missing");
+
+assert(privacy.includes("https://www.netlify.com/privacy/"), "privacy page must disclose the static host privacy layer");
+assert(privacy.includes("rights-removal.yml"), "privacy page must link to the rights request channel");
+assert(terms.includes("rights-removal.yml"), "terms page must link to the rights request channel");
 
 assert(headers.includes("X-Content-Type-Options: nosniff"), "_headers missing X-Content-Type-Options");
 assert(headers.includes("Permissions-Policy:"), "_headers missing Permissions-Policy");
@@ -146,6 +167,8 @@ assert(deployRunbook.includes("KIM-JONGIK/ninth-lab"), "deploy runbook must poin
 assert(deployWorkflow.includes("branches:") && deployWorkflow.includes("- main"), "deploy workflow must run from main branch pushes");
 assert(deployWorkflow.includes("workflow_dispatch:"), "deploy workflow must allow manual dispatch");
 assert(deployWorkflow.includes("tools/verify-static-launch.mjs"), "deploy workflow must verify static files before deploy");
+assert(deployWorkflow.includes("tools/verify-content-safety.mjs"), "deploy workflow must verify content safety before deploy");
+assert(deployWorkflow.includes("tools/verify-asset-provenance.mjs"), "deploy workflow must verify asset provenance before deploy");
 assert(deployWorkflow.includes("tools/build-public.mjs"), "deploy workflow must build public deploy directory");
 assert(deployWorkflow.includes("tools/verify-public-build.mjs"), "deploy workflow must verify public deploy directory");
 assert(deployWorkflow.includes("netlify-cli deploy"), "deploy workflow must deploy through Netlify CLI");

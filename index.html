@@ -13,7 +13,7 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=24" />
+    <link rel="stylesheet" href="styles.css?v=28" />
   </head>
   <body>
     <div class="page-shell">
@@ -31,8 +31,7 @@
           <a href="#live-jjal">라이브 짤</a>
           <a href="#reaction-pulse">팬심 %</a>
           <a href="#history">보관함</a>
-          <a href="#install">웹앱</a>
-          <a href="#launch">런칭</a>
+          <a href="#more">더보기</a>
           <a href="#rules">안전</a>
         </nav>
       </header>
@@ -41,9 +40,9 @@
         <section class="app-hero" id="generator" aria-labelledby="hero-title">
           <div class="hero-copy">
             <p class="eyebrow">공식 기록 없이 노는 야구 팬 실험실</p>
-            <h1 id="hero-title">오늘 야구 기분, 10초 만에 공유 카드로.</h1>
+            <h1 id="hero-title">오늘 야구 기분, 바로 밈 카드로.</h1>
             <p>
-              실명, 로고, 실제 경기 데이터 없이 상황과 감정만 골라 팬메이드 카드를 만듭니다.
+              경기 흐름과 감정만 고르면 실명, 로고, 중계 화면 없는 팬메이드 카드가 됩니다.
             </p>
             <div class="safety-strip" role="note">
               <span>비공식</span>
@@ -86,14 +85,24 @@
               <label class="field">
                 <span>오늘의 상황</span>
                 <select id="scenario" name="scenario">
-                  <option value="bottom9">9회말 심장 모드</option>
-                  <option value="rain">비 오는 날 야구 감성</option>
-                  <option value="commute">출근길 불펜진</option>
-                  <option value="extra">연장전 멘탈 케어</option>
-                  <option value="dugout">갑자기 명장 빙의</option>
-                  <option value="solo">혼자 보는 날</option>
-                  <option value="snack">응원 간식 타임</option>
-                  <option value="workday">퇴근 후 플레이볼</option>
+                  <optgroup label="경기 흐름">
+                    <option value="pregame">시작 전 마음 예열</option>
+                    <option value="chance">기회가 온 것 같은데</option>
+                    <option value="crisis">마음 수비 시간</option>
+                    <option value="bottom9" selected>9회말 심장 모드</option>
+                    <option value="extra">연장전 멘탈 케어</option>
+                    <option value="afterglow">끝난 뒤 복기 모드</option>
+                  </optgroup>
+                  <optgroup label="일상 야구">
+                    <option value="commute">출근길 불펜진</option>
+                    <option value="workday">퇴근 후 플레이볼</option>
+                    <option value="solo">혼자 보는 날</option>
+                    <option value="snack">응원 간식 타임</option>
+                  </optgroup>
+                  <optgroup label="변수와 작전">
+                    <option value="rain">비 오는 날 야구 감성</option>
+                    <option value="dugout">갑자기 명장 빙의</option>
+                  </optgroup>
                 </select>
               </label>
 
@@ -106,6 +115,22 @@
                   <option value="chaos">작전 없는 작전</option>
                 </select>
               </label>
+
+              <label class="field">
+                <span>밈 문법</span>
+                <select id="cardFormat" name="cardFormat">
+                  <option value="classic">한줄 밈</option>
+                  <option value="bulletin">단톡 속보</option>
+                  <option value="status">상태창</option>
+                  <option value="diary">관전 일지</option>
+                </select>
+              </label>
+
+              <div class="content-inventory" aria-label="콘텐츠 소스 현황">
+                <span>권리 안전 문구</span>
+                <strong id="contentSourceCount">257개 소스</strong>
+                <button class="ghost-action small" id="surpriseMeBtn" type="button">랜덤 조합</button>
+              </div>
 
               <fieldset class="field">
                 <legend>공유 비율</legend>
@@ -167,8 +192,11 @@
                 />
               </label>
 
-              <div class="button-row is-four">
+              <div class="button-row create-actions">
                 <button class="primary-action" id="generateBtn" type="button">새 카드 만들기</button>
+                <button class="ghost-action" id="rerollBtn" type="button">다른 문구</button>
+              </div>
+              <div class="button-row share-actions">
                 <button class="ghost-action" id="nativeShareBtn" type="button">공유</button>
                 <button class="ghost-action" id="copyShareLinkBtn" type="button">링크 복사</button>
                 <button class="ghost-action" id="downloadBtn" type="button">PNG 저장</button>
@@ -211,10 +239,10 @@
                 <span>공식 기록 아님</span>
                 <span>실명·로고 미사용</span>
               </div>
-              <div class="safe-check" id="safeCheck" aria-live="polite">
-                <strong>공유 전 점검</strong>
+              <details class="safe-check" id="safeCheck">
+                <summary>공유 전 점검 <span>자동 확인</span></summary>
                 <ul id="safeCheckList"></ul>
-              </div>
+              </details>
             </section>
           </div>
         </section>
@@ -329,6 +357,9 @@
               </label>
 
               <div class="quick-grid" id="quickJjalGrid" aria-label="빠른 짤 버튼"></div>
+              <button class="ghost-action small quick-jjal-toggle" id="quickJjalToggleBtn" type="button">
+                빠른 짤 전체 보기
+              </button>
             </div>
           </div>
         </section>
@@ -337,14 +368,14 @@
           <div class="pulse-header">
             <div class="section-heading">
               <p>저작권 안전한 라이브 온도</p>
-              <h2 id="pulse-title">팬심 퍼센테이지</h2>
+              <h2 id="pulse-title">내 팬심 샘플 %</h2>
             </div>
             <p id="pulseLeader" class="pulse-leader">지금은 숨참기 모드가 가장 큽니다.</p>
           </div>
           <div class="pulse-layout">
             <div>
               <p class="pulse-copy">
-                공식 경기 데이터가 아니라, 앱 안의 반응 선택과 베이스 샘플로 만든 감정 분포입니다.
+                공식 경기 데이터가 아니라, 이 브라우저의 반응 선택과 베이스 샘플로 만든 감정 분포입니다.
                 공식 집계, 순위, 경기 기록이 아니며 캡처 없이도 “다들 지금 무슨 기분인지”를
                 공유할 수 있게 보여줍니다.
               </p>
@@ -414,95 +445,107 @@
           </button>
         </section>
 
-        <section class="content-band" id="lineup" aria-labelledby="lineup-title">
+        <section class="content-band more-band" id="more" aria-labelledby="more-title">
           <div class="section-heading">
-            <p>번외 놀이</p>
-            <h2 id="lineup-title">내 인생 타순</h2>
+            <p>필요할 때만 열기</p>
+            <h2 id="more-title">보너스 놀이와 웹앱 도구</h2>
           </div>
-          <div class="lineup-tool">
-            <div class="lineup-copy">
-              <p>
-                선수 대신 하루 루틴을 타순에 올려보세요. 공개 카드에는 실제 이름 없이
-                생활감만 남깁니다.
-              </p>
-              <button class="primary-action small" id="lineupBtn" type="button">
-                오늘의 타순 섞기
-              </button>
-            </div>
-            <ol class="lineup-list" id="lineupList" aria-live="polite"></ol>
-          </div>
-        </section>
+          <div class="utility-accordion">
+            <details class="utility-details" id="lineup">
+              <summary>
+                <span><strong>내 인생 타순</strong><small>하루 루틴으로 만드는 번외 놀이</small></span>
+                <span aria-hidden="true">+</span>
+              </summary>
+              <div class="utility-body lineup-tool">
+                <div class="lineup-copy">
+                  <p>
+                    선수 대신 하루 루틴을 타순에 올립니다. 공개 카드에는 실제 이름 없이
+                    생활감만 남깁니다.
+                  </p>
+                  <button class="primary-action small" id="lineupBtn" type="button">
+                    오늘의 타순 섞기
+                  </button>
+                </div>
+                <ol class="lineup-list" id="lineupList" aria-live="polite"></ol>
+              </div>
+            </details>
 
-        <section class="content-band install-band" id="install" aria-labelledby="install-title">
-          <div class="section-heading">
-            <p>웹 먼저, 앱처럼</p>
-            <h2 id="install-title">설치 없이 열리고, 필요하면 홈 화면에</h2>
-          </div>
-          <div class="install-layout">
-            <article>
-              <h3>링크 공유</h3>
-              <p>카드 상태를 링크에 담아 친구가 같은 카드에서 바로 이어볼 수 있습니다.</p>
-            </article>
-            <article>
-              <h3>모바일 탭</h3>
-              <p>만들기, 오늘, 라이브, 보관함, 안전 화면을 엄지손가락 동선에 맞췄습니다.</p>
-            </article>
-            <article>
-              <h3>오프라인 준비</h3>
-              <p>한 번 연 뒤에는 기본 화면과 이미지 자산을 더 빠르게 다시 불러옵니다.</p>
-            </article>
-          </div>
-          <div class="install-actions">
-            <button class="primary-action small" id="installAppBtn" type="button">
-              홈 화면에 추가
-            </button>
-            <p id="installStatus">지원 브라우저에서는 앱처럼 설치할 수 있습니다.</p>
-          </div>
-        </section>
+            <details class="utility-details install-band" id="install">
+              <summary>
+                <span><strong>웹앱으로 쓰기</strong><small>홈 화면 추가와 오프라인 준비</small></span>
+                <span aria-hidden="true">+</span>
+              </summary>
+              <div class="utility-body">
+                <div class="install-layout">
+                  <article>
+                    <h3>링크 공유</h3>
+                    <p>카드 상태를 링크에 담아 친구가 같은 카드에서 이어볼 수 있습니다.</p>
+                  </article>
+                  <article>
+                    <h3>모바일 탭</h3>
+                    <p>핵심 화면 다섯 곳을 엄지손가락 동선으로 바로 오갑니다.</p>
+                  </article>
+                  <article>
+                    <h3>오프라인 준비</h3>
+                    <p>한 번 연 기본 화면과 이미지 자산을 다음 방문에 다시 불러옵니다.</p>
+                  </article>
+                </div>
+                <div class="install-actions">
+                  <button class="primary-action small" id="installAppBtn" type="button">
+                    홈 화면에 추가
+                  </button>
+                  <p id="installStatus">지원 브라우저에서는 앱처럼 설치할 수 있습니다.</p>
+                </div>
+              </div>
+            </details>
 
-        <section class="content-band launch-band" id="launch" aria-labelledby="launch-title">
-          <div class="section-heading">
-            <p>공개 베타 준비</p>
-            <h2 id="launch-title">링크 돌리기 전 운영 체크</h2>
-          </div>
-          <div class="launch-grid" aria-label="런칭 준비 상태">
-            <article>
-              <span class="launch-status">완료</span>
-              <h3>정적 웹 MVP</h3>
-              <p>카드 생성, 저장, 공유, 피드백 복사까지 서버 없이 동작합니다.</p>
-            </article>
-            <article>
-              <span class="launch-status">완료</span>
-              <h3>권리 보호선</h3>
-              <p>실명, 로고, 중계자료, 공식 기록으로 보일 수 있는 표현을 막습니다.</p>
-            </article>
-            <article>
-              <span class="launch-status">완료</span>
-              <h3>무료 공개 배포</h3>
-              <p>GitHub에 올리면 Netlify 공개 링크가 자동으로 갱신됩니다.</p>
-            </article>
-          </div>
-          <div class="launch-tool" aria-labelledby="invite-title">
-            <div>
-              <h3 id="invite-title">베타 초대 문구</h3>
-              <p id="invitePreview" class="invite-preview" aria-live="polite"></p>
-            </div>
-            <label class="field">
-              <span>초대 톤</span>
-              <select id="inviteTone">
-                <option value="casual">친구 단톡방</option>
-                <option value="community">커뮤니티 글</option>
-                <option value="tester">테스터 모집</option>
-              </select>
-            </label>
-            <div class="launch-actions">
-              <button class="primary-action small" id="copyInviteBtn" type="button">
-                초대 문구 복사
-              </button>
-              <button class="ghost-action small" id="copyLaunchChecklistBtn" type="button">
-                체크리스트 복사
-              </button>
-            </div>
+            <details class="utility-details launch-band" id="launch">
+              <summary>
+                <span><strong>베타 운영 도구</strong><small>초대 문구와 공개 체크리스트</small></span>
+                <span aria-hidden="true">+</span>
+              </summary>
+              <div class="utility-body">
+                <div class="launch-grid" aria-label="런칭 준비 상태">
+                  <article>
+                    <span class="launch-status">완료</span>
+                    <h3>정적 웹 MVP</h3>
+                    <p>카드 생성, 저장, 공유, 피드백 복사까지 서버 없이 동작합니다.</p>
+                  </article>
+                  <article>
+                    <span class="launch-status">완료</span>
+                    <h3>권리 보호선</h3>
+                    <p>실명, 로고, 중계자료, 공식 기록으로 보일 수 있는 표현을 막습니다.</p>
+                  </article>
+                  <article>
+                    <span class="launch-status">완료</span>
+                    <h3>무료 공개 배포</h3>
+                    <p>GitHub 변경이 Netlify 공개 링크에 자동으로 반영됩니다.</p>
+                  </article>
+                </div>
+                <div class="launch-tool" aria-labelledby="invite-title">
+                  <div>
+                    <h3 id="invite-title">베타 초대 문구</h3>
+                    <p id="invitePreview" class="invite-preview" aria-live="polite"></p>
+                  </div>
+                  <label class="field">
+                    <span>초대 톤</span>
+                    <select id="inviteTone">
+                      <option value="casual">친구 단톡방</option>
+                      <option value="community">커뮤니티 글</option>
+                      <option value="tester">테스터 모집</option>
+                    </select>
+                  </label>
+                  <div class="launch-actions">
+                    <button class="primary-action small" id="copyInviteBtn" type="button">
+                      초대 문구 복사
+                    </button>
+                    <button class="ghost-action small" id="copyLaunchChecklistBtn" type="button">
+                      체크리스트 복사
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </details>
           </div>
         </section>
 
@@ -525,7 +568,13 @@
               <p>상대 팬덤·선수·심판을 공격하는 말, 부상·사생활 추측, 욕설은 피해주세요.</p>
             </article>
           </div>
-          <div class="report-panel" aria-labelledby="report-title">
+          <details class="settings-details">
+            <summary>
+              <span><strong>베타·데이터 도구</strong><small>검토 문구, 피드백, 로컬 데이터 관리</small></span>
+              <span aria-hidden="true">+</span>
+            </summary>
+            <div class="ops-stack">
+              <div class="report-panel" aria-labelledby="report-title">
             <div>
               <h3 id="report-title">권리·안전 검토 요청</h3>
               <p>
@@ -548,8 +597,8 @@
             <button class="ghost-action small" id="copyReportBtn" type="button">
               검토 문구 복사
             </button>
-          </div>
-          <div class="feedback-panel" aria-labelledby="feedback-title">
+              </div>
+              <div class="feedback-panel" aria-labelledby="feedback-title">
             <div>
               <h3 id="feedback-title">베타 피드백</h3>
               <p>
@@ -572,8 +621,8 @@
             <button class="ghost-action small" id="copyFeedbackBtn" type="button">
               피드백 문구 복사
             </button>
-          </div>
-          <div class="data-panel" aria-labelledby="data-title">
+              </div>
+              <div class="data-panel" aria-labelledby="data-title">
             <div>
               <h3 id="data-title">내 데이터</h3>
               <p>보관함, 팬심 반응, 덕아웃 출석은 이 브라우저 안에만 저장됩니다.</p>
@@ -587,7 +636,9 @@
                 로컬 데이터 지우기
               </button>
             </div>
-          </div>
+              </div>
+            </div>
+          </details>
           <p class="legal-note">
             본 서비스는 비공식 팬 서비스이며, 특정 리그·구단·선수와 제휴하거나
             보증받지 않았습니다. 앱 내 팀, 선수, 경기, 기록은 모두 창작·가상 콘텐츠입니다.
@@ -595,6 +646,11 @@
           <div class="legal-links" aria-label="법적 안내">
             <a href="legal/privacy.html">개인정보 안내</a>
             <a href="legal/terms.html">이용·권리 기준</a>
+            <a
+              href="https://github.com/KIM-JONGIK/ninth-lab/issues/new?template=rights-removal.yml"
+              target="_blank"
+              rel="noreferrer"
+            >권리·삭제 요청</a>
           </div>
         </section>
       </main>
@@ -602,15 +658,14 @@
 
     <nav class="app-tabbar" aria-label="빠른 탭">
       <a href="#generator" data-tab-target="generator">만들기</a>
-      <a href="#today" data-tab-target="today">오늘</a>
       <a href="#live-jjal" data-tab-target="live-jjal">라이브</a>
       <a href="#reaction-pulse" data-tab-target="reaction-pulse">팬심</a>
       <a href="#history" data-tab-target="history">보관함</a>
-      <a href="#rules" data-tab-target="rules">안전</a>
+      <a href="#today" data-tab-target="today">오늘</a>
     </nav>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=24"></script>
+    <script src="app.js?v=28"></script>
   </body>
 </html>

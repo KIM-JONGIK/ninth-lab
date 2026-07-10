@@ -1,0 +1,44 @@
+name: 권리 및 삭제 요청
+description: 권리 침해 우려, 삭제, 공식 서비스 오인 가능성을 운영자에게 알립니다.
+title: "[권리 요청] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        이 이슈는 공개됩니다. 실명, 연락처, 계정 정보 등 민감한 개인정보는 적지 마세요.
+        요청 대상과 우려 지점만 남기면 운영자가 공개 범위 안에서 확인합니다.
+  - type: dropdown
+    id: request_type
+    attributes:
+      label: 요청 유형
+      options:
+        - 권리물 또는 저작권 우려
+        - 실명 또는 사생활 우려
+        - 공식 서비스로 오인 가능
+        - 비방 또는 혐오 표현
+        - 기타 삭제 요청
+    validations:
+      required: true
+  - type: input
+    id: target_url
+    attributes:
+      label: 확인할 주소
+      description: 문제가 보이는 9회말 연구소 페이지나 공유 링크를 적어주세요.
+      placeholder: https://ninth-lab-jkim0428.netlify.app/...
+    validations:
+      required: true
+  - type: textarea
+    id: concern
+    attributes:
+      label: 우려 내용
+      description: 실제 인물이나 단체의 상세 개인정보 없이 확인할 부분을 설명해주세요.
+      placeholder: 어떤 요소가 왜 문제가 될 수 있는지 간단히 적어주세요.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy_check
+    attributes:
+      label: 공개 정보 확인
+      options:
+        - label: 공개 이슈에 민감한 개인정보를 포함하지 않았습니다.
+          required: true

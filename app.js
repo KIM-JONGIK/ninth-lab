@@ -1,5 +1,6 @@
 const scenarioSelect = document.querySelector("#scenario");
 const toneSelect = document.querySelector("#tone");
+const cardFormatSelect = document.querySelector("#cardFormat");
 const energyInput = document.querySelector("#energy");
 const energyLabel = document.querySelector("#energyLabel");
 const nicknameInput = document.querySelector("#nickname");
@@ -20,6 +21,7 @@ const copyJjalBtn = document.querySelector("#copyJjalBtn");
 const jjalMoodSelect = document.querySelector("#jjalMood");
 const jjalCustomInput = document.querySelector("#jjalCustom");
 const quickJjalGrid = document.querySelector("#quickJjalGrid");
+const quickJjalToggleBtn = document.querySelector("#quickJjalToggleBtn");
 const backgroundInputs = document.querySelectorAll('input[name="background"]');
 const reactionPulseSection = document.querySelector("#reaction-pulse");
 const reactionPulseList = document.querySelector("#reactionPulseList");
@@ -80,12 +82,123 @@ const fanTypeGrid = document.querySelector("#fanTypeGrid");
 const quickStartCardBtn = document.querySelector("#quickStartCardBtn");
 const quickStartJjalBtn = document.querySelector("#quickStartJjalBtn");
 const quickStartCaptionBtn = document.querySelector("#quickStartCaptionBtn");
+const contentSourceCount = document.querySelector("#contentSourceCount");
+const surpriseMeBtn = document.querySelector("#surpriseMeBtn");
+const rerollBtn = document.querySelector("#rerollBtn");
 const appTabs = document.querySelectorAll(".app-tabbar a");
 const STADIUM_IMAGE_SRC = "assets/stadium-night.png";
 const smoothCenterScroll = { block: "center", behavior: "smooth" };
 const smoothStartScroll = { block: "start", behavior: "smooth" };
 
 const scenarios = {
+  pregame: {
+    label: "시작 전 마음 예열",
+    persona: "경기 전 설렘형",
+    tag: "마음 예열",
+    phrases: {
+      hype: [
+        "아직 시작 전인데 마음은 벌써 첫 장면을 기다린다.",
+        "자리 잡는 순간 오늘의 응원도 함께 켜졌다.",
+        "시작 신호보다 팬심이 반 박자 먼저 달린다.",
+      ],
+      deadpan: [
+        "차분히 보겠다는 다짐은 시작 전에만 유효하다.",
+        "물은 준비했고 평정심은 아직 배송 중이다.",
+        "아무 일도 없는데 괜히 자세부터 고쳐 앉았다.",
+      ],
+      soft: [
+        "서두르지 말고 오늘의 설렘부터 천천히 즐긴다.",
+        "시작을 기다리는 마음도 충분히 좋은 응원이다.",
+        "오늘의 작은 기대를 조용히 옆자리에 앉힌다.",
+      ],
+      chaos: [
+        "시작 전부터 마음속 회의가 세 번 열렸다.",
+        "간식 배치까지 끝났으니 이제 분위기만 오면 된다.",
+        "아직 아무 일도 없는데 리액션은 몸을 다 풀었다.",
+      ],
+    },
+  },
+  chance: {
+    label: "기회가 온 것 같은데",
+    persona: "기대 선행형",
+    tag: "기대 상승",
+    phrases: {
+      hype: [
+        "방금 공기 바뀌었다. 마음이 먼저 앞으로 간다.",
+        "지금만큼은 작은 움직임도 크게 믿어본다.",
+        "괜히 손에 힘이 들어가는 바로 그 분위기다.",
+      ],
+      deadpan: [
+        "기대하지 않는 척했는데 상체가 이미 앞으로 갔다.",
+        "침착함은 유지 중이고 손바닥만 바빠졌다.",
+        "아직 모른다면서 마음은 이미 다음 장면에 있다.",
+      ],
+      soft: [
+        "조금 기대해도 괜찮다. 좋은 흐름은 천천히 온다.",
+        "작은 가능성 하나를 마음 가까이에 두고 본다.",
+        "결과보다 지금의 설렘을 먼저 오래 바라본다.",
+      ],
+      chaos: [
+        "갑자기 소파가 응원석으로 긴급 전환됐다.",
+        "작전은 모르겠고 일단 숨부터 크게 들이켠다.",
+        "방금부터 눈, 손, 마음이 서로 다른 사인을 낸다.",
+      ],
+    },
+  },
+  crisis: {
+    label: "마음 수비 시간",
+    persona: "긴장 관리형",
+    tag: "멘탈 수비",
+    phrases: {
+      hype: [
+        "여기만 지나가면 된다는 마음으로 박수를 모은다.",
+        "긴장도 응원의 일부라면 오늘은 아주 뜨겁다.",
+        "마음이 흔들릴수록 더 크게 자리를 지킨다.",
+      ],
+      deadpan: [
+        "표정은 평온하고 손끝만 비상근무 중이다.",
+        "괜찮다고 세 번 말했으니 이제 진짜 괜찮아야 한다.",
+        "숨은 쉬고 있는데 왜 마음은 대기 화면인가.",
+      ],
+      soft: [
+        "한 장면씩 지나가면 된다. 마음도 천천히 수비한다.",
+        "불안한 순간에도 좋아하는 마음은 자리를 지킨다.",
+        "잠깐 눈을 감고 다음 장면을 차분히 기다린다.",
+      ],
+      chaos: [
+        "마음속 작전판에 선만 열두 개가 생겼다.",
+        "물 한 모금이 오늘의 가장 과감한 선택이다.",
+        "침착 버튼을 찾다가 리액션 버튼부터 눌렀다.",
+      ],
+    },
+  },
+  afterglow: {
+    label: "끝난 뒤 복기 모드",
+    persona: "여운 보관형",
+    tag: "여운 저장",
+    phrases: {
+      hype: [
+        "끝났는데 마음속 응원은 아직 퇴장하지 않았다.",
+        "오늘의 여운까지 챙겨서 기분 좋게 돌아간다.",
+        "마지막 장면 뒤에도 박수는 한 번 더 남아 있다.",
+      ],
+      deadpan: [
+        "화면은 껐고 복기는 자동 재생 중이다.",
+        "이제 자야 하는데 마음이 자꾸 처음으로 돌아간다.",
+        "끝난 줄 알았더니 감정만 조용히 연장 중이다.",
+      ],
+      soft: [
+        "오늘의 마음을 잘 접어 다음 응원 옆에 둔다.",
+        "좋았던 순간 하나만 오래 품고 하루를 마친다.",
+        "끝난 뒤의 조용함까지 오늘 야구의 일부로 남긴다.",
+      ],
+      chaos: [
+        "복기 세 문장 만에 혼자 토론회가 열렸다.",
+        "끝나자마자 다음 응원 계획을 짜는 중이다.",
+        "조용해진 방에서 내 리액션만 뒤늦게 다시 울린다.",
+      ],
+    },
+  },
   bottom9: {
     label: "9회말 심장 모드",
     persona: "끝내기 낭만파",
@@ -98,7 +211,7 @@ const scenarios = {
       ],
       deadpan: [
         "평온한 척했지만 손바닥은 이미 연장전.",
-        "아무 일 없다는 표정으로 심장만 도루 중.",
+        "아무 일 없다는 표정으로 심장만 전력질주 중.",
         "이 정도 긴장은 일상 수비라고 우겨본다.",
       ],
       soft: [
@@ -108,7 +221,7 @@ const scenarios = {
       ],
       chaos: [
         "작전명은 모르겠고 일단 크게 외친다.",
-        "내 안의 감독 회의가 갑자기 소집됐다.",
+        "내 안의 작전 회의가 갑자기 소집됐다.",
         "차분하게 보려 했는데 응원석이 먼저 출루했다.",
       ],
     },
@@ -185,7 +298,7 @@ const scenarios = {
       soft: [
         "길어진 하루도 결국 마지막 아웃카운트를 만난다.",
         "잠깐 쉬어도 괜찮다. 응원도 호흡이 필요하다.",
-        "오늘은 이기는 것보다 버틴 것이 기록이다.",
+        "오늘은 이기는 것보다 버틴 마음이 더 중요하다.",
       ],
       chaos: [
         "연장 12회 같은 기분으로 간식을 찾는 중.",
@@ -242,7 +355,7 @@ const scenarios = {
         "혼자 있어도 좋아하는 마음은 혼자가 아니다.",
       ],
       chaos: [
-        "혼자 중계, 혼자 해설, 혼자 작전 회의까지 완료.",
+        "혼자 관전, 혼자 해설, 혼자 작전 회의까지 완료.",
         "방금 소파가 응원석으로 전환됐다.",
         "말 없는 과몰입이 제일 시끄러운 법.",
       ],
@@ -304,12 +417,22 @@ const scenarios = {
   },
 };
 
+const scenarioKeys = Object.keys(scenarios);
+
 const tones = {
   hype: "응원 과몰입",
   deadpan: "무표정 자조",
   soft: "멘탈 케어",
   chaos: "작전 없는 작전",
 };
+
+const cardFormats = {
+  classic: { label: "한줄 밈", kicker: "비공식 팬메이드" },
+  bulletin: { label: "단톡 속보", kicker: "단톡방 속보 · 창작 상황" },
+  status: { label: "상태창", kicker: "팬심 상태창 · 비공식" },
+  diary: { label: "관전 일지", kicker: "관전 일지 · 감정만 남김" },
+};
+const cardFormatKeys = Object.keys(cardFormats);
 
 const energyLabels = {
   1: "관전 모드",
@@ -320,8 +443,9 @@ const energyLabels = {
 };
 
 const unsafePattern =
-  /(선수|감독|심판|구단|구단명|팀명|로고|엠블럼|심볼|유니폼|팀컬러|등번호|실명|본명|별명\s*공개|부상|사생활|열애|가족|주소|학교|중계|중계화면|방송화면|방송|캡처|캡쳐|스크린샷|움짤|클립|영상|하이라이트|리플레이|비디오판독|선수사진|프로필사진|공식|오피셜|제휴|인증|협찬|후원|승인|라이선스|라이센스|독점|협회|리그|kbo|kbop|mlb|npb|퓨처스|메이저리그|기록|스코어|박스스코어|경기결과|문자중계|기록실|순위|전적|승률|게임차|연승|연패|매직넘버|타율|평균자책점|방어율|era|ops|war|whip|홈런|타점|안타|도루|세이브|홀드|탈삼진|삼진|qs|lg|엘지|두산|kia|기아|삼성|롯데|한화|ssg|키움|nc|kt|트윈스|베어스|타이거즈|라이온즈|자이언츠|이글스|랜더스|히어로즈|다이노스|위즈|류현진|김광현|양현종|최정|이정후|김혜성|강백호|구자욱|박병호|오타니|저지|트라웃|다르빗슈|욕설|비하|조롱|죽어|꺼져|패드립|얼굴|사진)/i;
+  /(선수|감독|심판|구단|구단명|팀명|로고|엠블럼|심볼|유니폼|팀컬러|등번호|실명|본명|별명\s*공개|부상|사생활|열애|가족|주소|학교|중계|중계화면|방송화면|방송|캡처|캡쳐|스크린샷|움짤|클립|영상|하이라이트|리플레이|비디오판독|선수사진|프로필사진|공식|오피셜|제휴|인증|협찬|후원|승인|라이선스|라이센스|독점|협회|리그|kbo|kbop|mlb|npb|퓨처스|메이저리그|기록|스코어|박스스코어|경기결과|문자중계|기록실|순위|전적|승률|게임차|연승|연패|매직넘버|타율|평균자책점|방어율|era|ops|war|whip|홈런|타점|안타|도루|세이브|홀드|탈삼진|삼진|qs|lg|엘지|두산|kia|기아|삼성|롯데|한화|ssg|키움|nc|kt|트윈스|베어스|타이거즈|라이온즈|자이언츠|이글스|랜더스|히어로즈|다이노스|위즈|류현진|김광현|양현종|최정|이정후|김혜성|강백호|구자욱|박병호|오타니|저지|트라웃|다르빗슈|욕설|비하발언|비하표현|(?:^|[^가-힣])비하(?:$|[^가-힣])|조롱|죽어|꺼져|패드립|얼굴|사진)/i;
 const officialScorePattern = /(\d+\s*[:대-]\s*\d+)|(\d+\s*(승|패|세이브|홀드|홈런|타점|안타|삼진|득점|실점))/i;
+const playerNumberPattern = /(등번호\s*\d{1,3})|(\d{1,3}\s*번\s*(선수|투수|타자|에이스|포수|외야수|내야수))/i;
 const SHARE_DISCLOSURE = "비공식 팬메이드 · 선수/구단/리그와 무관 · 중계자료 없음 · 공식 기록 아님";
 const PUBLIC_BETA_URL = "https://ninth-lab-jkim0428.netlify.app/";
 
@@ -363,7 +487,7 @@ const jjalMoods = {
     phrases: [
       "지금은 숨 크게 쉬는 시간.",
       "아무 일 없던 걸로 가자.",
-      "마음의 방어율 지키는 중.",
+      "마음의 균형 지키는 중.",
       "잔잔한 표정으로 속만 바쁘다.",
       "오늘의 멘탈은 두 손으로 붙잡는 중.",
     ],
@@ -527,7 +651,7 @@ const dailyPrompts = [
 const dailyQuestions = [
   "오늘 내 응원 에너지는 몇 회까지 버틸까?",
   "지금 필요한 건 한 방일까, 멘탈 수비일까?",
-  "오늘의 나는 감독형, 해설형, 묵묵한 관중형 중 어디일까?",
+  "오늘의 나는 작전형, 해설형, 묵묵한 관중형 중 어디일까?",
   "방금 마음속으로 몇 번이나 작전 회의를 열었을까?",
   "오늘 단톡방에 남길 가장 안전한 리액션은 무엇일까?",
   "기다림도 응원이라면 오늘 몇 점짜리 응원일까?",
@@ -639,7 +763,7 @@ const inviteTemplates = {
   ],
   tester: [
     "야구 팬 공유 카드 MVP 베타 테스터를 찾습니다.",
-    "카드 생성, PNG 저장, 캡션 복사, 팬심 퍼센테이지, 서버 없는 피드백 흐름을 확인해주세요.",
+    "카드 생성, PNG 저장, 캡션 복사, 로컬 팬심 샘플, 서버 없는 피드백 흐름을 확인해주세요.",
     "권리물이나 개인정보를 넣지 않는 안전한 사용 흐름을 우선 검증합니다.",
   ],
 };
@@ -697,6 +821,7 @@ const lineupPool = [
 let currentState = {
   scenario: "bottom9",
   tone: "hype",
+  format: "classic",
   energy: 4,
   ratio: "square",
   nickname: "",
@@ -716,6 +841,7 @@ let pendingHistoryUndo = null;
 let pulseExpanded = false;
 let historyExpanded = false;
 let clearLocalDataArmed = false;
+let quickJjalExpanded = false;
 const imageLoadCache = new Map();
 
 const missionLabels = {
@@ -790,6 +916,52 @@ function getSelectedRatio() {
   return checked ? checked.value : "square";
 }
 
+function normalizeCardFormat(value) {
+  return cardFormats[value] ? value : "classic";
+}
+
+function getSelectedCardFormat() {
+  return normalizeCardFormat(cardFormatSelect?.value || currentState.format);
+}
+
+function formatScenarioCopy(scenario, phrase, formatKey, nickname = "") {
+  const safeFormatKey = normalizeCardFormat(formatKey);
+  const format = cardFormats[safeFormatKey];
+  const titles = {
+    classic: scenario.label,
+    bulletin: `${scenario.tag} · 방금 알림`,
+    status: `현재 상태 · ${scenario.tag}`,
+    diary: `${scenario.label} 관전 일지`,
+  };
+
+  return {
+    title: titles[safeFormatKey] || scenario.label,
+    phrase,
+    kicker: nickname ? `${nickname} · ${format.label}` : format.kicker,
+  };
+}
+
+function renderContentInventory() {
+  const scenarioPhraseCount = scenarioKeys.reduce(
+    (total, key) =>
+      total +
+      Object.values(scenarios[key].phrases).reduce((toneTotal, phrases) => toneTotal + phrases.length, 0),
+    0,
+  );
+  const livePhraseCount = jjalMoodKeys.reduce(
+    (total, key) => total + jjalMoods[key].phrases.length,
+    0,
+  );
+  const sourceCount =
+    scenarioPhraseCount +
+    livePhraseCount +
+    quickJjals.length +
+    dailyPrompts.length +
+    dailyQuestions.length +
+    dailyHashes.length;
+  contentSourceCount.textContent = `${sourceCount}개 소스 · ${cardFormatKeys.length}개 문법`;
+}
+
 function normalizeBackground(value) {
   return cardBackgrounds[value] ? value : "stadium";
 }
@@ -799,32 +971,65 @@ function getSelectedBackground() {
   return normalizeBackground(checked?.value || currentState.background);
 }
 
+function normalizeSafetyText(value) {
+  return String(value || "").normalize("NFKC");
+}
+
+function compactSafetyText(value) {
+  return normalizeSafetyText(value).replace(/[\s._-]+/g, "");
+}
+
+function matchesUnsafePattern(value) {
+  const normalized = normalizeSafetyText(value);
+  const compact = compactSafetyText(normalized);
+  return (
+    unsafePattern.test(normalized) ||
+    unsafePattern.test(compact) ||
+    officialScorePattern.test(normalized) ||
+    officialScorePattern.test(compact) ||
+    playerNumberPattern.test(normalized) ||
+    playerNumberPattern.test(compact)
+  );
+}
+
 function cleanNickname(value) {
-  const compact = value.replace(/[<>()[\]{}"'`]/g, "").replace(/\s+/g, " ").trim();
+  const compact = normalizeSafetyText(value)
+    .replace(/[<>()[\]{}"'`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
   return compact.slice(0, 12);
 }
 
 function cleanJjalText(value) {
-  return value.replace(/[<>()[\]{}"`]/g, "").replace(/\s+/g, " ").trim().slice(0, 34);
+  return normalizeSafetyText(value)
+    .replace(/[<>()[\]{}"`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 34);
 }
 
 function nicknameLooksUnsafe(value) {
-  return unsafePattern.test(value) || officialScorePattern.test(value);
+  return matchesUnsafePattern(value);
 }
 
 function textLooksUnsafe(value) {
-  return unsafePattern.test(value) || officialScorePattern.test(value);
+  return matchesUnsafePattern(value);
 }
 
 function stripSafeDisclosureTerms(value) {
   const safeTerms = [
     "선수/구단/리그와 무관",
     "공식 기록 아님",
+    "공식기록아님",
     "중계 캡처 아님",
+    "중계캡처아님",
     "캡처 없이 만든 짤",
+    "캡처없이응원",
     "중계자료 없음",
     "로고 없음",
+    "로고없음",
     "실명 없음",
+    "실명없이",
     "비공식",
     "FAN-MADE",
     "fan-made",
@@ -834,11 +1039,11 @@ function stripSafeDisclosureTerms(value) {
 
 function exportTextLooksUnsafe(value) {
   const checked = stripSafeDisclosureTerms(value);
-  return unsafePattern.test(checked) || officialScorePattern.test(checked);
+  return matchesUnsafePattern(checked);
 }
 
 function cleanShareText(value, maxLength = 80) {
-  return String(value || "")
+  return normalizeSafetyText(value)
     .replace(/[<>()[\]{}"`]/g, "")
     .replace(/\s+/g, " ")
     .trim()
@@ -1014,6 +1219,7 @@ function checkInDailyMission() {
   currentState = {
     scenario: "solo",
     tone: "soft",
+    format: "diary",
     energy: 3,
     ratio: "story",
     background: getSelectedBackground(),
@@ -1074,6 +1280,7 @@ function cardPayload() {
   return {
     scenario: currentState.scenario || "bottom9",
     tone: currentState.tone || "hype",
+    format: normalizeCardFormat(currentState.format),
     energy: currentState.energy || 4,
     ratio: currentState.ratio || "square",
     nickname: currentState.nickname || "",
@@ -1097,6 +1304,7 @@ function shareUrl() {
 function stateFromPayload(payload) {
   const scenarioKey = scenarios[payload.scenario] ? payload.scenario : "bottom9";
   const tone = tones[payload.tone] ? payload.tone : "hype";
+  const format = normalizeCardFormat(payload.format);
   const energy = Math.min(5, Math.max(1, Number(payload.energy) || 4));
   const ratio = ["square", "story", "wide"].includes(payload.ratio) ? payload.ratio : "square";
   const background = normalizeBackground(payload.background);
@@ -1111,8 +1319,17 @@ function stateFromPayload(payload) {
         ? pick(mood.phrases)
         : pick(scenario.phrases[tone]);
   const nickname = nicknameLooksUnsafe(payload.nickname || "") ? "" : cleanNickname(payload.nickname || "");
+  const formattedCopy = formatScenarioCopy(scenario, phrase, format, nickname);
   const titleCandidate = cleanShareText(payload.title, 36);
-  const title = titleCandidate && !textLooksUnsafe(titleCandidate) ? titleCandidate : mood ? mood.title : scenario.label;
+  const title =
+    titleCandidate && !textLooksUnsafe(titleCandidate)
+      ? titleCandidate
+      : mood
+        ? mood.title
+        : formattedCopy.title;
+  const kickerCandidate = cleanShareText(payload.kicker, 36);
+  const payloadKicker =
+    kickerCandidate && !exportTextLooksUnsafe(kickerCandidate) ? kickerCandidate : "";
   const timelineItems = sanitizeTimelineItems(payload.timelineItems);
   const payloadTags = Array.isArray(payload.tags)
     ? payload.tags
@@ -1126,11 +1343,12 @@ function stateFromPayload(payload) {
       : ["3컷 타임라인", "감정 로그", "비공식"]
     : mood
       ? [mood.label, mood.tag, "중계 캡처 아님"]
-      : [tones[tone], energyLabels[energy], scenario.tag, "창작 상황"];
+      : [cardFormats[format].label, energyLabels[energy], scenario.tag, "창작 상황"];
 
   return {
     scenario: scenarioKey,
     tone,
+    format,
     energy,
     ratio,
     nickname,
@@ -1141,9 +1359,7 @@ function stateFromPayload(payload) {
       ? cleanShareText(payload.kicker, 28) || "3컷 감정 타임라인"
       : mood
         ? "LIVE FAN-MADE · 캡처 없이 만든 짤"
-        : nickname
-          ? `${nickname}의 오늘 야구 온도`
-          : "비공식 팬메이드",
+        : payloadKicker || formattedCopy.kicker,
     tags,
     moodKey,
     jjal: Boolean(payload.jjal && mood),
@@ -1160,6 +1376,7 @@ function syncControlsFromState() {
   if (backgroundInput) backgroundInput.checked = true;
   scenarioSelect.value = currentState.scenario;
   toneSelect.value = currentState.tone;
+  cardFormatSelect.value = normalizeCardFormat(currentState.format);
   energyInput.value = String(currentState.energy);
   energyLabel.textContent = String(currentState.energy);
   nicknameInput.value = currentState.nickname;
@@ -1245,6 +1462,7 @@ function applyRelayQuestionCard() {
   currentState = {
     scenario: "dugout",
     tone: "hype",
+    format: "bulletin",
     energy: 4,
     ratio: "wide",
     background: getSelectedBackground(),
@@ -1318,26 +1536,33 @@ async function copyTextToClipboard(text) {
   return ok;
 }
 
-function generateCard() {
-  const scenario = scenarios[scenarioSelect.value];
-  const tone = toneSelect.value;
+function generateCard(previousPhrase = "") {
+  const scenarioKey = scenarios[scenarioSelect.value] ? scenarioSelect.value : "bottom9";
+  const scenario = scenarios[scenarioKey];
+  const tone = tones[toneSelect.value] ? toneSelect.value : "hype";
+  const format = getSelectedCardFormat();
   const energy = Number(energyInput.value);
   const ratio = getSelectedRatio();
   const rawNickname = nicknameInput.value;
   const safeNickname = nicknameLooksUnsafe(rawNickname) ? "" : cleanNickname(rawNickname);
-  const phrase = pick(scenario.phrases[tone]);
+  const avoidPhrase = typeof previousPhrase === "string" ? previousPhrase : "";
+  const phrase = avoidPhrase
+    ? pickDifferent(scenario.phrases[tone], avoidPhrase)
+    : pick(scenario.phrases[tone]);
+  const formattedCopy = formatScenarioCopy(scenario, phrase, format, safeNickname);
 
   currentState = {
-    scenario: scenarioSelect.value,
+    scenario: scenarioKey,
     tone,
+    format,
     energy,
     ratio,
     background: getSelectedBackground(),
     nickname: safeNickname,
-    phrase,
-    title: scenario.label,
-    kicker: safeNickname ? `${safeNickname}의 오늘 야구 온도` : "비공식 팬메이드",
-    tags: [tones[tone], energyLabels[energy], scenario.tag, "창작 상황"],
+    phrase: formattedCopy.phrase,
+    title: formattedCopy.title,
+    kicker: formattedCopy.kicker,
+    tags: [cardFormats[format].label, energyLabels[energy], scenario.tag, "창작 상황"],
     moodKey: "",
     jjal: false,
   };
@@ -1355,11 +1580,29 @@ function generateCard() {
   }
 }
 
+function surpriseMe() {
+  scenarioSelect.value = pick(scenarioKeys);
+  toneSelect.value = pick(Object.keys(tones));
+  cardFormatSelect.value = pick(cardFormatKeys);
+  energyInput.value = String(1 + Math.floor(Math.random() * 5));
+  const ratio = pick(["square", "story", "wide"]);
+  const ratioInput = document.querySelector(`input[name="ratio"][value="${ratio}"]`);
+  if (ratioInput) ratioInput.checked = true;
+  const background = pick(cardBackgroundKeys);
+  const backgroundInput = document.querySelector(`input[name="background"][value="${background}"]`);
+  if (backgroundInput) backgroundInput.checked = true;
+  generateCard(currentState.phrase);
+  saveCurrentCard();
+  scrollShareCardIntoView();
+  showToast("새로운 상황과 밈 문법을 섞었습니다.");
+}
+
 function applyFanType(typeKey) {
   const type = fanTypes[typeKey] || fanTypes.clutch;
   currentState = {
     scenario: type.scenario,
     tone: type.tone,
+    format: "status",
     energy: type.energy,
     ratio: type.ratio,
     background: getSelectedBackground(),
@@ -1407,6 +1650,7 @@ async function quickStartCaption() {
 function renderShareCard() {
   const timelineItems = timelineItemsForState();
   const background = normalizeBackground(currentState.background);
+  const format = normalizeCardFormat(currentState.format);
   cardKicker.textContent = currentState.kicker || "비공식 팬메이드";
   cardTitle.textContent = currentState.title || scenarios[currentState.scenario].label;
   cardPhrase.textContent = currentState.phrase;
@@ -1438,10 +1682,15 @@ function renderShareCard() {
   shareCard.classList.toggle("is-square", currentState.ratio === "square");
   shareCard.classList.toggle("is-jjal", Boolean(currentState.jjal));
   shareCard.classList.toggle("is-timeline", Boolean(timelineItems.length));
+  cardFormatKeys.forEach((key) => {
+    shareCard.classList.toggle(`format-${key}`, key === format);
+  });
   cardBackgroundKeys.forEach((key) => {
     shareCard.classList.toggle(`bg-${key}`, key === background);
   });
   shareCard.dataset.background = background;
+  shareCard.dataset.format = format;
+  shareCard.dataset.energy = String(currentState.energy || 3);
   renderSafetyChecklist();
 }
 
@@ -1528,6 +1777,7 @@ function applyJjal(moodKey = jjalMoodSelect.value, forcedPhrase = "") {
   currentState = {
     scenario: "bottom9",
     tone: mood.tone,
+    format: "bulletin",
     energy: mood.energy,
     ratio: "wide",
     background: getSelectedBackground(),
@@ -1535,12 +1785,13 @@ function applyJjal(moodKey = jjalMoodSelect.value, forcedPhrase = "") {
     title: mood.title,
     kicker: "LIVE FAN-MADE · 캡처 없이 만든 짤",
     phrase,
-    tags: [`${mood.label} ${moodPercent}%`, mood.tag, "중계 캡처 아님"],
+    tags: [mood.label, `로컬 샘플 ${moodPercent}%`, "중계 캡처 아님"],
     moodKey: safeMoodKey,
     jjal: true,
   };
 
   document.querySelector('input[name="ratio"][value="wide"]').checked = true;
+  cardFormatSelect.value = "bulletin";
   renderShareCard();
   renderReactionPulse(safeMoodKey);
 
@@ -1623,6 +1874,10 @@ function renderReactionPulse(activeMood = "") {
 }
 
 function renderQuickJjals() {
+  quickJjalGrid.classList.toggle("is-compact", !quickJjalExpanded);
+  quickJjalToggleBtn.textContent = quickJjalExpanded
+    ? "빠른 짤 간단히 보기"
+    : `빠른 짤 ${quickJjals.length}개 보기`;
   quickJjalGrid.replaceChildren(
     ...quickJjals.map(([mood, phrase]) => {
       const button = document.createElement("button");
@@ -1663,6 +1918,7 @@ function cardSnapshot() {
     savedAt: new Date().toISOString(),
     scenario: currentState.scenario || "bottom9",
     tone: currentState.tone || "hype",
+    format: normalizeCardFormat(currentState.format),
     energy: currentState.energy || 4,
     ratio: currentState.ratio || "square",
     background: normalizeBackground(currentState.background),
@@ -1692,6 +1948,7 @@ function restoreHistoryCard(item) {
   currentState = {
     scenario: item.scenario || "bottom9",
     tone: item.tone || "hype",
+    format: normalizeCardFormat(item.format),
     energy: Number(item.energy) || 4,
     ratio: item.ratio || "square",
     background: normalizeBackground(item.background),
@@ -1709,6 +1966,7 @@ function restoreHistoryCard(item) {
   if (ratioInput) ratioInput.checked = true;
   if (scenarios[currentState.scenario]) scenarioSelect.value = currentState.scenario;
   if (tones[currentState.tone]) toneSelect.value = currentState.tone;
+  cardFormatSelect.value = normalizeCardFormat(currentState.format);
   energyInput.value = String(currentState.energy);
   energyLabel.textContent = String(currentState.energy);
   nicknameInput.value = currentState.nickname;
@@ -1995,7 +2253,7 @@ async function copyFeedbackText() {
 function nextBetaAction({ cardCount, reactionTotal, attendance }) {
   if (cardCount < 1) return "첫 방문자가 바로 1장 버튼으로 카드를 만들 수 있는지 확인";
   if (cardCount < 3) return "카드 3장까지 만들어 주간 결산 흐름 확인";
-  if (reactionTotal < 5) return "팬심 퍼센테이지 버튼을 눌러 반응 샘플 확인";
+  if (reactionTotal < 5) return "팬심 샘플 버튼을 눌러 로컬 반응 확인";
   if (!attendance.lastDate) return "덕아웃 출석 버튼으로 재방문 흐름 확인";
   return "초대 문구를 10명에게 보내고 피드백 문구 회수";
 }
@@ -2070,6 +2328,7 @@ function buildEmotionTimeline() {
   currentState = {
     scenario: "solo",
     tone: "soft",
+    format: "diary",
     energy: 4,
     ratio: "story",
     background: getSelectedBackground(),
@@ -2106,6 +2365,7 @@ function buildWeeklyRecap() {
   currentState = {
     scenario: "solo",
     tone: "soft",
+    format: "diary",
     energy: 3,
     ratio: "story",
     background: getSelectedBackground(),
@@ -2560,6 +2820,7 @@ function applyDailyContentCard(kind) {
   currentState = {
     scenario: "solo",
     tone: kind === "question" ? "hype" : "soft",
+    format: kind === "question" ? "bulletin" : "diary",
     energy: kind === "question" ? 4 : 3,
     ratio: next.ratio,
     background: getSelectedBackground(),
@@ -2708,6 +2969,14 @@ generateBtn.addEventListener("click", () => {
   scrollShareCardIntoView();
 });
 
+rerollBtn.addEventListener("click", () => {
+  generateCard(currentState.phrase);
+  scrollShareCardIntoView();
+  showToast("같은 설정에서 문구만 바꿨습니다.");
+});
+
+surpriseMeBtn.addEventListener("click", surpriseMe);
+
 downloadBtn.addEventListener("click", () => {
   downloadCard().catch(() => {
     showToast("이미지를 저장하지 못했습니다. 다시 시도해주세요.");
@@ -2788,6 +3057,11 @@ quickJjalGrid.addEventListener("click", (event) => {
   showToast("빠른 짤을 카드에 올렸습니다.");
 });
 
+quickJjalToggleBtn.addEventListener("click", () => {
+  quickJjalExpanded = !quickJjalExpanded;
+  renderQuickJjals();
+});
+
 cardHistoryList.addEventListener("click", (event) => {
   const target = event.target.closest("[data-action]");
   const itemEl = event.target.closest(".history-item");
@@ -2812,6 +3086,7 @@ cardHistoryList.addEventListener("click", (event) => {
     } else {
       scenarioSelect.value = item.scenario || "bottom9";
       toneSelect.value = item.tone || "hype";
+      cardFormatSelect.value = normalizeCardFormat(item.format);
       energyInput.value = String(item.energy || 4);
       nicknameInput.value = item.nickname || "";
       const ratioInput = document.querySelector(`input[name="ratio"][value="${item.ratio || "square"}"]`);
@@ -2938,10 +3213,12 @@ backgroundInputs.forEach((input) => {
 
 scenarioSelect.addEventListener("change", generateCard);
 toneSelect.addEventListener("change", generateCard);
+cardFormatSelect.addEventListener("change", generateCard);
 nicknameInput.addEventListener("change", generateCard);
 
 renderLineup();
 renderQuickJjals();
+renderContentInventory();
 reactionVotes = readReactionVotes();
 renderReactionPulse();
 renderDailyDeck();

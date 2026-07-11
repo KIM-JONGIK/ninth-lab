@@ -33,6 +33,9 @@ jobs:
       - name: Verify static launch files
         run: node tools/verify-static-launch.mjs
 
+      - name: Verify interaction wiring
+        run: node tools/verify-interaction-wiring.mjs
+
       - name: Verify content safety
         run: node tools/verify-content-safety.mjs
 

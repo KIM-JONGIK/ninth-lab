@@ -1168,7 +1168,7 @@ function nextDeckPhrase(deckKey, items, previousText = "") {
 }
 
 function scrollShareCardIntoView() {
-  activateAppView("generator");
+  activateAppView("generator", { updateHash: true });
   setBuilderPane("preview");
   if (isMobileWorkspace()) {
     document.querySelector("#generator").scrollTop = 0;

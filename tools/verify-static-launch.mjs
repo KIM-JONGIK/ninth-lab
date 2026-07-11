@@ -40,6 +40,7 @@ const requiredFiles = [
   ".github/ISSUE_TEMPLATE/config.yml",
   "tools/build-public.mjs",
   "tools/verify-content-safety.mjs",
+  "tools/verify-interaction-wiring.mjs",
   "tools/verify-phrase-deck.mjs",
   "tools/verify-time-scene.mjs",
   "tools/verify-asset-provenance.mjs",
@@ -266,6 +267,7 @@ assert(pagesWorkflow.includes("workflow_dispatch:"), "Pages workflow must allow 
 assert(pagesWorkflow.includes("pages: write"), "Pages workflow must request pages write permission");
 assert(pagesWorkflow.includes("id-token: write"), "Pages workflow must request id-token permission");
 assert(pagesWorkflow.includes("tools/verify-static-launch.mjs"), "Pages workflow must verify static files");
+assert(pagesWorkflow.includes("tools/verify-interaction-wiring.mjs"), "Pages workflow must verify interaction wiring");
 assert(pagesWorkflow.includes("tools/verify-content-safety.mjs"), "Pages workflow must verify content safety");
 assert(pagesWorkflow.includes("tools/verify-phrase-deck.mjs"), "Pages workflow must verify phrase decks");
 assert(pagesWorkflow.includes("tools/verify-time-scene.mjs"), "Pages workflow must verify time scene boundaries");

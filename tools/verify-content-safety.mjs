@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import vm from "node:vm";
 
 const app = readFileSync(join(process.cwd(), "app.js"), "utf8");
+const indexHtml = readFileSync(join(process.cwd(), "index.html"), "utf8");
 const errors = [];
 
 function assert(condition, message) {
@@ -84,6 +86,20 @@ const questionBlock = sourceBetween("const dailyQuestions =", "const dailyHashes
 const hashBlock = sourceBetween("const dailyHashes =", "const fanTypes");
 const fanTypeBlock = sourceBetween("const fanTypes =", "const fanTypeKeys");
 const missionBlock = sourceBetween("const missionPhrases =", "function pick(");
+const expectedToneKeys = ["hype", "deadpan", "soft", "chaos"];
+let scenarioCatalog = {};
+
+try {
+  const context = vm.createContext({});
+  vm.runInContext(
+    scenarioBlock + "\nglobalThis.scenarioCatalog = scenarios;",
+    context,
+    { timeout: 1000 },
+  );
+  scenarioCatalog = context.scenarioCatalog || {};
+} catch (error) {
+  errors.push("Could not evaluate scenario catalog: " + error.message);
+}
 
 const scenarioPhrases = parseIndentedStrings(scenarioBlock, 8);
 const jjalPhrases = parseIndentedStrings(jjalBlock, 6);
@@ -103,7 +119,24 @@ verifyStrings("daily hashtag", dailyHashes);
 verifyStrings("fan type", parseStrings(fanTypeBlock));
 verifyStrings("mission", parseStrings(missionBlock));
 
-assert(scenarioPhrases.length >= 192, `Expected at least 192 scenario phrases, found ${scenarioPhrases.length}`);
+const scenarioEntries = Object.entries(scenarioCatalog);
+assert(scenarioEntries.length >= 12, `Expected at least 12 scenarios, found ${scenarioEntries.length}`);
+scenarioEntries.forEach(([scenarioKey, scenario]) => {
+  expectedToneKeys.forEach((toneKey) => {
+    const phrases = scenario?.phrases?.[toneKey];
+    assert(
+      Array.isArray(phrases) && phrases.length >= 5,
+      `${scenarioKey}.${toneKey} must contain at least 5 phrases`,
+    );
+  });
+});
+const scenarioTonePoolCount = scenarioEntries.reduce(
+  (total, [, scenario]) =>
+    total + expectedToneKeys.filter((toneKey) => Array.isArray(scenario?.phrases?.[toneKey])).length,
+  0,
+);
+assert(scenarioTonePoolCount >= 48, `Expected at least 48 scenario-tone pools, found ${scenarioTonePoolCount}`);
+assert(scenarioPhrases.length >= 240, `Expected at least 240 scenario phrases, found ${scenarioPhrases.length}`);
 assert(jjalPhrases.length >= 55, `Expected at least 55 live reaction phrases, found ${jjalPhrases.length}`);
 assert(quickPhrases.length >= 21, `Expected at least 21 quick reactions, found ${quickPhrases.length}`);
 assert(dailyPrompts.length >= 14, `Expected at least 14 daily prompts, found ${dailyPrompts.length}`);
@@ -117,7 +150,14 @@ const totalSources =
   dailyPrompts.length +
   dailyQuestions.length +
   dailyHashes.length;
-assert(totalSources >= 305, `Expected at least 305 content sources, found ${totalSources}`);
+const displayedSourceCount = Number(
+  indexHtml.match(/id="contentSourceCount">(\d+)개 소스/)?.[1],
+);
+assert(totalSources >= 353, `Expected at least 353 content sources, found ${totalSources}`);
+assert(
+  displayedSourceCount === totalSources,
+  `Displayed source count ${displayedSourceCount || "missing"} does not match catalog ${totalSources}`,
+);
 assert(new Set(scenarioPhrases).size === scenarioPhrases.length, "Scenario phrase pool contains duplicates");
 assert(new Set(jjalPhrases).size === jjalPhrases.length, "Live reaction phrase pool contains duplicates");
 
@@ -139,5 +179,5 @@ if (errors.length) {
 }
 
 console.log(
-  `Content safety verification passed. sources=${totalSources}, scenario=${scenarioPhrases.length}, live=${jjalPhrases.length}`,
+  `Content safety verification passed. sources=${totalSources}, scenario=${scenarioPhrases.length}, pools=${scenarioTonePoolCount}, live=${jjalPhrases.length}`,
 );

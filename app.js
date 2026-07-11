@@ -84,13 +84,18 @@ const quickStartJjalBtn = document.querySelector("#quickStartJjalBtn");
 const quickStartCaptionBtn = document.querySelector("#quickStartCaptionBtn");
 const mobileQuickCardBtn = document.querySelector("#mobileQuickCardBtn");
 const mobileQuickJjalBtn = document.querySelector("#mobileQuickJjalBtn");
+const cardForm = document.querySelector("#cardForm");
+const cardPreviewPanel = document.querySelector("#cardPreviewPanel");
+const builderPaneTabs = document.querySelectorAll("[data-builder-pane]");
 const contentSourceCount = document.querySelector("#contentSourceCount");
 const surpriseMeBtn = document.querySelector("#surpriseMeBtn");
 const rerollBtn = document.querySelector("#rerollBtn");
-const appTabs = document.querySelectorAll(".app-tabbar a");
+const appTabs = document.querySelectorAll("[data-view-target]");
+const appViews = document.querySelectorAll("main > .app-view");
 const STADIUM_IMAGE_SRC = "assets/stadium-night.png";
 const smoothCenterScroll = { block: "center", behavior: "smooth" };
-const smoothStartScroll = { block: "start", behavior: "smooth" };
+let activeAppViewId = "generator";
+let activeBuilderPane = "preview";
 
 const scenarios = {
   pregame: {
@@ -1093,11 +1098,18 @@ function nextDeckPhrase(deckKey, items, previousText = "") {
 }
 
 function scrollShareCardIntoView() {
+  activateAppView("generator");
+  setBuilderPane("preview");
+  if (isMobileWorkspace()) {
+    document.querySelector("#generator").scrollTop = 0;
+    return;
+  }
   shareCard.scrollIntoView(smoothCenterScroll);
 }
 
 function scrollReactionPulseIntoView() {
-  reactionPulseSection.scrollIntoView(smoothStartScroll);
+  activateAppView("reaction-pulse");
+  reactionPulseSection.scrollTop = 0;
 }
 
 function getSelectedRatio() {
@@ -3065,39 +3077,66 @@ async function requestInstall() {
     choice.outcome === "accepted" ? "홈 화면 추가가 시작되었습니다." : "설치는 나중에 다시 할 수 있습니다.";
 }
 
+function isMobileWorkspace() {
+  return window.matchMedia("(max-width: 880px)").matches;
+}
+
+function setBuilderPane(pane) {
+  if (!builderPaneTabs.length) return;
+  activeBuilderPane = pane === "controls" ? "controls" : "preview";
+  builderPaneTabs.forEach((tab) => {
+    const active = tab.dataset.builderPane === activeBuilderPane;
+    tab.classList.toggle("is-active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  cardForm.classList.toggle("is-mobile-active", activeBuilderPane === "controls");
+  cardPreviewPanel.classList.toggle("is-mobile-active", activeBuilderPane === "preview");
+}
+
+function viewFromHash() {
+  const hash = window.location.hash;
+  if (hash.startsWith(`#${HASH_PREFIX}`)) return "generator";
+  if (hash.startsWith(`#${ASK_PREFIX}`)) return "reaction-pulse";
+  const id = decodeURIComponent(hash.slice(1));
+  return Array.from(appViews).some((view) => view.id === id) ? id : "generator";
+}
+
+function activateAppView(id, { updateHash = false } = {}) {
+  const nextView = Array.from(appViews).find((view) => view.id === id) || document.querySelector("#generator");
+  activeAppViewId = nextView.id;
+  appViews.forEach((view) => {
+    const active = view === nextView;
+    view.hidden = !active;
+    view.classList.toggle("is-active", active);
+    if (active) view.scrollTop = 0;
+  });
+  appTabs.forEach((tab) => {
+    const active = tab.dataset.viewTarget === activeAppViewId;
+    tab.classList.toggle("is-active", active);
+    if (active) {
+      tab.setAttribute("aria-current", "page");
+    } else {
+      tab.removeAttribute("aria-current");
+    }
+  });
+  if (updateHash && window.location.hash !== `#${activeAppViewId}`) {
+    window.history.replaceState(null, "", `#${activeAppViewId}`);
+  }
+}
+
 function setupAppTabs() {
-  if (!appTabs.length || !("IntersectionObserver" in window)) return;
-  const sections = Array.from(appTabs)
-    .map((tab) => document.querySelector(`#${tab.dataset.tabTarget}`))
-    .filter(Boolean);
-
-  const activate = (id) => {
-    appTabs.forEach((tab) => {
-      const active = tab.dataset.tabTarget === id;
-      tab.classList.toggle("is-active", active);
-      if (active) {
-        tab.setAttribute("aria-current", "page");
-      } else {
-        tab.removeAttribute("aria-current");
-      }
+  document.body.classList.add("app-shell-ready");
+  appTabs.forEach((tab) => {
+    tab.addEventListener("click", (event) => {
+      event.preventDefault();
+      activateAppView(tab.dataset.viewTarget, { updateHash: true });
     });
-  };
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible?.target?.id) activate(visible.target.id);
-    },
-    {
-      rootMargin: "-30% 0px -55% 0px",
-      threshold: [0.1, 0.4, 0.7],
-    },
-  );
-
-  sections.forEach((section) => observer.observe(section));
-  activate(sections[0]?.id || "generator");
+  });
+  builderPaneTabs.forEach((tab) => {
+    tab.addEventListener("click", () => setBuilderPane(tab.dataset.builderPane));
+  });
+  setBuilderPane(activeBuilderPane);
+  activateAppView(viewFromHash());
 }
 
 function registerServiceWorker() {
@@ -3442,7 +3481,14 @@ renderCardHistory();
 setupAppTabs();
 
 window.addEventListener("hashchange", () => {
-  if (!restoreCardFromHash()) {
-    restoreRelayFromHash();
+  if (restoreCardFromHash()) {
+    activateAppView("generator");
+    setBuilderPane("preview");
+    return;
   }
+  if (restoreRelayFromHash()) {
+    activateAppView("reaction-pulse");
+    return;
+  }
+  activateAppView(viewFromHash());
 });

@@ -62,6 +62,7 @@ const publicBuildVerify = readText("tools/verify-public-build.mjs");
 const launchGuide = readText("docs/free-web-launch.md");
 const deployRunbook = readText("docs/deploy-runbook.md");
 const app = readText("app.js");
+const styles = readText("styles.css");
 
 const cssVersion = index.match(/styles\.css\?v=(\d+)/)?.[1];
 const appVersion = index.match(/app\.js\?v=(\d+)/)?.[1];
@@ -109,6 +110,16 @@ assert(index.includes("id=\"quickStartCaptionBtn\""), "quick start caption entry
 assert(index.includes("id=\"mobileQuickCardBtn\""), "mobile first-screen card entrypoint is missing");
 assert(index.includes("id=\"mobileQuickJjalBtn\""), "mobile first-screen jjal entrypoint is missing");
 assert(!index.includes("처음 왔다면"), "first-screen controls must not rely on instructional copy");
+assert(index.includes("data-builder-pane=\"preview\""), "mobile preview workspace tab is missing");
+assert(index.includes("data-builder-pane=\"controls\""), "mobile controls workspace tab is missing");
+assert(index.includes("class=\"content-band daily-band app-view\""), "daily content must be an app view");
+assert(index.includes("id=\"today\"") && index.includes("id=\"rules\""), "app view targets are missing");
+assert(app.includes('document.body.classList.add("app-shell-ready")'), "single-screen app shell is not initialized");
+assert(app.includes("activateAppView"), "app view navigation is missing");
+assert((index.match(/data-view-target=/g) || []).length >= 14, "desktop and mobile app view navigation is incomplete");
+assert(styles.includes("body.app-shell-ready"), "single-screen body lock styles are missing");
+assert(styles.includes("height: 100dvh"), "app shell must stay within the viewport");
+assert(styles.includes("[data-builder-pane-panel].is-mobile-active"), "mobile builder pane switching styles are missing");
 assert(index.includes("id=\"cardFormat\""), "meme grammar selector is missing");
 assert(index.includes("id=\"rerollBtn\""), "phrase reroll entrypoint is missing");
 assert(index.includes("id=\"surpriseMeBtn\""), "random content mix entrypoint is missing");

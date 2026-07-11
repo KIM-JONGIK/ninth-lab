@@ -14,12 +14,12 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=33" />
+    <link rel="stylesheet" href="styles.css?v=34" />
   </head>
   <body>
     <div class="page-shell">
       <header class="topbar" aria-label="서비스 소개">
-        <a class="brand" href="#generator" aria-label="9회말 연구소 홈">
+        <a class="brand" href="#generator" data-view-target="generator" aria-label="9회말 연구소 홈">
           <span class="brand-mark" aria-hidden="true">9</span>
           <span>
             <strong>9회말 연구소</strong>
@@ -27,18 +27,22 @@
           </span>
         </a>
         <nav class="nav-links" aria-label="주요 메뉴">
-          <a href="#generator">만들기</a>
-          <a href="#today">오늘</a>
-          <a href="#live-jjal">라이브 짤</a>
-          <a href="#reaction-pulse">팬심 %</a>
-          <a href="#history">보관함</a>
-          <a href="#more">더보기</a>
-          <a href="#rules">안전</a>
+          <a href="#generator" data-view-target="generator">만들기</a>
+          <a href="#today" data-view-target="today">오늘</a>
+          <a href="#live-jjal" data-view-target="live-jjal">라이브 짤</a>
+          <a href="#reaction-pulse" data-view-target="reaction-pulse">팬심 %</a>
+          <a href="#history" data-view-target="history">보관함</a>
+          <a href="#more" data-view-target="more">더보기</a>
+          <a href="#rules" data-view-target="rules">안전</a>
+        </nav>
+        <nav class="mobile-utility-nav" aria-label="추가 메뉴">
+          <a href="#more" data-view-target="more">더보기</a>
+          <a href="#rules" data-view-target="rules">안전</a>
         </nav>
       </header>
 
       <main>
-        <section class="app-hero" id="generator" aria-labelledby="hero-title">
+        <section class="app-hero app-view is-active" id="generator" aria-labelledby="hero-title">
           <div class="hero-copy">
             <p class="eyebrow">공식 기록 없이 노는 야구 팬 실험실</p>
             <h1 id="hero-title">오늘 야구 기분, 바로 밈 카드로.</h1>
@@ -60,8 +64,28 @@
             </div>
           </div>
 
+          <div class="mobile-builder-tabs" role="tablist" aria-label="카드 제작 화면">
+            <button
+              class="is-active"
+              id="mobilePreviewTab"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="cardPreviewPanel"
+              data-builder-pane="preview"
+            >카드 보기</button>
+            <button
+              id="mobileControlsTab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="cardForm"
+              data-builder-pane="controls"
+            >옵션 고르기</button>
+          </div>
+
           <div class="builder" aria-label="밈 카드 생성기">
-            <form class="control-panel" id="cardForm">
+            <form class="control-panel" id="cardForm" data-builder-pane-panel="controls">
               <div class="section-heading">
                 <p>상황판</p>
                 <h2>카드 재료 고르기</h2>
@@ -214,7 +238,12 @@
               </p>
             </form>
 
-            <section class="preview-panel" aria-labelledby="preview-title">
+            <section
+              class="preview-panel is-mobile-active"
+              id="cardPreviewPanel"
+              data-builder-pane-panel="preview"
+              aria-labelledby="preview-title"
+            >
               <div class="section-heading compact">
                 <p>공유 미리보기</p>
                 <h2 id="preview-title">오늘의 카드</h2>
@@ -236,11 +265,11 @@
                 </article>
               </div>
               <div class="preview-actions" aria-label="미리보기 공유 동작">
-                <button class="primary-action small" id="previewShareBtn" type="button">카드 공유</button>
-                <button class="ghost-action small" id="previewCopyLinkBtn" type="button">링크 복사</button>
-                <button class="ghost-action small" id="previewCaptionBtn" type="button">캡션 복사</button>
-                <button class="ghost-action small" id="previewRelayBtn" type="button">친구에게 묻기</button>
-                <button class="ghost-action small" id="previewDownloadBtn" type="button">PNG 저장</button>
+                <button class="primary-action small" id="previewShareBtn" type="button" aria-label="카드 공유" title="카드 공유">공유</button>
+                <button class="ghost-action small" id="previewCopyLinkBtn" type="button" aria-label="링크 복사" title="링크 복사">링크</button>
+                <button class="ghost-action small" id="previewCaptionBtn" type="button" aria-label="캡션 복사" title="캡션 복사">캡션</button>
+                <button class="ghost-action small" id="previewRelayBtn" type="button" aria-label="친구에게 묻기" title="친구에게 묻기">질문</button>
+                <button class="ghost-action small" id="previewDownloadBtn" type="button" aria-label="PNG 저장" title="PNG 저장">PNG</button>
               </div>
               <div class="share-ready" aria-label="공유 안전 점검">
                 <span>비공식 고지 포함</span>
@@ -255,7 +284,7 @@
           </div>
         </section>
 
-        <section class="content-band daily-band" id="today" aria-labelledby="today-title">
+        <section class="content-band daily-band app-view" id="today" aria-labelledby="today-title" hidden>
           <div class="daily-layout">
             <div class="section-heading">
               <p>오늘의 덕아웃</p>
@@ -315,7 +344,7 @@
           </div>
         </section>
 
-        <section class="content-band live-band" id="live-jjal" aria-labelledby="live-title">
+        <section class="content-band live-band app-view" id="live-jjal" aria-labelledby="live-title" hidden>
           <div class="section-heading">
             <p>커뮤니티 반응용</p>
             <h2 id="live-title">라이브 짤판</h2>
@@ -372,7 +401,7 @@
           </div>
         </section>
 
-        <section class="content-band pulse-band" id="reaction-pulse" aria-labelledby="pulse-title">
+        <section class="content-band pulse-band app-view" id="reaction-pulse" aria-labelledby="pulse-title" hidden>
           <div class="pulse-header">
             <div class="section-heading">
               <p>저작권 안전한 라이브 온도</p>
@@ -427,7 +456,7 @@
           </p>
         </section>
 
-        <section class="content-band history-band" id="history" aria-labelledby="history-title">
+        <section class="content-band history-band app-view" id="history" aria-labelledby="history-title" hidden>
           <div class="history-header">
             <div class="section-heading">
               <p>경기 중 다시 쓰기</p>
@@ -453,7 +482,7 @@
           </button>
         </section>
 
-        <section class="content-band more-band" id="more" aria-labelledby="more-title">
+        <section class="content-band more-band app-view" id="more" aria-labelledby="more-title" hidden>
           <div class="section-heading">
             <p>필요할 때만 열기</p>
             <h2 id="more-title">보너스 놀이와 웹앱 도구</h2>
@@ -557,7 +586,7 @@
           </div>
         </section>
 
-        <section class="content-band rules-band" id="rules" aria-labelledby="rules-title">
+        <section class="content-band rules-band app-view" id="rules" aria-labelledby="rules-title" hidden>
           <div class="section-heading">
             <p>서비스 경계</p>
             <h2 id="rules-title">안전하게 놀기 위한 약속</h2>
@@ -665,15 +694,15 @@
     </div>
 
     <nav class="app-tabbar" aria-label="빠른 탭">
-      <a href="#generator" data-tab-target="generator">만들기</a>
-      <a href="#live-jjal" data-tab-target="live-jjal">라이브</a>
-      <a href="#reaction-pulse" data-tab-target="reaction-pulse">팬심</a>
-      <a href="#history" data-tab-target="history">보관함</a>
-      <a href="#today" data-tab-target="today">오늘</a>
+      <a href="#generator" data-view-target="generator">만들기</a>
+      <a href="#live-jjal" data-view-target="live-jjal">라이브</a>
+      <a href="#reaction-pulse" data-view-target="reaction-pulse">팬심</a>
+      <a href="#history" data-view-target="history">보관함</a>
+      <a href="#today" data-view-target="today">오늘</a>
     </nav>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=33"></script>
+    <script src="app.js?v=34"></script>
   </body>
 </html>

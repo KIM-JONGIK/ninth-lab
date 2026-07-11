@@ -543,7 +543,7 @@ const unsafePattern =
 const officialScorePattern = /(\d+\s*[:대-]\s*\d+)|(\d+\s*(승|패|세이브|홀드|홈런|타점|안타|삼진|득점|실점))/i;
 const playerNumberPattern = /(등번호\s*\d{1,3})|(\d{1,3}\s*번\s*(선수|투수|타자|에이스|포수|외야수|내야수))/i;
 const SHARE_DISCLOSURE = "비공식 팬메이드 · 선수/구단/리그와 무관 · 중계자료 없음 · 공식 기록 아님";
-const PUBLIC_BETA_URL = "https://ninth-lab-jkim0428.netlify.app/";
+const PUBLIC_BETA_URL = "https://kim-jongik.github.io/ninth-lab/";
 
 const jjalMoods = {
   pregame: {
@@ -1630,7 +1630,7 @@ async function copyLaunchChecklist() {
     "완료: 권리·안전 검토 요청 문구 복사",
     "완료: 베타 피드백 문구 복사",
     "완료: GitHub 저장소 원격 연결",
-    "완료: Netlify 자동 배포",
+    "완료: GitHub Pages 자동 배포",
     "완료: 공개 배포물 내부 파일 차단",
     "권장: 첫 테스트 10명에게 초대 문구 전달",
     "권장: 피드백 문구 3개 이상 회수",

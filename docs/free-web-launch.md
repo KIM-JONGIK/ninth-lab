@@ -1,47 +1,40 @@
 # 9회말 연구소 무료 웹 베타 출시 가이드
 
-이 앱은 서버 없는 정적 HTML/CSS/JavaScript 웹앱입니다. 로그인, 업로드, 결제, 실시간 데이터가 없으므로 작은 공개 베타는 무료 정적 호스팅으로 시작할 수 있습니다.
+이 앱은 서버 없는 정적 HTML/CSS/JavaScript 웹앱입니다. 로그인, 업로드, 결제, 실시간 데이터가 없으므로 유료 기능을 붙이기 전까지 GitHub Pages 무료 정적 호스팅으로 공개 베타를 운영합니다.
 
-## 추천 순서
+## 현재 배포 순서
 
-1. Cloudflare Pages
-   - 정적 요청과 대역폭 부담이 작고, 무료 플랜에서 작은 베타를 시작하기 좋습니다.
-   - Git 저장소를 연결하거나 정적 파일을 업로드하는 방식으로 배포합니다.
+1. GitHub Pages
+   - 현재 주 배포처입니다.
+   - public 저장소와 GitHub Actions 내장 권한만 사용하며 외부 배포 토큰이 필요 없습니다.
+   - 공개 URL은 `https://kim-jongik.github.io/ninth-lab/`입니다.
 
-2. Netlify
-   - 정적 사이트 배포와 미리보기 URL이 편합니다.
-   - 폼, 함수, 저장소 기능은 쓰지 않고 정적 배포만 사용합니다.
+2. Cloudflare Pages
+   - 광고, 업체 홍보, 거래 중개 같은 수익 기능을 붙이기 전에 이전을 검토합니다.
+   - 현재 `dist/`와 `_headers` 구조를 그대로 사용할 수 있습니다.
 
-3. GitHub Pages
-   - 가장 단순합니다. GitHub 저장소에서 정적 파일을 바로 공개할 수 있습니다.
-   - 상업 기능을 본격 운영하기 전의 MVP 소개와 테스트 공유에 적합합니다.
-
-4. Vercel Hobby
-   - 무료 시작은 가능하지만 이 앱에는 서버 렌더링이나 함수가 필요 없습니다.
-   - 정적 배포만 쓰고 사용량 알림을 확인합니다.
+3. Netlify
+   - 자동 배포는 중지했습니다.
+   - `.github/workflows/netlify-deploy.yml`의 수동 실행만 비상용으로 유지합니다.
 
 ## 출시 전 체크리스트
 
-- `index.html`, `styles.css`, `app.js`, `manifest.webmanifest`, `service-worker.js`, `assets/`, `legal/`, `404.html`, `robots.txt`, `_headers`, `netlify.toml`이 배포 루트에 있어야 합니다.
-- 공개 배포물은 `tools/build-public.mjs`가 만드는 `dist/` 폴더만 사용하고, `docs/`, `tools/`, `README.md`, `.github/`는 공개 업로드에 포함하지 않습니다.
-- `legal/privacy.html`과 `legal/terms.html` 링크가 실제 배포 URL에서 열려야 합니다.
+- `index.html`, `styles.css`, `app.js`, `manifest.webmanifest`, `service-worker.js`, `assets/`, `legal/`, `404.html`, `robots.txt`이 배포 결과에 있어야 합니다.
+- 공개 배포물은 `tools/build-public.mjs`가 만드는 `dist/`만 사용합니다.
+- GitHub Pages용 `.nojekyll` 파일이 `dist/`에 생성돼야 합니다.
+- `docs/`, `tools/`, `README.md`, `.github/`, 환경 파일은 공개 산출물에 포함하지 않습니다.
+- `legal/privacy.html`과 `legal/terms.html` 링크가 `/ninth-lab/` 하위 경로에서 열려야 합니다.
 - 서비스 워커 캐시 이름과 HTML의 `?v=` 버전이 함께 올라가야 합니다.
-- `_headers`가 적용되는 호스팅에서는 `service-worker.js`와 HTML은 `no-cache`, 이미지 자산은 장기 캐시로 동작해야 합니다.
-- Netlify에 배포할 때는 `netlify.toml`의 `publish = "dist"` 설정으로 공개 빌드 결과만 올립니다.
-- Netlify 자동 배포는 GitHub Actions에서 실행하고, 토큰은 `NETLIFY_AUTH_TOKEN`, 사이트 ID는 `NETLIFY_SITE_ID` GitHub Secrets에만 저장합니다.
-- `.netlifyignore`로 `.github/`, `.netlify/`, `docs/`, `tools/`, 로컬 환경 파일을 공개 업로드에서 제외합니다.
-- `#card=`와 `#ask=` 링크가 채팅 앱에서 잘리지 않는지 확인합니다.
+- GitHub Pages는 `_headers`를 적용하지 않습니다. 이 파일은 향후 Cloudflare Pages 전환용으로 유지합니다.
+- `#card=`와 `#ask=` 공유 링크가 Pages 하위 경로에서 유지되는지 확인합니다.
 - 첫 공개 문구에는 `비공식 팬메이드`, `중계자료 없음`, `공식 기록 아님`을 유지합니다.
 - 광고, 업체 홍보, 중고거래 탭은 공개 베타에는 숨깁니다.
-- 공개 후 문의를 받을 최소 채널을 정하기 전에는 “자동 신고 접수”처럼 보이는 문구를 쓰지 않습니다.
+- 공개 후 문의를 받을 최소 채널을 정하기 전에는 자동 신고 접수처럼 보이는 문구를 쓰지 않습니다.
 
 ## 작은 베타 운영 기준
 
-- 첫 배포는 지인, 소규모 커뮤니티, 테스트 링크 공유 수준으로 제한합니다.
+- 첫 공개는 지인과 소규모 커뮤니티의 테스트 링크 공유 수준으로 제한합니다.
 - 실제 선수명, 구단명, 로고, 중계 캡처를 유도하는 피드백이 나오면 기능을 늘리기 전에 필터와 문구를 먼저 보강합니다.
-- 카드 생성 수, 체류 시간, 공유 횟수 같은 서버 지표는 현재 수집하지 않습니다. 반응은 수동 피드백으로 받습니다.
-- 도메인을 붙일 경우 브랜드명이 공식 리그, 구단, 선수와 혼동되지 않는지 다시 확인합니다.
-
-## 현재 권장안
-
-작게 시작하려면 Cloudflare Pages 또는 Netlify에 정적 배포하고, 커스텀 도메인 없이 제공되는 무료 서브도메인으로 먼저 반응을 봅니다. 반응이 있으면 그다음에 도메인, 문의 채널, 운영 정책, 광고/제휴 탭을 분리해서 설계합니다.
+- 카드 생성 수, 체류 시간, 공유 횟수 같은 서버 지표는 현재 수집하지 않습니다.
+- GitHub Pages 방문 과정에서 GitHub가 처리하는 기술 정보와 앱 자체의 로컬 저장을 개인정보 안내에서 구분합니다.
+- 광고·중개 등 수익 기능을 도입하기 전 Cloudflare Pages 또는 유료 상업 호스팅으로 이전하고 고지를 다시 검토합니다.

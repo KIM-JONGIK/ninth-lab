@@ -33,6 +33,7 @@ const requiredFiles = [
   "netlify.toml",
   ".netlifyignore",
   ".github/workflows/netlify-deploy.yml",
+  ".github/workflows/github-pages-deploy.yml",
   ".github/ISSUE_TEMPLATE/rights-removal.yml",
   ".github/ISSUE_TEMPLATE/config.yml",
   "tools/build-public.mjs",
@@ -54,7 +55,8 @@ const notFound = readText("404.html");
 const headers = readText("_headers");
 const netlifyConfig = readText("netlify.toml");
 const netlifyIgnore = readText(".netlifyignore");
-const deployWorkflow = readText(".github/workflows/netlify-deploy.yml");
+const netlifyWorkflow = readText(".github/workflows/netlify-deploy.yml");
+const pagesWorkflow = readText(".github/workflows/github-pages-deploy.yml");
 const publicBuild = readText("tools/build-public.mjs");
 const publicBuildVerify = readText("tools/verify-public-build.mjs");
 const launchGuide = readText("docs/free-web-launch.md");
@@ -127,7 +129,11 @@ assert(app.includes("renderContentInventory"), "content source inventory is miss
 assert(app.includes("nextDeckPhrase"), "no-repeat phrase deck is missing");
 assert(app.includes("PHRASE_DECK_KEY"), "phrase deck session key is missing");
 assert(app.includes("PUBLIC_BETA_URL"), "invite copy must use the public beta URL outside production");
-assert(app.includes("Netlify 자동 배포"), "launch checklist must reflect automatic Netlify deploy");
+assert(
+  app.includes("https://kim-jongik.github.io/ninth-lab/"),
+  "invite copy must use the GitHub Pages beta URL",
+);
+assert(app.includes("GitHub Pages 자동 배포"), "launch checklist must reflect automatic GitHub Pages deploy");
 assert(app.includes("단톡방 4지선다"), "relay poll card flow is missing");
 assert(app.includes("3컷 감정 타임라인"), "emotion timeline card flow is missing");
 assert(app.includes("drawTimelineDownload"), "timeline PNG renderer is missing");
@@ -139,7 +145,10 @@ assert(app.includes("imageLoadCache"), "PNG image load cache is missing");
 assert(app.includes("compactSafetyText"), "spaced-text safety normalization is missing");
 assert(app.includes("playerNumberPattern"), "player-number identification guard is missing");
 
-assert(privacy.includes("https://www.netlify.com/privacy/"), "privacy page must disclose the static host privacy layer");
+assert(
+  privacy.includes("github-general-privacy-statement"),
+  "privacy page must disclose the GitHub Pages hosting privacy layer",
+);
 assert(privacy.includes("rights-removal.yml"), "privacy page must link to the rights request channel");
 assert(terms.includes("rights-removal.yml"), "terms page must link to the rights request channel");
 
@@ -154,31 +163,38 @@ assert(netlifyIgnore.includes(".netlify/"), ".netlifyignore must exclude local N
 assert(netlifyIgnore.includes("tools/"), ".netlifyignore must exclude local tooling from public upload");
 assert(publicBuild.includes('"index.html"'), "public build script must copy index.html");
 assert(publicBuild.includes('"legal"'), "public build script must copy legal pages");
+assert(publicBuild.includes('".nojekyll"'), "public build script must create the GitHub Pages marker");
 assert(publicBuildVerify.includes("forbidden"), "public build verification must check forbidden internal files");
 
 assert(launchGuide.includes("무료 정적 호스팅"), "launch guide must explain free static hosting");
 assert(launchGuide.includes("_headers"), "launch guide must mention _headers deployment file");
-assert(launchGuide.includes("netlify.toml"), "launch guide must mention netlify.toml deployment file");
 assert(launchGuide.includes("dist/"), "launch guide must mention public dist deploy output");
-assert(launchGuide.includes("NETLIFY_AUTH_TOKEN"), "launch guide must mention Netlify token secret");
+assert(launchGuide.includes("외부 배포 토큰이 필요 없습니다"), "launch guide must explain token-free Pages deploys");
+assert(launchGuide.includes("kim-jongik.github.io/ninth-lab"), "launch guide must include the GitHub Pages URL");
 assert(launchGuide.includes("비공식 팬메이드"), "launch guide must keep unofficial disclosure in checklist");
 assert(deployRunbook.includes("GitHub Actions"), "deploy runbook must describe GitHub Actions deploys");
 assert(deployRunbook.includes("dist/"), "deploy runbook must describe public dist deploy output");
-assert(deployRunbook.includes("NETLIFY_AUTH_TOKEN"), "deploy runbook must mention Netlify token secret");
-assert(deployRunbook.includes("NETLIFY_SITE_ID"), "deploy runbook must mention Netlify site ID secret");
+assert(deployRunbook.includes("GITHUB_TOKEN"), "deploy runbook must describe built-in GitHub authorization");
+assert(deployRunbook.includes("build_type=workflow"), "deploy runbook must explain one-time Pages setup");
+assert(deployRunbook.includes("kim-jongik.github.io/ninth-lab"), "deploy runbook must include the Pages URL");
 assert(deployRunbook.includes("KIM-JONGIK/ninth-lab"), "deploy runbook must point at the current GitHub repo");
-assert(deployWorkflow.includes("branches:") && deployWorkflow.includes("- main"), "deploy workflow must run from main branch pushes");
-assert(deployWorkflow.includes("workflow_dispatch:"), "deploy workflow must allow manual dispatch");
-assert(deployWorkflow.includes("tools/verify-static-launch.mjs"), "deploy workflow must verify static files before deploy");
-assert(deployWorkflow.includes("tools/verify-content-safety.mjs"), "deploy workflow must verify content safety before deploy");
-assert(deployWorkflow.includes("tools/verify-phrase-deck.mjs"), "deploy workflow must verify no-repeat phrase decks");
-assert(deployWorkflow.includes("tools/verify-asset-provenance.mjs"), "deploy workflow must verify asset provenance before deploy");
-assert(deployWorkflow.includes("tools/build-public.mjs"), "deploy workflow must build public deploy directory");
-assert(deployWorkflow.includes("tools/verify-public-build.mjs"), "deploy workflow must verify public deploy directory");
-assert(deployWorkflow.includes("netlify-cli deploy"), "deploy workflow must deploy through Netlify CLI");
-assert(deployWorkflow.includes("--dir dist"), "deploy workflow must deploy only the public dist directory");
-assert(deployWorkflow.includes("secrets.NETLIFY_AUTH_TOKEN"), "deploy workflow must read Netlify token from GitHub Secrets");
-assert(deployWorkflow.includes("secrets.NETLIFY_SITE_ID"), "deploy workflow must read Netlify site ID from GitHub Secrets");
+assert(pagesWorkflow.includes("push:") && pagesWorkflow.includes("- main"), "Pages workflow must run from main pushes");
+assert(pagesWorkflow.includes("workflow_dispatch:"), "Pages workflow must allow manual dispatch");
+assert(pagesWorkflow.includes("pages: write"), "Pages workflow must request pages write permission");
+assert(pagesWorkflow.includes("id-token: write"), "Pages workflow must request id-token permission");
+assert(pagesWorkflow.includes("tools/verify-static-launch.mjs"), "Pages workflow must verify static files");
+assert(pagesWorkflow.includes("tools/verify-content-safety.mjs"), "Pages workflow must verify content safety");
+assert(pagesWorkflow.includes("tools/verify-phrase-deck.mjs"), "Pages workflow must verify phrase decks");
+assert(pagesWorkflow.includes("tools/verify-asset-provenance.mjs"), "Pages workflow must verify asset provenance");
+assert(pagesWorkflow.includes("tools/build-public.mjs"), "Pages workflow must build dist");
+assert(pagesWorkflow.includes("tools/verify-public-build.mjs"), "Pages workflow must verify dist");
+assert(pagesWorkflow.includes("actions/configure-pages@v5"), "Pages workflow must configure Pages");
+assert(pagesWorkflow.includes("actions/upload-pages-artifact@v3"), "Pages workflow must upload an artifact");
+assert(pagesWorkflow.includes("path: dist"), "Pages workflow must upload only dist");
+assert(pagesWorkflow.includes("actions/deploy-pages@v5"), "Pages workflow must deploy the Pages artifact");
+assert(netlifyWorkflow.includes("workflow_dispatch:"), "Netlify fallback must remain manually runnable");
+assert(!netlifyWorkflow.includes("push:"), "Netlify workflow must not deploy automatically");
+assert(netlifyWorkflow.includes("netlify-cli deploy"), "Netlify fallback must keep its explicit deploy command");
 
 if (errors.length) {
   console.error("Static launch verification failed:");

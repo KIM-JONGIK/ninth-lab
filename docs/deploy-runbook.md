@@ -1,13 +1,13 @@
-# GitHub Actions + Netlify deploy runbook
+# GitHub Actions + GitHub Pages deploy runbook
 
 ## Current target
 
-`9회말 연구소` is a static site. The source root is the repository root. The public deploy output is generated into `dist/`, and `netlify.toml` sets `publish = "dist"`.
+`9회말 연구소`는 저장소 루트의 정적 사이트입니다. 공개 파일은 `tools/build-public.mjs`가 `dist/`에 만들고, GitHub Pages 전용 워크플로가 이 폴더만 배포합니다.
 
-Current Netlify beta URL:
+GitHub Pages 공개 URL:
 
 ```text
-https://ninth-lab-jkim0428.netlify.app
+https://kim-jongik.github.io/ninth-lab/
 ```
 
 GitHub repository:
@@ -16,7 +16,24 @@ GitHub repository:
 https://github.com/KIM-JONGIK/ninth-lab
 ```
 
-Production deploys run from `.github/workflows/netlify-deploy.yml` whenever `main` receives a push.
+프로덕션 배포는 `.github/workflows/github-pages-deploy.yml`이 `main` 푸시마다 실행합니다.
+
+## Token policy
+
+GitHub Pages 배포에는 Netlify 토큰이나 별도 서비스 키를 사용하지 않습니다. 워크플로에 선언된 `pages: write`와 `id-token: write` 권한 및 GitHub가 발급하는 일회성 `GITHUB_TOKEN`만 사용합니다.
+
+`.github/workflows/netlify-deploy.yml`은 `workflow_dispatch`만 남긴 수동 비상용입니다. `main` 푸시로는 실행되지 않습니다.
+
+## One-time Pages setup
+
+저장소가 public인지 확인하고 Pages의 배포 소스를 GitHub Actions로 설정합니다.
+
+```powershell
+gh repo view KIM-JONGIK/ninth-lab --json visibility
+gh api --method POST repos/KIM-JONGIK/ninth-lab/pages -f build_type=workflow
+```
+
+이미 Pages 사이트가 만들어져 있다면 두 번째 명령은 생략합니다. 웹 화면에서는 `Settings > Pages > Build and deployment > Source > GitHub Actions`와 같은 설정입니다.
 
 ## Check readiness
 
@@ -25,57 +42,23 @@ node tools/verify-static-launch.mjs
 node tools/verify-content-safety.mjs
 node tools/verify-phrase-deck.mjs
 node tools/verify-asset-provenance.mjs
+node tools/build-public.mjs
+node tools/verify-public-build.mjs
 node tools/check-deploy-readiness.mjs
 ```
 
-## Required GitHub Actions secrets
-
-Store these in `KIM-JONGIK/ninth-lab` under `Settings > Secrets and variables > Actions`.
-
-- `NETLIFY_AUTH_TOKEN`: Netlify personal access token for the deploy account.
-- `NETLIFY_SITE_ID`: `dfcd6703-76fe-4463-9c75-7d09cee47926`
-
-CLI setup without printing token values:
+## Deploy
 
 ```powershell
-gh secret set NETLIFY_SITE_ID --repo KIM-JONGIK/ninth-lab --body "dfcd6703-76fe-4463-9c75-7d09cee47926"
-gh secret set NETLIFY_AUTH_TOKEN --repo KIM-JONGIK/ninth-lab
+git push origin main
+gh run list --workflow github-pages-deploy.yml --branch main --limit 5
+gh run watch <run-id> --exit-status
 ```
 
-## GitHub push
+워크플로는 소스·콘텐츠·문구 덱·자산 출처를 검사하고 `dist/`를 만든 뒤 `actions/upload-pages-artifact`와 `actions/deploy-pages`로 배포합니다.
 
-```powershell
-git remote add origin https://github.com/KIM-JONGIK/ninth-lab.git
-git push -u origin main
-```
+## Public artifact
 
-If the remote already exists:
+`dist/`에는 HTML, CSS, JavaScript, PWA 파일, 공개 자산, 법적 안내, `.nojekyll`만 포함합니다. `docs/`, `tools/`, `README.md`, `.github/`, `.env*`, `.netlify/`, 저장소 설정 파일은 공개 산출물에 포함하지 않습니다.
 
-```powershell
-git push -u origin main
-```
-
-## Automatic Netlify deploy
-
-The workflow checks out the repo, verifies source files, builds the public `dist/` directory, verifies that only public files are present, then deploys to Netlify with:
-
-```text
-npx --yes netlify-cli deploy --prod --dir dist
-```
-
-The token and site ID come only from GitHub Actions Secrets.
-
-Watch the latest run:
-
-```powershell
-gh run list --repo KIM-JONGIK/ninth-lab --limit 5
-gh run watch --repo KIM-JONGIK/ninth-lab <run-id> --exit-status
-```
-
-## Local-only files
-
-`.netlify/`, `.env*`, `node_modules/`, logs, docs, tools, repository docs, and GitHub workflow files are not copied into `dist/`. Keep deploy tokens in GitHub Secrets only, not in repository files.
-
-## Known blocker
-
-Automatic deploy is not ready until both GitHub Actions Secrets exist and the first workflow run on `main` passes.
+GitHub Pages는 `_headers` 규칙을 적용하지 않습니다. 이 파일은 향후 Cloudflare Pages 전환과 수동 Netlify 비상 배포를 위해 공개 산출물에 유지합니다.

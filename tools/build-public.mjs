@@ -1,4 +1,4 @@
-import { copyFileSync, cpSync, mkdirSync, rmSync } from "node:fs";
+import { copyFileSync, cpSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve } from "node:path";
 
 const root = process.cwd();
@@ -14,6 +14,7 @@ function assertInsideRoot(path) {
 assertInsideRoot(outDir);
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
+writeFileSync(join(outDir, ".nojekyll"), "");
 
 const files = [
   "index.html",

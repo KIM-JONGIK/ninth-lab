@@ -80,13 +80,14 @@
 ## 무료 웹 베타
 
 - 이 앱은 정적 파일만으로 동작하므로 무료 정적 호스팅에서 작은 공개 베타를 시작할 수 있습니다.
-- 현재 Netlify 공개 베타 URL은 `https://ninth-lab-jkim0428.netlify.app`입니다.
-- 추천 순서는 Cloudflare Pages 또는 Netlify로 무료 서브도메인 배포 후 반응 확인입니다.
-- GitHub Pages와 Vercel Hobby도 가능하지만, 현재 앱은 서버 기능이 필요 없으므로 정적 배포만 사용합니다.
-- `_headers`는 Cloudflare Pages/Netlify용 기본 보안·캐시 헤더입니다. GitHub Pages에서는 무시될 수 있습니다.
-- `netlify.toml`은 공개 가능한 파일만 `dist/`로 만든 뒤 Netlify에 배포하기 위한 설정입니다.
+- 유료 기능을 붙이기 전 주 배포 URL은 `https://kim-jongik.github.io/ninth-lab/`입니다.
+- GitHub Pages는 public 저장소와 GitHub Actions 내장 권한만 사용하므로 외부 배포 토큰이 필요 없습니다.
+- `main` 푸시는 `.github/workflows/github-pages-deploy.yml`을 통해 검증된 `dist/`만 배포합니다.
+- Netlify 자동 배포는 중지했고 기존 워크플로는 수동 비상용으로만 남겨뒀습니다.
+- `_headers`는 GitHub Pages에서 적용되지 않지만 향후 Cloudflare Pages 전환과 수동 비상 배포를 위해 유지합니다.
+- 광고·업체 홍보·거래 중개를 도입하기 전 Cloudflare Pages 또는 유료 상업 호스팅으로 이전합니다.
 - 배포 전 세부 체크리스트는 `docs/free-web-launch.md`를 확인하세요.
-- GitHub Actions와 GitHub Secrets 기반 자동 배포 절차는 `docs/deploy-runbook.md`와 `tools/check-deploy-readiness.mjs`를 사용합니다.
+- 토큰 없는 GitHub Pages 자동 배포 절차는 `docs/deploy-runbook.md`와 `tools/check-deploy-readiness.mjs`를 사용합니다.
 
 ## 실행
 
@@ -111,4 +112,4 @@ node tools/check-deploy-readiness.mjs
 ```
 
 첫 번째 스크립트는 필수 정적 파일, 법적 안내 링크, 서비스 워커 캐시 버전, 배포 헤더, 공개 베타 초대 URL, 공개 배포 빌드, 자동 배포 워크플로, 무료 웹 베타 문서를 점검합니다.
-두 번째 스크립트는 Git 원격, GitHub CLI 로그인, GitHub Actions Secrets, Netlify 설정, 자동 배포 워크플로 상태를 점검합니다.
+두 번째 스크립트는 Git 원격, GitHub CLI 로그인, public 저장소, GitHub Pages 설정, Pages 자동 배포 및 Netlify 자동 배포 중지 상태를 점검합니다.

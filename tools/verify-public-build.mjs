@@ -21,6 +21,7 @@ const required = [
   "service-worker.js",
   "robots.txt",
   "404.html",
+  ".nojekyll",
   "_headers",
   "assets/app-icon.svg",
   "assets/asset-manifest.json",
@@ -31,6 +32,7 @@ const required = [
 
 const forbidden = [
   ".github/workflows/netlify-deploy.yml",
+  ".github/workflows/github-pages-deploy.yml",
   ".netlify",
   "docs/deploy-runbook.md",
   "tools/verify-static-launch.mjs",

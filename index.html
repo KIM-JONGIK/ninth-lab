@@ -14,7 +14,7 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=32" />
+    <link rel="stylesheet" href="styles.css?v=33" />
   </head>
   <body>
     <div class="page-shell">
@@ -50,6 +50,14 @@
               <span>창작 상황</span>
               <span>실명·로고 금지</span>
             </div>
+            <div class="mobile-entry-actions" aria-label="바로 시작">
+              <button class="primary-action" id="mobileQuickCardBtn" type="button">
+                바로 1장 만들기
+              </button>
+              <button class="ghost-action" id="mobileQuickJjalBtn" type="button">
+                라이브 짤
+              </button>
+            </div>
           </div>
 
           <div class="builder" aria-label="밈 카드 생성기">
@@ -62,7 +70,6 @@
               <div class="starter-panel" aria-label="빠른 관전 타입 카드">
                 <div>
                   <strong>10초 관전 타입</strong>
-                  <p>처음 왔다면 하나만 눌러 바로 공유 카드로 시작하세요.</p>
                 </div>
                 <div class="fan-type-grid" id="fanTypeGrid">
                   <button type="button" data-fan-type="clutch">숨참기형</button>
@@ -667,6 +674,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=32"></script>
+    <script src="app.js?v=33"></script>
   </body>
 </html>

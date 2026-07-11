@@ -204,6 +204,10 @@ a {
   margin-top: 12px;
 }
 
+.mobile-entry-actions {
+  display: none;
+}
+
 .safety-strip span,
 .card-tags span {
   display: inline-flex;
@@ -2238,6 +2242,23 @@ a {
   .hero-copy h1 {
     font-size: clamp(2.05rem, 10vw, 3rem);
     line-height: 1.08;
+  }
+
+  .mobile-entry-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .mobile-entry-actions .primary-action,
+  .mobile-entry-actions .ghost-action {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    margin-top: 0;
+    padding-inline: 10px;
+    font-size: 0.9rem;
   }
 
   .lineup-list {

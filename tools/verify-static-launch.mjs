@@ -106,6 +106,9 @@ assert(index.includes("id=\"makePollCardBtn\""), "relay poll card entrypoint is 
 assert(index.includes("id=\"previewCaptionBtn\""), "preview caption copy entrypoint is missing");
 assert(index.includes("id=\"quickStartCardBtn\""), "quick start card entrypoint is missing");
 assert(index.includes("id=\"quickStartCaptionBtn\""), "quick start caption entrypoint is missing");
+assert(index.includes("id=\"mobileQuickCardBtn\""), "mobile first-screen card entrypoint is missing");
+assert(index.includes("id=\"mobileQuickJjalBtn\""), "mobile first-screen jjal entrypoint is missing");
+assert(!index.includes("처음 왔다면"), "first-screen controls must not rely on instructional copy");
 assert(index.includes("id=\"cardFormat\""), "meme grammar selector is missing");
 assert(index.includes("id=\"rerollBtn\""), "phrase reroll entrypoint is missing");
 assert(index.includes("id=\"surpriseMeBtn\""), "random content mix entrypoint is missing");

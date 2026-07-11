@@ -82,6 +82,8 @@ const fanTypeGrid = document.querySelector("#fanTypeGrid");
 const quickStartCardBtn = document.querySelector("#quickStartCardBtn");
 const quickStartJjalBtn = document.querySelector("#quickStartJjalBtn");
 const quickStartCaptionBtn = document.querySelector("#quickStartCaptionBtn");
+const mobileQuickCardBtn = document.querySelector("#mobileQuickCardBtn");
+const mobileQuickJjalBtn = document.querySelector("#mobileQuickJjalBtn");
 const contentSourceCount = document.querySelector("#contentSourceCount");
 const surpriseMeBtn = document.querySelector("#surpriseMeBtn");
 const rerollBtn = document.querySelector("#rerollBtn");
@@ -3233,8 +3235,10 @@ fanTypeGrid.addEventListener("click", (event) => {
 });
 
 quickStartCardBtn.addEventListener("click", quickStartCard);
+mobileQuickCardBtn.addEventListener("click", quickStartCard);
 
 quickStartJjalBtn.addEventListener("click", quickStartJjal);
+mobileQuickJjalBtn.addEventListener("click", quickStartJjal);
 
 quickStartCaptionBtn.addEventListener("click", () => {
   quickStartCaption().catch(() => {

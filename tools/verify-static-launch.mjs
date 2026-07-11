@@ -37,6 +37,7 @@ const requiredFiles = [
   ".github/ISSUE_TEMPLATE/config.yml",
   "tools/build-public.mjs",
   "tools/verify-content-safety.mjs",
+  "tools/verify-phrase-deck.mjs",
   "tools/verify-asset-provenance.mjs",
   "tools/verify-public-build.mjs",
   "docs/free-web-launch.md",
@@ -123,6 +124,8 @@ assert(app.includes("시작 전 마음 예열"), "pregame scenario content pack 
 assert(app.includes("끝난 뒤 복기 모드"), "aftergame scenario content pack is missing");
 assert(app.includes("cardFormats"), "meme grammar state map is missing");
 assert(app.includes("renderContentInventory"), "content source inventory is missing");
+assert(app.includes("nextDeckPhrase"), "no-repeat phrase deck is missing");
+assert(app.includes("PHRASE_DECK_KEY"), "phrase deck session key is missing");
 assert(app.includes("PUBLIC_BETA_URL"), "invite copy must use the public beta URL outside production");
 assert(app.includes("Netlify 자동 배포"), "launch checklist must reflect automatic Netlify deploy");
 assert(app.includes("단톡방 4지선다"), "relay poll card flow is missing");
@@ -168,6 +171,7 @@ assert(deployWorkflow.includes("branches:") && deployWorkflow.includes("- main")
 assert(deployWorkflow.includes("workflow_dispatch:"), "deploy workflow must allow manual dispatch");
 assert(deployWorkflow.includes("tools/verify-static-launch.mjs"), "deploy workflow must verify static files before deploy");
 assert(deployWorkflow.includes("tools/verify-content-safety.mjs"), "deploy workflow must verify content safety before deploy");
+assert(deployWorkflow.includes("tools/verify-phrase-deck.mjs"), "deploy workflow must verify no-repeat phrase decks");
 assert(deployWorkflow.includes("tools/verify-asset-provenance.mjs"), "deploy workflow must verify asset provenance before deploy");
 assert(deployWorkflow.includes("tools/build-public.mjs"), "deploy workflow must build public deploy directory");
 assert(deployWorkflow.includes("tools/verify-public-build.mjs"), "deploy workflow must verify public deploy directory");

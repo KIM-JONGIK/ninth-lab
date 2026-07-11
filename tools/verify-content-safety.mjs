@@ -103,7 +103,7 @@ verifyStrings("daily hashtag", dailyHashes);
 verifyStrings("fan type", parseStrings(fanTypeBlock));
 verifyStrings("mission", parseStrings(missionBlock));
 
-assert(scenarioPhrases.length >= 144, `Expected at least 144 scenario phrases, found ${scenarioPhrases.length}`);
+assert(scenarioPhrases.length >= 192, `Expected at least 192 scenario phrases, found ${scenarioPhrases.length}`);
 assert(jjalPhrases.length >= 55, `Expected at least 55 live reaction phrases, found ${jjalPhrases.length}`);
 assert(quickPhrases.length >= 21, `Expected at least 21 quick reactions, found ${quickPhrases.length}`);
 assert(dailyPrompts.length >= 14, `Expected at least 14 daily prompts, found ${dailyPrompts.length}`);
@@ -117,7 +117,7 @@ const totalSources =
   dailyPrompts.length +
   dailyQuestions.length +
   dailyHashes.length;
-assert(totalSources >= 257, `Expected at least 257 content sources, found ${totalSources}`);
+assert(totalSources >= 305, `Expected at least 305 content sources, found ${totalSources}`);
 assert(new Set(scenarioPhrases).size === scenarioPhrases.length, "Scenario phrase pool contains duplicates");
 assert(new Set(jjalPhrases).size === jjalPhrases.length, "Live reaction phrase pool contains duplicates");
 

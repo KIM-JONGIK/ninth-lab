@@ -100,21 +100,29 @@ const scenarios = {
         "아직 시작 전인데 마음은 벌써 첫 장면을 기다린다.",
         "자리 잡는 순간 오늘의 응원도 함께 켜졌다.",
         "시작 신호보다 팬심이 반 박자 먼저 달린다.",
+        "오늘의 첫 박수는 시작보다 조금 일찍 나왔다.",
+        "기다리는 몇 분까지 응원 에너지로 바꾸는 중이다.",
       ],
       deadpan: [
         "차분히 보겠다는 다짐은 시작 전에만 유효하다.",
         "물은 준비했고 평정심은 아직 배송 중이다.",
         "아무 일도 없는데 괜히 자세부터 고쳐 앉았다.",
+        "알림은 조용한데 마음만 자꾸 앞으로 간다.",
+        "편하게 보려고 앉았고 벌써 손에 힘이 들어갔다.",
       ],
       soft: [
         "서두르지 말고 오늘의 설렘부터 천천히 즐긴다.",
         "시작을 기다리는 마음도 충분히 좋은 응원이다.",
         "오늘의 작은 기대를 조용히 옆자리에 앉힌다.",
+        "기대가 너무 앞서지 않게 천천히 마음을 데운다.",
+        "오늘도 좋아하는 시간을 만날 준비만으로 충분하다.",
       ],
       chaos: [
         "시작 전부터 마음속 회의가 세 번 열렸다.",
         "간식 배치까지 끝났으니 이제 분위기만 오면 된다.",
         "아직 아무 일도 없는데 리액션은 몸을 다 풀었다.",
+        "자리, 물, 간식, 마음 순서로 긴급 점검 완료.",
+        "아직 시작 전인데 혼자 분위기 전환까지 마쳤다.",
       ],
     },
   },
@@ -127,21 +135,29 @@ const scenarios = {
         "방금 공기 바뀌었다. 마음이 먼저 앞으로 간다.",
         "지금만큼은 작은 움직임도 크게 믿어본다.",
         "괜히 손에 힘이 들어가는 바로 그 분위기다.",
+        "조용하던 마음이 한순간에 응원석으로 변했다.",
+        "이 흐름이라면 박수 한 번쯤 먼저 꺼내도 좋다.",
       ],
       deadpan: [
         "기대하지 않는 척했는데 상체가 이미 앞으로 갔다.",
         "침착함은 유지 중이고 손바닥만 바빠졌다.",
         "아직 모른다면서 마음은 이미 다음 장면에 있다.",
+        "기대는 안 한다고 말하면서 화면과 거리는 줄었다.",
+        "아직 아무것도 아닌데 마음만 확신에 가까워진다.",
       ],
       soft: [
         "조금 기대해도 괜찮다. 좋은 흐름은 천천히 온다.",
         "작은 가능성 하나를 마음 가까이에 두고 본다.",
         "결과보다 지금의 설렘을 먼저 오래 바라본다.",
+        "작은 흐름 하나도 오늘은 오래 응원해보고 싶다.",
+        "잘 풀리기를 바라는 마음을 조용히 한 칸 올린다.",
       ],
       chaos: [
         "갑자기 소파가 응원석으로 긴급 전환됐다.",
         "작전은 모르겠고 일단 숨부터 크게 들이켠다.",
         "방금부터 눈, 손, 마음이 서로 다른 사인을 낸다.",
+        "방금부터 모든 움직임에 혼자 의미를 붙이는 중.",
+        "침착하게 보려다 박수 타이밍부터 계산하고 있다.",
       ],
     },
   },
@@ -154,21 +170,29 @@ const scenarios = {
         "여기만 지나가면 된다는 마음으로 박수를 모은다.",
         "긴장도 응원의 일부라면 오늘은 아주 뜨겁다.",
         "마음이 흔들릴수록 더 크게 자리를 지킨다.",
+        "이 순간을 지나갈 힘까지 응원에 전부 보탠다.",
+        "마음이 바빠도 끝까지 자리를 지키는 쪽을 택한다.",
       ],
       deadpan: [
         "표정은 평온하고 손끝만 비상근무 중이다.",
         "괜찮다고 세 번 말했으니 이제 진짜 괜찮아야 한다.",
         "숨은 쉬고 있는데 왜 마음은 대기 화면인가.",
+        "괜찮다는 말이 네 번째부터는 주문처럼 들린다.",
+        "표정 관리만 성공했고 나머지는 모두 긴장 중이다.",
       ],
       soft: [
         "한 장면씩 지나가면 된다. 마음도 천천히 수비한다.",
         "불안한 순간에도 좋아하는 마음은 자리를 지킨다.",
         "잠깐 눈을 감고 다음 장면을 차분히 기다린다.",
+        "지금 필요한 건 정답보다 한 번의 깊은 숨이다.",
+        "흔들리는 마음도 잠시 쉬었다 다시 응원하면 된다.",
       ],
       chaos: [
         "마음속 작전판에 선만 열두 개가 생겼다.",
         "물 한 모금이 오늘의 가장 과감한 선택이다.",
         "침착 버튼을 찾다가 리액션 버튼부터 눌렀다.",
+        "침착을 찾는 사이 간식 봉지만 세 번 접었다.",
+        "머릿속 선택지는 늘었고 손은 괜히 무릎을 잡았다.",
       ],
     },
   },
@@ -181,21 +205,29 @@ const scenarios = {
         "끝났는데 마음속 응원은 아직 퇴장하지 않았다.",
         "오늘의 여운까지 챙겨서 기분 좋게 돌아간다.",
         "마지막 장면 뒤에도 박수는 한 번 더 남아 있다.",
+        "오늘의 박수는 끝난 뒤에도 마음 안에서 계속된다.",
+        "좋았던 기분을 내일 몫까지 조금 남겨두고 간다.",
       ],
       deadpan: [
         "화면은 껐고 복기는 자동 재생 중이다.",
         "이제 자야 하는데 마음이 자꾸 처음으로 돌아간다.",
         "끝난 줄 알았더니 감정만 조용히 연장 중이다.",
+        "이제 그만 생각하려 했고 바로 처음부터 떠올렸다.",
+        "조용해진 뒤에야 내 리액션이 얼마나 컸는지 안다.",
       ],
       soft: [
         "오늘의 마음을 잘 접어 다음 응원 옆에 둔다.",
         "좋았던 순간 하나만 오래 품고 하루를 마친다.",
         "끝난 뒤의 조용함까지 오늘 야구의 일부로 남긴다.",
+        "오늘의 여운을 서두르지 않고 천천히 데려간다.",
+        "마음에 남은 한 장면이면 오늘은 충분히 좋았다.",
       ],
       chaos: [
         "복기 세 문장 만에 혼자 토론회가 열렸다.",
         "끝나자마자 다음 응원 계획을 짜는 중이다.",
         "조용해진 방에서 내 리액션만 뒤늦게 다시 울린다.",
+        "복기하다가 혼자 다음 편 예고까지 만들었다.",
+        "끝난 뒤가 더 바쁜 마음이 오늘도 회의를 연다.",
       ],
     },
   },
@@ -208,21 +240,29 @@ const scenarios = {
         "오늘 내 심장은 전광판보다 먼저 뛰었다.",
         "끝날 때까지 끝난 척하지 않는 팬력.",
         "목청은 이미 대타로 준비 중이다.",
+        "마지막까지 남은 목소리를 오늘 여기에 다 쓴다.",
+        "한 번 더 믿는 마음이 지금 가장 큰 응원이다.",
       ],
       deadpan: [
         "평온한 척했지만 손바닥은 이미 연장전.",
         "아무 일 없다는 표정으로 심장만 전력질주 중.",
         "이 정도 긴장은 일상 수비라고 우겨본다.",
+        "차분한 척은 끝났고 이제 자세만 겨우 유지한다.",
+        "시간은 가는데 마음은 같은 장면에 멈춰 있다.",
       ],
       soft: [
         "천천히 숨 쉬자. 응원은 아직 아웃되지 않았다.",
         "오늘의 마음도 마지막 공까지 같이 간다.",
         "불안해도 괜찮다. 팬심은 원래 큰 타구다.",
+        "어떤 끝이 와도 여기까지 함께 본 마음은 남는다.",
+        "마지막 순간까지 좋아하는 마음을 천천히 보낸다.",
       ],
       chaos: [
         "작전명은 모르겠고 일단 크게 외친다.",
         "내 안의 작전 회의가 갑자기 소집됐다.",
         "차분하게 보려 했는데 응원석이 먼저 출루했다.",
+        "심장은 달리고 머리는 갑자기 모든 경우를 센다.",
+        "앉아 있으라는 몸과 일어나려는 마음이 협상 중이다.",
       ],
     },
   },
@@ -289,21 +329,29 @@ const scenarios = {
         "피곤한데 이상하게 응원 에너지는 남아 있다.",
         "연장전 같은 하루에도 박수는 아직 유효하다.",
         "버틴 마음이 오늘의 진짜 장타다.",
+        "남은 힘이 어디서 왔는지 몰라도 응원은 계속된다.",
+        "길어진 시간만큼 오늘의 박수도 더 단단해졌다.",
       ],
       deadpan: [
         "이 하루는 왜 자꾸 승부치기로 가는가.",
         "체력은 바닥인데 표정은 아직 벤치 클리어.",
         "멘탈은 파울, 마감은 페어. 애매하다.",
+        "끝날 것 같다는 말만 오늘 여러 번 연장됐다.",
+        "체력은 먼저 갔고 마음만 자리를 지키고 있다.",
       ],
       soft: [
         "길어진 하루도 결국 마지막 아웃카운트를 만난다.",
         "잠깐 쉬어도 괜찮다. 응원도 호흡이 필요하다.",
         "오늘은 이기는 것보다 버틴 마음이 더 중요하다.",
+        "조금 길어져도 한 장면씩 같이 지나가면 된다.",
+        "지친 마음에는 결과보다 따뜻한 마무리가 필요하다.",
       ],
       chaos: [
         "연장 12회 같은 기분으로 간식을 찾는 중.",
         "갑자기 모든 선택지가 대타처럼 보인다.",
         "작전판은 없지만 마음속 선은 많이 그었다.",
+        "간식 계획은 끝났고 비상 식량 회의가 시작됐다.",
+        "시간 감각을 잃고 응원 자세만 계속 바뀌는 중이다.",
       ],
     },
   },
@@ -799,6 +847,7 @@ const reactionPulseTheme = {
 const HISTORY_KEY = "ninthLabCardHistory.v1";
 const REACTION_KEY = "ninthLabReactionVotes.v1";
 const ATTENDANCE_KEY = "ninthLabAttendance.v1";
+const PHRASE_DECK_KEY = "ninthLabPhraseDeck.v1";
 const MAX_HISTORY_ITEMS = 8;
 const HASH_PREFIX = "card=";
 const ASK_PREFIX = "ask=";
@@ -843,6 +892,7 @@ let historyExpanded = false;
 let clearLocalDataArmed = false;
 let quickJjalExpanded = false;
 const imageLoadCache = new Map();
+let phraseDeckState = readPhraseDecks();
 
 const missionLabels = {
   before: "경기 전",
@@ -897,10 +947,70 @@ function normalizePhrase(text) {
   return (text || "").replace(/[.!?]+$/g, "").trim();
 }
 
-function pickDifferent(items, previousText) {
-  const previous = normalizePhrase(previousText);
-  const candidates = items.filter((item) => normalizePhrase(item) !== previous);
-  return pick(candidates.length ? candidates : items);
+function readPhraseDecks() {
+  try {
+    const raw = sessionStorage.getItem(PHRASE_DECK_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed)
+        .filter(([key, value]) => typeof key === "string" && Array.isArray(value))
+        .map(([key, value]) => [
+          key,
+          value.filter((item) => typeof item === "string").slice(0, 24),
+        ]),
+    );
+  } catch {
+    return {};
+  }
+}
+
+function writePhraseDecks() {
+  try {
+    sessionStorage.setItem(PHRASE_DECK_KEY, JSON.stringify(phraseDeckState));
+  } catch {
+    // Phrase rotation still works in memory when session storage is unavailable.
+  }
+}
+
+function resetPhraseDecks() {
+  phraseDeckState = {};
+  try {
+    sessionStorage.removeItem(PHRASE_DECK_KEY);
+  } catch {
+    // Session storage is optional.
+  }
+}
+
+function nextDeckPhrase(deckKey, items, previousText = "") {
+  const source = [...new Set(items.filter((item) => typeof item === "string" && item.trim()))];
+  if (!source.length) return "";
+
+  const sourceByNormalized = new Map(source.map((item) => [normalizePhrase(item), item]));
+  const used = new Set();
+  let remaining = (Array.isArray(phraseDeckState[deckKey]) ? phraseDeckState[deckKey] : [])
+    .map((item) => sourceByNormalized.get(normalizePhrase(item)))
+    .filter((item) => {
+      const normalized = normalizePhrase(item);
+      if (!item || used.has(normalized)) return false;
+      used.add(normalized);
+      return true;
+    });
+
+  if (!remaining.length) {
+    remaining = shuffle(source);
+    const previous = normalizePhrase(previousText);
+    const nextIndex = remaining.length - 1;
+    if (remaining.length > 1 && normalizePhrase(remaining[nextIndex]) === previous) {
+      [remaining[0], remaining[nextIndex]] = [remaining[nextIndex], remaining[0]];
+    }
+  }
+
+  const phrase = remaining.pop() || source[0];
+  phraseDeckState[deckKey] = remaining;
+  writePhraseDecks();
+  return phrase;
 }
 
 function scrollShareCardIntoView() {
@@ -1169,6 +1279,7 @@ function clearLocalData() {
   reactionVotes = {};
   writeReactionVotes();
   writeAttendance({ lastDate: "", streak: 0, mission: "before" });
+  resetPhraseDecks();
   pendingHistoryUndo = null;
   resetClearLocalDataButton();
   renderReactionPulse();
@@ -1546,9 +1657,11 @@ function generateCard(previousPhrase = "") {
   const rawNickname = nicknameInput.value;
   const safeNickname = nicknameLooksUnsafe(rawNickname) ? "" : cleanNickname(rawNickname);
   const avoidPhrase = typeof previousPhrase === "string" ? previousPhrase : "";
-  const phrase = avoidPhrase
-    ? pickDifferent(scenario.phrases[tone], avoidPhrase)
-    : pick(scenario.phrases[tone]);
+  const phrase = nextDeckPhrase(
+    "scenario:" + scenarioKey + ":" + tone,
+    scenario.phrases[tone],
+    avoidPhrase,
+  );
   const formattedCopy = formatScenarioCopy(scenario, phrase, format, safeNickname);
 
   currentState = {
@@ -1770,7 +1883,13 @@ function applyJjal(moodKey = jjalMoodSelect.value, forcedPhrase = "") {
   const rawCustom = forcedPhrase || jjalCustomInput.value;
   const customPhrase = cleanJjalText(rawCustom);
   const safeCustom = customPhrase && !textLooksUnsafe(customPhrase);
-  const phrase = safeCustom ? customPhrase : pick(mood.phrases);
+  const phrase = safeCustom
+    ? customPhrase
+    : nextDeckPhrase(
+        "jjal:" + safeMoodKey,
+        mood.phrases,
+        currentState.jjal && currentState.moodKey === safeMoodKey ? currentState.phrase : "",
+      );
   addReactionVote(safeMoodKey, 1);
   const moodPercent = getReactionTotals().find((item) => item.key === safeMoodKey)?.percent || 0;
 
@@ -3082,7 +3201,10 @@ cardHistoryList.addEventListener("click", (event) => {
     if (backgroundInput) backgroundInput.checked = true;
     if (item.jjal && item.moodKey) {
       const mood = jjalMoods[item.moodKey] || jjalMoods.clutch;
-      applyJjal(item.moodKey, pickDifferent(mood.phrases, item.phrase));
+      applyJjal(
+        item.moodKey,
+        nextDeckPhrase("jjal:" + item.moodKey, mood.phrases, item.phrase),
+      );
     } else {
       scenarioSelect.value = item.scenario || "bottom9";
       toneSelect.value = item.tone || "hype";

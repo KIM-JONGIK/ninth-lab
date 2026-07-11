@@ -22,6 +22,9 @@ Production deploys run from `.github/workflows/netlify-deploy.yml` whenever `mai
 
 ```powershell
 node tools/verify-static-launch.mjs
+node tools/verify-content-safety.mjs
+node tools/verify-phrase-deck.mjs
+node tools/verify-asset-provenance.mjs
 node tools/check-deploy-readiness.mjs
 ```
 

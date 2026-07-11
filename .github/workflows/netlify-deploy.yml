@@ -30,6 +30,9 @@ jobs:
       - name: Verify content safety
         run: node tools/verify-content-safety.mjs
 
+      - name: Verify no-repeat phrase decks
+        run: node tools/verify-phrase-deck.mjs
+
       - name: Verify visual asset provenance
         run: node tools/verify-asset-provenance.mjs
 

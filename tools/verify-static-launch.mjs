@@ -71,6 +71,7 @@ const deployRunbook = readText("docs/deploy-runbook.md");
 const app = readText("app.js");
 const styles = readText("styles.css");
 const timeScene = readText("time-scene.js");
+const fanTypesBlock = app.match(/const fanTypes = \{([\s\S]*?)\n\};\nconst fanTypeKeys/)?.[1] ?? "";
 
 const cssVersion = index.match(/styles\.css\?v=(\d+)/)?.[1];
 const timeSceneVersion = index.match(/time-scene\.js\?v=(\d+)/)?.[1];
@@ -167,6 +168,15 @@ assert(app.includes("박수부터 나가고 이유는 나중"), "expanded live r
 assert(app.includes("시작 전 마음 예열"), "pregame scenario content pack is missing");
 assert(app.includes("끝난 뒤 복기 모드"), "aftergame scenario content pack is missing");
 assert(app.includes("cardFormats"), "meme grammar state map is missing");
+assert(fanTypesBlock, "quick fan type configuration is missing");
+assert(
+  (fanTypesBlock.match(/ratio: "square"/g) || []).length === 4,
+  "all quick fan types must use the same square card size",
+);
+assert(
+  !/ratio: "(?:story|wide)"/.test(fanTypesBlock),
+  "quick fan types must not override the card with story or wide dimensions",
+);
 assert(app.includes("renderContentInventory"), "content source inventory is missing");
 assert(app.includes("nextDeckPhrase"), "no-repeat phrase deck is missing");
 assert(app.includes("PHRASE_DECK_KEY"), "phrase deck session key is missing");

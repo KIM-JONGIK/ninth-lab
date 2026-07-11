@@ -895,7 +895,8 @@ const reactionPulseTheme = {
 const HISTORY_KEY = "ninthLabCardHistory.v1";
 const REACTION_KEY = "ninthLabReactionVotes.v1";
 const ATTENDANCE_KEY = "ninthLabAttendance.v1";
-const PHRASE_DECK_KEY = "ninthLabPhraseDeck.v1";
+const PHRASE_DECK_KEY = "ninthLabPhraseDeck.v2";
+const LEGACY_PHRASE_DECK_KEY = "ninthLabPhraseDeck.v1";
 const MAX_HISTORY_ITEMS = 8;
 const HASH_PREFIX = "card=";
 const ASK_PREFIX = "ask=";
@@ -997,16 +998,31 @@ function normalizePhrase(text) {
 
 function readPhraseDecks() {
   try {
+    sessionStorage.removeItem(LEGACY_PHRASE_DECK_KEY);
     const raw = sessionStorage.getItem(PHRASE_DECK_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
     return Object.fromEntries(
       Object.entries(parsed)
-        .filter(([key, value]) => typeof key === "string" && Array.isArray(value))
+        .slice(0, 128)
+        .filter(
+          ([key, value]) =>
+            typeof key === "string" &&
+            value &&
+            typeof value === "object" &&
+            !Array.isArray(value) &&
+            typeof value.signature === "string" &&
+            Array.isArray(value.remaining),
+        )
         .map(([key, value]) => [
           key,
-          value.filter((item) => typeof item === "string").slice(0, 24),
+          {
+            signature: value.signature,
+            remaining: value.remaining
+              .filter((item) => typeof item === "string")
+              .slice(0, 24),
+          },
         ]),
     );
   } catch {
@@ -1026,6 +1042,7 @@ function resetPhraseDecks() {
   phraseDeckState = {};
   try {
     sessionStorage.removeItem(PHRASE_DECK_KEY);
+    sessionStorage.removeItem(LEGACY_PHRASE_DECK_KEY);
   } catch {
     // Session storage is optional.
   }
@@ -1035,9 +1052,18 @@ function nextDeckPhrase(deckKey, items, previousText = "") {
   const source = [...new Set(items.filter((item) => typeof item === "string" && item.trim()))];
   if (!source.length) return "";
 
+  const poolSignature = source
+    .map((item) => normalizePhrase(item))
+    .sort()
+    .join("|");
   const sourceByNormalized = new Map(source.map((item) => [normalizePhrase(item), item]));
+  const storedDeck = phraseDeckState[deckKey];
   const used = new Set();
-  let remaining = (Array.isArray(phraseDeckState[deckKey]) ? phraseDeckState[deckKey] : [])
+  let remaining = (
+    storedDeck?.signature === poolSignature && Array.isArray(storedDeck.remaining)
+      ? storedDeck.remaining
+      : []
+  )
     .map((item) => sourceByNormalized.get(normalizePhrase(item)))
     .filter((item) => {
       const normalized = normalizePhrase(item);
@@ -1056,7 +1082,10 @@ function nextDeckPhrase(deckKey, items, previousText = "") {
   }
 
   const phrase = remaining.pop() || source[0];
-  phraseDeckState[deckKey] = remaining;
+  phraseDeckState[deckKey] = {
+    signature: poolSignature,
+    remaining,
+  };
   writePhraseDecks();
   return phrase;
 }

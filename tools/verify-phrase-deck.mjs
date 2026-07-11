@@ -21,6 +21,10 @@ if (errors.length) {
 
 const deckSource = app.slice(start, end);
 const storage = new Map();
+storage.set(
+  "ninthLabPhraseDeck.v1",
+  JSON.stringify({ "scenario:pregame:hype": ["예전 하나", "예전 둘"] }),
+);
 const context = vm.createContext({
   sessionStorage: {
     getItem(key) {
@@ -38,6 +42,7 @@ const context = vm.createContext({
 vm.runInContext(
   [
     'const PHRASE_DECK_KEY = "ninthLabPhraseDeck.test";',
+    'const LEGACY_PHRASE_DECK_KEY = "ninthLabPhraseDeck.v1";',
     "let phraseDeckState = {};",
     "function shuffle(items) { return [...items]; }",
     deckSource,
@@ -56,7 +61,17 @@ const result = vm.runInContext(
     'const sixth = nextDeckPhrase("scenario:pregame:hype", pool, firstCycle.at(-1));',
     "phraseDeckState = readPhraseDecks();",
     'const otherFirst = nextDeckPhrase("scenario:chance:hype", pool, "");',
-    "({ firstCycle, sixth, otherFirst, stored: JSON.parse(sessionStorage.getItem(PHRASE_DECK_KEY)) })",
+    'phraseDeckState["scenario:migration:hype"] = { signature: "stale-three-item-pool", remaining: ["하나", "둘"] };',
+    "writePhraseDecks();",
+    'const migratedFirst = nextDeckPhrase("scenario:migration:hype", pool, "");',
+    "({",
+    "  firstCycle,",
+    "  sixth,",
+    "  otherFirst,",
+    "  migratedFirst,",
+    "  legacyRemoved: sessionStorage.getItem(LEGACY_PHRASE_DECK_KEY) === null,",
+    "  stored: JSON.parse(sessionStorage.getItem(PHRASE_DECK_KEY)),",
+    "})",
   ].join("\n"),
   context,
 );
@@ -74,13 +89,19 @@ assert(
   "The first phrase in a refilled deck repeated the immediately previous phrase",
 );
 assert(
-  result.stored["scenario:pregame:hype"]?.length === 4,
+  result.stored["scenario:pregame:hype"]?.remaining?.length === 4,
   "The refilled deck was not persisted with four phrases remaining",
 );
 assert(
-  result.stored["scenario:chance:hype"]?.length === 4,
+  result.stored["scenario:chance:hype"]?.remaining?.length === 4,
   "Separate scenario and tone decks did not remain independent",
 );
+assert(
+  result.migratedFirst === "다섯" &&
+    result.stored["scenario:migration:hype"]?.remaining?.length === 4,
+  "A changed source pool did not discard the stale phrase deck",
+);
+assert(result.legacyRemoved, "The legacy phrase deck storage key was not removed");
 
 if (errors.length) {
   console.error("Phrase deck verification failed:");
@@ -92,5 +113,6 @@ console.log(
   "Phrase deck verification passed. first-cycle=" +
     result.firstCycle.length +
     ", unique=" +
-    new Set(result.firstCycle).size,
+    new Set(result.firstCycle).size +
+    ", migration=reset",
 );

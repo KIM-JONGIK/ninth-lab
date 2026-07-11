@@ -113,8 +113,8 @@ addCheck(
     pagesWorkflow.includes("tools/verify-asset-provenance.mjs") &&
     pagesWorkflow.includes("tools/build-public.mjs") &&
     pagesWorkflow.includes("tools/verify-public-build.mjs") &&
-    pagesWorkflow.includes("actions/configure-pages@v5") &&
-    pagesWorkflow.includes("actions/upload-pages-artifact@v3") &&
+    pagesWorkflow.includes("actions/configure-pages@v6.0.0") &&
+    pagesWorkflow.includes("actions/upload-pages-artifact@v5.0.0") &&
     pagesWorkflow.includes("path: dist") &&
     pagesWorkflow.includes("actions/deploy-pages@v5"),
   pagesWorkflowExists ? pagesWorkflowPath + " present" : pagesWorkflowPath + " missing",

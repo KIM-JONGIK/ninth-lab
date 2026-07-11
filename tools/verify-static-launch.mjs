@@ -188,8 +188,8 @@ assert(pagesWorkflow.includes("tools/verify-phrase-deck.mjs"), "Pages workflow m
 assert(pagesWorkflow.includes("tools/verify-asset-provenance.mjs"), "Pages workflow must verify asset provenance");
 assert(pagesWorkflow.includes("tools/build-public.mjs"), "Pages workflow must build dist");
 assert(pagesWorkflow.includes("tools/verify-public-build.mjs"), "Pages workflow must verify dist");
-assert(pagesWorkflow.includes("actions/configure-pages@v5"), "Pages workflow must configure Pages");
-assert(pagesWorkflow.includes("actions/upload-pages-artifact@v3"), "Pages workflow must upload an artifact");
+assert(pagesWorkflow.includes("actions/configure-pages@v6.0.0"), "Pages workflow must configure Pages");
+assert(pagesWorkflow.includes("actions/upload-pages-artifact@v5.0.0"), "Pages workflow must upload an artifact");
 assert(pagesWorkflow.includes("path: dist"), "Pages workflow must upload only dist");
 assert(pagesWorkflow.includes("actions/deploy-pages@v5"), "Pages workflow must deploy the Pages artifact");
 assert(netlifyWorkflow.includes("workflow_dispatch:"), "Netlify fallback must remain manually runnable");

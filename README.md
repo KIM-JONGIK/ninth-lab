@@ -88,7 +88,8 @@
 ## 무료 웹 베타
 
 - 이 앱은 정적 파일만으로 동작하므로 무료 정적 호스팅에서 작은 공개 베타를 시작할 수 있습니다.
-- 유료 기능을 붙이기 전 주 배포 URL은 `https://kim-jongik.github.io/ninth-lab/`입니다.
+- GPT Sites를 새 주 배포 경로로 사용하고 GitHub Pages는 공개 백업 주소로 유지합니다.
+- GitHub Pages 백업 URL은 `https://kim-jongik.github.io/ninth-lab/`입니다.
 - GitHub Pages는 public 저장소와 GitHub Actions 내장 권한만 사용하므로 외부 배포 토큰이 필요 없습니다.
 - `main` 푸시는 `.github/workflows/github-pages-deploy.yml`을 통해 검증된 `dist/`만 배포합니다.
 - Netlify 자동 배포는 중지했고 기존 워크플로는 수동 비상용으로만 남겨뒀습니다.
@@ -118,6 +119,8 @@ node tools/verify-phrase-deck.mjs
 node tools/verify-time-scene.mjs
 node tools/verify-asset-provenance.mjs
 node tools/check-deploy-readiness.mjs
+node tools/build-sites.mjs
+node tools/verify-sites-build.mjs
 ```
 
 첫 번째 스크립트는 필수 정적 파일, 법적 안내 링크, 서비스 워커 캐시 버전, 배포 헤더, 공개 베타 초대 URL, 공개 배포 빌드, 자동 배포 워크플로, 무료 웹 베타 문서를 점검합니다.

@@ -45,6 +45,11 @@ jobs:
       - name: Verify visual asset provenance
         run: node tools/verify-asset-provenance.mjs
 
+      - name: Verify GPT Sites build
+        run: |
+          node tools/build-sites.mjs
+          node tools/verify-sites-build.mjs
+
       - name: Build public deploy directory
         run: node tools/build-public.mjs
 

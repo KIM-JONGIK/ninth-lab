@@ -44,6 +44,10 @@ const requiredFiles = [
   "tools/verify-time-scene.mjs",
   "tools/verify-asset-provenance.mjs",
   "tools/verify-public-build.mjs",
+  "tools/build-sites.mjs",
+  "tools/verify-sites-build.mjs",
+  "sites-worker.js",
+  ".openai/hosting.json",
   "docs/free-web-launch.md",
   "docs/deploy-runbook.md",
 ];
@@ -135,6 +139,9 @@ assert(styles.includes("body.app-shell-ready"), "single-screen body lock styles 
 assert(styles.includes("height: 100dvh"), "app shell must stay within the viewport");
 assert(styles.includes("[data-builder-pane-panel].is-mobile-active"), "mobile builder pane switching styles are missing");
 assert(styles.includes(".control-scroll"), "control panel internal scrolling styles are missing");
+assert(styles.includes("container-type: size"), "mobile card stage must expose height-aware container units");
+assert(styles.includes("56.25cqh"), "story cards must be constrained by preview height");
+assert(styles.includes("177.78cqh"), "wide cards must be constrained by preview height");
 assert(index.includes("data-time-stadium-image"), "time-aware stadium card image is missing");
 assert(timeScene.includes("DAY_START_HOUR = 6"), "day scene must begin at 06:00 local time");
 assert(timeScene.includes("NIGHT_START_HOUR = 18"), "night scene must begin at 18:00 local time");
@@ -191,6 +198,7 @@ for (const field of [
   assert(app.includes(`\"${field}\"`), `local engagement counter is missing: ${field}`);
 }
 assert(app.includes("registerLocalSession"), "local session registration is missing");
+assert(app.includes('classList.add("has-generated-card")'), "generated cards must enter the compact mobile workspace");
 assert(!app.includes("navigator.userAgent"), "local engagement must not record browser identifiers");
 assert(index.includes('role="radio"'), "mission controls must expose radio semantics");
 assert(app.includes('event.key === "Home"'), "workspace keyboard navigation is missing");
@@ -217,6 +225,10 @@ assert(publicBuild.includes('"time-scene.js"'), "public build script must copy t
 assert(publicBuild.includes('"legal"'), "public build script must copy legal pages");
 assert(publicBuild.includes('".nojekyll"'), "public build script must create the GitHub Pages marker");
 assert(publicBuildVerify.includes("forbidden"), "public build verification must check forbidden internal files");
+assert(readText(".openai/hosting.json").includes("project_id"), "Sites hosting config must preserve its project id");
+assert(readText("tools/build-sites.mjs").includes('join(serverDir, "index.js")'), "Sites build must emit its worker entrypoint");
+assert(readText("tools/verify-sites-build.mjs").includes("navigation fallback"), "Sites build verification must test navigation fallback");
+assert(readText("sites-worker.js").includes("env.ASSETS.fetch"), "Sites worker must use the static asset binding");
 
 assert(launchGuide.includes("무료 정적 호스팅"), "launch guide must explain free static hosting");
 assert(launchGuide.includes("_headers"), "launch guide must mention _headers deployment file");
@@ -239,6 +251,8 @@ assert(pagesWorkflow.includes("tools/verify-content-safety.mjs"), "Pages workflo
 assert(pagesWorkflow.includes("tools/verify-phrase-deck.mjs"), "Pages workflow must verify phrase decks");
 assert(pagesWorkflow.includes("tools/verify-time-scene.mjs"), "Pages workflow must verify time scene boundaries");
 assert(pagesWorkflow.includes("tools/verify-asset-provenance.mjs"), "Pages workflow must verify asset provenance");
+assert(pagesWorkflow.includes("tools/build-sites.mjs"), "Pages workflow must build the GPT Sites adapter");
+assert(pagesWorkflow.includes("tools/verify-sites-build.mjs"), "Pages workflow must verify the GPT Sites adapter");
 assert(pagesWorkflow.includes("tools/build-public.mjs"), "Pages workflow must build dist");
 assert(pagesWorkflow.includes("tools/verify-public-build.mjs"), "Pages workflow must verify dist");
 assert(pagesWorkflow.includes("actions/configure-pages@v6.0.0"), "Pages workflow must configure Pages");

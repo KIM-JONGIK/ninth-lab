@@ -1689,6 +1689,7 @@ function restoreCardFromHash() {
     currentState = stateFromPayload(payload);
     syncControlsFromState();
     renderShareCard();
+    document.body.classList.add("has-generated-card");
     if (currentState.moodKey) renderReactionPulse(currentState.moodKey);
     showToast("공유 링크의 카드를 열었습니다.");
     return true;
@@ -2234,6 +2235,7 @@ function saveCurrentCard() {
     (item) => `${item.title}|${item.phrase}|${item.ratio}` !== `${next.title}|${next.phrase}|${next.ratio}`,
   );
   const ok = writeHistory([next, ...existing]);
+  document.body.classList.add("has-generated-card");
   if (ok) incrementEngagement("card_created_count", { render: false });
   renderCardHistory();
   return ok;
@@ -2271,6 +2273,7 @@ function restoreHistoryCard(item) {
   }
 
   renderShareCard();
+  document.body.classList.add("has-generated-card");
 }
 
 function formatSavedAt(value) {

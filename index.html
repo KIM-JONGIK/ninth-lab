@@ -14,8 +14,8 @@
     <title>9회말 연구소</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <script src="time-scene.js?v=35"></script>
-    <link rel="stylesheet" href="styles.css?v=35" />
+    <script src="time-scene.js?v=40"></script>
+    <link rel="stylesheet" href="styles.css?v=40" />
   </head>
   <body>
     <div class="page-shell">
@@ -45,22 +45,14 @@
       <main>
         <section class="app-hero app-view is-active" id="generator" aria-labelledby="hero-title">
           <div class="hero-copy">
-            <p class="eyebrow">공식 기록 없이 노는 야구 팬 실험실</p>
-            <h1 id="hero-title">오늘 야구 기분, 바로 밈 카드로.</h1>
+            <p class="eyebrow">비공식 팬메이드 · 실명·로고·공식 기록 없음</p>
+            <h1 id="hero-title">경기 보다가, 지금 기분 한 장.</h1>
             <p>
-              경기 흐름과 감정만 고르면 실명, 로고, 중계 화면 없는 팬메이드 카드가 됩니다.
+              중계 캡처 없이 팬의 감정만 담는 비공식 창작 카드입니다.
             </p>
-            <div class="safety-strip" role="note">
-              <span>비공식</span>
-              <span>창작 상황</span>
-              <span>실명·로고 금지</span>
-            </div>
             <div class="mobile-entry-actions" aria-label="바로 시작">
               <button class="primary-action" id="mobileQuickCardBtn" type="button">
-                바로 1장 만들기
-              </button>
-              <button class="ghost-action" id="mobileQuickJjalBtn" type="button">
-                라이브 짤
+                지금 기분 카드 만들기
               </button>
             </div>
           </div>
@@ -74,7 +66,7 @@
               aria-selected="true"
               aria-controls="cardPreviewPanel"
               data-builder-pane="preview"
-            >카드 보기</button>
+            >카드</button>
             <button
               id="mobileControlsTab"
               type="button"
@@ -82,42 +74,32 @@
               aria-selected="false"
               aria-controls="cardForm"
               data-builder-pane="controls"
-            >옵션 고르기</button>
+            >옵션</button>
           </div>
 
           <div class="builder" aria-label="밈 카드 생성기">
             <form class="control-panel" id="cardForm" data-builder-pane-panel="controls">
-              <div class="section-heading">
-                <p>상황판</p>
-                <h2>카드 재료 고르기</h2>
-              </div>
+              <div class="control-scroll">
+                <div class="section-heading">
+                  <p>카드 옵션</p>
+                  <h2>지금 기분 고르기</h2>
+                </div>
 
-              <div class="starter-panel" aria-label="빠른 관전 타입 카드">
-                <div>
-                  <strong>10초 관전 타입</strong>
+                <div class="starter-panel" aria-label="관전 타입 카드">
+                  <div>
+                    <strong>관전 타입</strong>
+                  </div>
+                  <div class="fan-type-grid" id="fanTypeGrid">
+                    <button type="button" data-fan-type="clutch">숨참기형</button>
+                    <button type="button" data-fan-type="dugout">작전판형</button>
+                    <button type="button" data-fan-type="snack">간식응원형</button>
+                    <button type="button" data-fan-type="afterwork">퇴근등판형</button>
+                  </div>
                 </div>
-                <div class="fan-type-grid" id="fanTypeGrid">
-                  <button type="button" data-fan-type="clutch">숨참기형</button>
-                  <button type="button" data-fan-type="dugout">작전판형</button>
-                  <button type="button" data-fan-type="snack">간식응원형</button>
-                  <button type="button" data-fan-type="afterwork">퇴근등판형</button>
-                </div>
-                <div class="starter-shortcuts" aria-label="첫 방문 빠른 시작">
-                  <button class="primary-action small" id="quickStartCardBtn" type="button">
-                    바로 1장
-                  </button>
-                  <button class="ghost-action small" id="quickStartJjalBtn" type="button">
-                    라이브 짤
-                  </button>
-                  <button class="ghost-action small" id="quickStartCaptionBtn" type="button">
-                    캡션까지
-                  </button>
-                </div>
-              </div>
 
-              <label class="field">
-                <span>오늘의 상황</span>
-                <select id="scenario" name="scenario">
+                <label class="field">
+                  <span>상황</span>
+                  <select id="scenario" name="scenario">
                   <optgroup label="경기 흐름">
                     <option value="pregame">시작 전 마음 예열</option>
                     <option value="chance">기회가 온 것 같은데</option>
@@ -136,36 +118,42 @@
                     <option value="rain">비 오는 날 야구 감성</option>
                     <option value="dugout">갑자기 명장 빙의</option>
                   </optgroup>
-                </select>
-              </label>
+                  </select>
+                </label>
 
-              <label class="field">
-                <span>카드 톤</span>
-                <select id="tone" name="tone">
-                  <option value="hype">응원 과몰입</option>
-                  <option value="deadpan">무표정 자조</option>
-                  <option value="soft">다정한 멘탈 케어</option>
-                  <option value="chaos">작전 없는 작전</option>
-                </select>
-              </label>
+                <label class="field">
+                  <span>말투</span>
+                  <select id="tone" name="tone">
+                    <option value="hype">응원 과몰입</option>
+                    <option value="deadpan">무표정 자조</option>
+                    <option value="soft">다정한 멘탈 케어</option>
+                    <option value="chaos">작전 없는 작전</option>
+                  </select>
+                </label>
 
-              <label class="field">
-                <span>밈 문법</span>
-                <select id="cardFormat" name="cardFormat">
-                  <option value="classic">한줄 밈</option>
-                  <option value="bulletin">단톡 속보</option>
-                  <option value="status">상태창</option>
-                  <option value="diary">관전 일지</option>
-                </select>
-              </label>
+                <details class="advanced-options">
+                  <summary>
+                    <span><strong>더 세밀하게</strong><small>배경·비율·문구 형식·별명</small></span>
+                    <span aria-hidden="true">+</span>
+                  </summary>
+                  <div class="advanced-options-body">
+                    <label class="field">
+                      <span>문구 형식</span>
+                      <select id="cardFormat" name="cardFormat">
+                        <option value="classic">한줄 밈</option>
+                        <option value="bulletin">단톡 속보</option>
+                        <option value="status">상태창</option>
+                        <option value="diary">관전 일지</option>
+                      </select>
+                    </label>
 
-              <div class="content-inventory" aria-label="콘텐츠 소스 현황">
-                <span>권리 안전 문구 덱</span>
-                <strong id="contentSourceCount">353개 소스</strong>
-                <button class="ghost-action small" id="surpriseMeBtn" type="button">랜덤 조합</button>
-              </div>
+                    <div class="content-inventory" aria-label="콘텐츠 소스 현황">
+                      <span>권리 안전 문구 덱</span>
+                      <strong id="contentSourceCount">353개 소스</strong>
+                      <button class="ghost-action small" id="surpriseMeBtn" type="button">랜덤 조합</button>
+                    </div>
 
-              <fieldset class="field">
+                    <fieldset class="field">
                 <legend>공유 비율</legend>
                 <div class="segmented" role="radiogroup" aria-label="공유 카드 비율">
                   <label>
@@ -181,14 +169,14 @@
                     <span>가로형</span>
                   </label>
                 </div>
-              </fieldset>
+                    </fieldset>
 
-              <fieldset class="field background-field">
+                    <fieldset class="field background-field">
                 <legend>카드 배경</legend>
                 <div class="background-swatches" role="radiogroup" aria-label="카드 배경">
                   <label>
                     <input type="radio" name="background" value="stadium" checked />
-                    <span class="background-swatch swatch-stadium">야간</span>
+                    <span class="background-swatch swatch-stadium">시간 자동</span>
                   </label>
                   <label>
                     <input type="radio" name="background" value="clay" />
@@ -207,36 +195,36 @@
                     <span class="background-swatch swatch-neon">네온</span>
                   </label>
                 </div>
-              </fieldset>
+                    </fieldset>
 
-              <label class="field slider-field">
-                <span>과몰입 수치 <strong id="energyLabel">4</strong></span>
-                <input id="energy" name="energy" type="range" min="1" max="5" value="4" />
-              </label>
+                    <label class="field slider-field">
+                      <span>과몰입 수치 <strong id="energyLabel">4</strong></span>
+                      <input id="energy" name="energy" type="range" min="1" max="5" value="4" />
+                    </label>
 
-              <label class="field">
-                <span>내 별명 <small>선택, 실명·구단명 제외</small></span>
-                <input
-                  id="nickname"
-                  name="nickname"
-                  maxlength="12"
-                  autocomplete="off"
-                  placeholder="예: 응원석 3열"
-                />
-              </label>
-
-              <div class="button-row create-actions">
-                <button class="primary-action" id="generateBtn" type="button">새 카드 만들기</button>
-                <button class="ghost-action" id="rerollBtn" type="button">다른 문구</button>
+                    <label class="field">
+                      <span>내 별명 <small>선택, 실명·구단명 제외</small></span>
+                      <input
+                        id="nickname"
+                        name="nickname"
+                        maxlength="12"
+                        autocomplete="off"
+                        placeholder="예: 응원석 3열"
+                      />
+                    </label>
+                  </div>
+                </details>
               </div>
-              <div class="button-row share-actions">
-                <button class="ghost-action" id="nativeShareBtn" type="button">공유</button>
-                <button class="ghost-action" id="copyShareLinkBtn" type="button">링크 복사</button>
-                <button class="ghost-action" id="downloadBtn" type="button">PNG 저장</button>
+
+              <div class="control-footer">
+                <div class="button-row create-actions">
+                  <button class="primary-action" id="generateBtn" type="button">지금 기분 카드 만들기</button>
+                  <button class="ghost-action" id="rerollBtn" type="button">문구만 바꾸기</button>
+                </div>
+                <p class="form-note" id="safetyMessage">
+                  실명·구단·공식 기록 없이 만든 창작 카드예요.
+                </p>
               </div>
-              <p class="form-note" id="safetyMessage">
-                실존 인물, 구단, 공식 기록을 특정하지 않는 문구만 생성합니다.
-              </p>
             </form>
 
             <section
@@ -266,11 +254,16 @@
                 </article>
               </div>
               <div class="preview-actions" aria-label="미리보기 공유 동작">
-                <button class="primary-action small" id="previewShareBtn" type="button" aria-label="카드 공유" title="카드 공유">공유</button>
-                <button class="ghost-action small" id="previewCopyLinkBtn" type="button" aria-label="링크 복사" title="링크 복사">링크</button>
-                <button class="ghost-action small" id="previewCaptionBtn" type="button" aria-label="캡션 복사" title="캡션 복사">캡션</button>
-                <button class="ghost-action small" id="previewRelayBtn" type="button" aria-label="친구에게 묻기" title="친구에게 묻기">질문</button>
-                <button class="ghost-action small" id="previewDownloadBtn" type="button" aria-label="PNG 저장" title="PNG 저장">PNG</button>
+                <button class="primary-action small" id="previewShareBtn" type="button">단톡방에 보내기</button>
+                <button class="ghost-action small" id="previewRelayBtn" type="button">친구에게 묻기</button>
+                <button class="ghost-action small" id="previewDownloadBtn" type="button">PNG 저장</button>
+                <details class="preview-more">
+                  <summary>링크·캡션</summary>
+                  <div class="preview-more-actions">
+                    <button class="ghost-action small" id="previewCopyLinkBtn" type="button">카드 링크 복사</button>
+                    <button class="ghost-action small" id="previewCaptionBtn" type="button">게시글 캡션 복사</button>
+                  </div>
+                </details>
               </div>
               <div class="share-ready" aria-label="공유 안전 점검">
                 <span>비공식 고지 포함</span>
@@ -278,7 +271,7 @@
                 <span>실명·로고 미사용</span>
               </div>
               <details class="safe-check" id="safeCheck">
-                <summary>공유 전 점검 <span>자동 확인</span></summary>
+                <summary><strong id="safeCheckTitle">공유 준비됨</strong><span id="safeCheckMeta">권리 안전 자동 확인</span></summary>
                 <ul id="safeCheckList"></ul>
               </details>
             </section>
@@ -299,9 +292,9 @@
               <div class="mission-box" aria-label="오늘의 덕아웃 출석">
                 <span id="attendanceStatus">덕아웃 출석 준비 중</span>
                 <div class="mission-choice" role="radiogroup" aria-label="오늘 야구 기분">
-                  <button class="is-selected" type="button" data-mission="before">경기 전</button>
-                  <button type="button" data-mission="during">보는 중</button>
-                  <button type="button" data-mission="after">끝난 뒤</button>
+                  <button class="is-selected" type="button" role="radio" aria-checked="true" data-mission="before">경기 전</button>
+                  <button type="button" role="radio" aria-checked="false" tabindex="-1" data-mission="during">보는 중</button>
+                  <button type="button" role="radio" aria-checked="false" tabindex="-1" data-mission="after">끝난 뒤</button>
                 </div>
                 <button class="ghost-action small" id="dailyCheckInBtn" type="button">
                   출석 카드 만들기
@@ -662,13 +655,13 @@
               </div>
               <div class="data-panel" aria-labelledby="data-title">
             <div>
-              <h3 id="data-title">내 데이터</h3>
-              <p>보관함, 팬심 반응, 덕아웃 출석, 문구 순환 상태는 이 브라우저 안에만 저장됩니다.</p>
+              <h3 id="data-title">내 활동 요약</h3>
+              <p>생성·공유 횟수 같은 정수 카운터만 이 브라우저에 저장하며 서버로 보내지 않습니다.</p>
             </div>
             <div class="data-stats" id="dataStats" aria-live="polite"></div>
             <div class="data-actions">
               <button class="ghost-action small" id="copyBetaReportBtn" type="button">
-                베타 리포트 복사
+                활동 요약 복사
               </button>
               <button class="ghost-action small danger-action" id="clearLocalDataBtn" type="button">
                 로컬 데이터 지우기
@@ -704,6 +697,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=35"></script>
+    <script src="app.js?v=40"></script>
   </body>
 </html>

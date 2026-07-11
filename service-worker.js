@@ -1,13 +1,13 @@
-const CACHE_NAME = "ninth-lab-v35";
+const CACHE_NAME = "ninth-lab-v40";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
-  "./styles.css?v=35",
+  "./styles.css?v=40",
   "./time-scene.js",
-  "./time-scene.js?v=35",
+  "./time-scene.js?v=40",
   "./app.js",
-  "./app.js?v=35",
+  "./app.js?v=40",
   "./manifest.webmanifest",
   "./404.html",
   "./robots.txt",

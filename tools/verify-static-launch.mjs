@@ -116,13 +116,16 @@ assert(index.includes("무료 공개 배포"), "launch center must show current 
 assert(index.includes("id=\"previewRelayBtn\""), "preview relay entrypoint is missing");
 assert(index.includes("id=\"makePollCardBtn\""), "relay poll card entrypoint is missing");
 assert(index.includes("id=\"previewCaptionBtn\""), "preview caption copy entrypoint is missing");
-assert(index.includes("id=\"quickStartCardBtn\""), "quick start card entrypoint is missing");
-assert(index.includes("id=\"quickStartCaptionBtn\""), "quick start caption entrypoint is missing");
 assert(index.includes("id=\"mobileQuickCardBtn\""), "mobile first-screen card entrypoint is missing");
-assert(index.includes("id=\"mobileQuickJjalBtn\""), "mobile first-screen jjal entrypoint is missing");
+assert(index.includes("지금 기분 카드 만들기"), "first-screen card CTA copy is missing");
 assert(!index.includes("처음 왔다면"), "first-screen controls must not rely on instructional copy");
 assert(index.includes("data-builder-pane=\"preview\""), "mobile preview workspace tab is missing");
 assert(index.includes("data-builder-pane=\"controls\""), "mobile controls workspace tab is missing");
+assert(index.includes("class=\"control-scroll\""), "scrollable control body is missing");
+assert(index.includes("class=\"control-footer\""), "persistent create footer is missing");
+assert(index.includes("class=\"advanced-options\""), "progressive option disclosure is missing");
+assert(index.includes("class=\"preview-more\""), "secondary share menu is missing");
+assert(index.includes("단톡방에 보내기"), "group-chat share CTA is missing");
 assert(index.includes("class=\"content-band daily-band app-view\""), "daily content must be an app view");
 assert(index.includes("id=\"today\"") && index.includes("id=\"rules\""), "app view targets are missing");
 assert(app.includes('document.body.classList.add("app-shell-ready")'), "single-screen app shell is not initialized");
@@ -131,6 +134,7 @@ assert((index.match(/data-view-target=/g) || []).length >= 14, "desktop and mobi
 assert(styles.includes("body.app-shell-ready"), "single-screen body lock styles are missing");
 assert(styles.includes("height: 100dvh"), "app shell must stay within the viewport");
 assert(styles.includes("[data-builder-pane-panel].is-mobile-active"), "mobile builder pane switching styles are missing");
+assert(styles.includes(".control-scroll"), "control panel internal scrolling styles are missing");
 assert(index.includes("data-time-stadium-image"), "time-aware stadium card image is missing");
 assert(timeScene.includes("DAY_START_HOUR = 6"), "day scene must begin at 06:00 local time");
 assert(timeScene.includes("NIGHT_START_HOUR = 18"), "night scene must begin at 18:00 local time");
@@ -175,12 +179,28 @@ assert(app.includes("scrollShareCardIntoView"), "shared card scroll helper is mi
 assert(app.includes("imageLoadCache"), "PNG image load cache is missing");
 assert(app.includes("compactSafetyText"), "spaced-text safety normalization is missing");
 assert(app.includes("playerNumberPattern"), "player-number identification guard is missing");
+assert(app.includes("ninthLabEngagement.v1"), "local engagement counter storage is missing");
+for (const field of [
+  "quick_start_count",
+  "card_created_count",
+  "share_open_count",
+  "caption_copy_count",
+  "relay_copy_count",
+  "return_session_count",
+]) {
+  assert(app.includes(`\"${field}\"`), `local engagement counter is missing: ${field}`);
+}
+assert(app.includes("registerLocalSession"), "local session registration is missing");
+assert(!app.includes("navigator.userAgent"), "local engagement must not record browser identifiers");
+assert(index.includes('role="radio"'), "mission controls must expose radio semantics");
+assert(app.includes('event.key === "Home"'), "workspace keyboard navigation is missing");
 
 assert(
   privacy.includes("github-general-privacy-statement"),
   "privacy page must disclose the GitHub Pages hosting privacy layer",
 );
 assert(privacy.includes("rights-removal.yml"), "privacy page must link to the rights request channel");
+assert(privacy.includes("여섯 개의 정수 카운터"), "privacy page must disclose local engagement counters");
 assert(terms.includes("rights-removal.yml"), "terms page must link to the rights request channel");
 
 assert(headers.includes("X-Content-Type-Options: nosniff"), "_headers missing X-Content-Type-Options");

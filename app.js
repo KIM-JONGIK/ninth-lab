@@ -5,9 +5,6 @@ const energyInput = document.querySelector("#energy");
 const energyLabel = document.querySelector("#energyLabel");
 const nicknameInput = document.querySelector("#nickname");
 const generateBtn = document.querySelector("#generateBtn");
-const nativeShareBtn = document.querySelector("#nativeShareBtn");
-const copyShareLinkBtn = document.querySelector("#copyShareLinkBtn");
-const downloadBtn = document.querySelector("#downloadBtn");
 const previewShareBtn = document.querySelector("#previewShareBtn");
 const previewCopyLinkBtn = document.querySelector("#previewCopyLinkBtn");
 const previewCaptionBtn = document.querySelector("#previewCaptionBtn");
@@ -41,6 +38,8 @@ const weeklyRecapBtn = document.querySelector("#weeklyRecapBtn");
 const historyToggleBtn = document.querySelector("#historyToggleBtn");
 const safetyMessage = document.querySelector("#safetyMessage");
 const safeCheckList = document.querySelector("#safeCheckList");
+const safeCheckTitle = document.querySelector("#safeCheckTitle");
+const safeCheckMeta = document.querySelector("#safeCheckMeta");
 const shareCard = document.querySelector("#shareCard");
 const cardKicker = document.querySelector("#cardKicker");
 const cardTitle = document.querySelector("#cardTitle");
@@ -79,11 +78,7 @@ const dataStats = document.querySelector("#dataStats");
 const copyBetaReportBtn = document.querySelector("#copyBetaReportBtn");
 const clearLocalDataBtn = document.querySelector("#clearLocalDataBtn");
 const fanTypeGrid = document.querySelector("#fanTypeGrid");
-const quickStartCardBtn = document.querySelector("#quickStartCardBtn");
-const quickStartJjalBtn = document.querySelector("#quickStartJjalBtn");
-const quickStartCaptionBtn = document.querySelector("#quickStartCaptionBtn");
 const mobileQuickCardBtn = document.querySelector("#mobileQuickCardBtn");
-const mobileQuickJjalBtn = document.querySelector("#mobileQuickJjalBtn");
 const cardForm = document.querySelector("#cardForm");
 const cardPreviewPanel = document.querySelector("#cardPreviewPanel");
 const builderPaneTabs = document.querySelectorAll("[data-builder-pane]");
@@ -927,11 +922,21 @@ const reactionPulseTheme = {
 const HISTORY_KEY = "ninthLabCardHistory.v1";
 const REACTION_KEY = "ninthLabReactionVotes.v1";
 const ATTENDANCE_KEY = "ninthLabAttendance.v1";
+const ENGAGEMENT_KEY = "ninthLabEngagement.v1";
+const ENGAGEMENT_SESSION_KEY = "ninthLabEngagementSession.v1";
 const PHRASE_DECK_KEY = "ninthLabPhraseDeck.v2";
 const LEGACY_PHRASE_DECK_KEY = "ninthLabPhraseDeck.v1";
 const MAX_HISTORY_ITEMS = 8;
 const HASH_PREFIX = "card=";
 const ASK_PREFIX = "ask=";
+const ENGAGEMENT_FIELDS = [
+  "quick_start_count",
+  "card_created_count",
+  "share_open_count",
+  "caption_copy_count",
+  "relay_copy_count",
+  "return_session_count",
+];
 
 const lineupPool = [
   ["1번 타자", "아침 커피, 출루율 높음"],
@@ -984,7 +989,7 @@ const missionLabels = {
 const timelineSlots = ["경기 전", "보는 중", "끝난 뒤"];
 
 const cardBackgrounds = {
-  stadium: "야간 구장",
+  stadium: "시간 자동 구장",
   clay: "흙먼지",
   rain: "우천",
   dugout: "더그아웃",
@@ -1340,13 +1345,70 @@ function writeAttendance(value) {
   }
 }
 
+function emptyEngagement() {
+  return Object.fromEntries(ENGAGEMENT_FIELDS.map((field) => [field, 0]));
+}
+
+function readEngagement() {
+  const fallback = emptyEngagement();
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ENGAGEMENT_KEY) || "{}");
+    ENGAGEMENT_FIELDS.forEach((field) => {
+      fallback[field] = Math.max(0, Math.floor(Number(parsed[field]) || 0));
+    });
+  } catch {
+    // Engagement counters are optional and never leave this browser.
+  }
+  return fallback;
+}
+
+function writeEngagement(value) {
+  const safeValue = emptyEngagement();
+  ENGAGEMENT_FIELDS.forEach((field) => {
+    safeValue[field] = Math.max(0, Math.floor(Number(value[field]) || 0));
+  });
+  try {
+    localStorage.setItem(ENGAGEMENT_KEY, JSON.stringify(safeValue));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function incrementEngagement(field, { render = true } = {}) {
+  if (!ENGAGEMENT_FIELDS.includes(field)) return;
+  const next = readEngagement();
+  next[field] += 1;
+  writeEngagement(next);
+  if (render && dataStats) renderDataStats();
+}
+
+function registerLocalSession() {
+  try {
+    if (sessionStorage.getItem(ENGAGEMENT_SESSION_KEY)) return;
+    sessionStorage.setItem(ENGAGEMENT_SESSION_KEY, "1");
+    const current = readEngagement();
+    const hasPreviousActivity = ENGAGEMENT_FIELDS.some(
+      (field) => field !== "return_session_count" && current[field] > 0,
+    );
+    if (hasPreviousActivity) {
+      current.return_session_count += 1;
+      writeEngagement(current);
+    }
+  } catch {
+    // A blocked storage layer must not block the card maker.
+  }
+}
+
 function renderDataStats() {
-  const attendance = readAttendance();
-  const reactionTotal = Object.values(readReactionVotes()).reduce((total, value) => total + Number(value || 0), 0);
+  const engagement = readEngagement();
   const stats = [
-    ["보관함", `${readHistory().length}장`],
-    ["팬심 반응", `${reactionTotal}회`],
-    ["덕아웃 출석", `${attendance.streak || 0}일`],
+    ["빠른 시작", `${engagement.quick_start_count}회`],
+    ["카드 생성", `${engagement.card_created_count}장`],
+    ["공유 열기", `${engagement.share_open_count}회`],
+    ["캡션 복사", `${engagement.caption_copy_count}회`],
+    ["질문 공유", `${engagement.relay_copy_count}회`],
+    ["재방문", `${engagement.return_session_count}회`],
   ];
 
   dataStats.replaceChildren(
@@ -1395,6 +1457,12 @@ function clearLocalData() {
   reactionVotes = {};
   writeReactionVotes();
   writeAttendance({ lastDate: "", streak: 0, mission: "before" });
+  try {
+    localStorage.removeItem(ENGAGEMENT_KEY);
+    sessionStorage.removeItem(ENGAGEMENT_SESSION_KEY);
+  } catch {
+    // Local storage cleanup is best effort.
+  }
   resetPhraseDecks();
   pendingHistoryUndo = null;
   resetClearLocalDataButton();
@@ -1423,6 +1491,7 @@ function selectMission(mission) {
     const selected = button.dataset.mission === selectedMission;
     button.classList.toggle("is-selected", selected);
     button.setAttribute("aria-checked", selected ? "true" : "false");
+    button.tabIndex = selected ? 0 : -1;
   });
 }
 
@@ -1804,7 +1873,7 @@ function generateCard(previousPhrase = "") {
       "별명에 공식명·실명·권리물을 떠올릴 수 있는 단어가 있어 카드에는 익명으로 표시했습니다.";
     safetyMessage.classList.add("is-warning");
   } else {
-    safetyMessage.textContent = "실존 인물, 구단, 공식 기록을 특정하지 않는 문구만 생성합니다.";
+    safetyMessage.textContent = "실명·구단·공식 기록 없이 만든 창작 카드예요.";
     safetyMessage.classList.remove("is-warning");
   }
 }
@@ -1846,7 +1915,7 @@ function applyFanType(typeKey) {
 
   syncControlsFromState();
   renderShareCard();
-  safetyMessage.textContent = "관전 타입 카드는 실존 선수·구단·중계자료 없이 창작 감정만 사용합니다.";
+  safetyMessage.textContent = "실명·구단·중계 캡처 없이 만든 창작 카드예요.";
   safetyMessage.classList.remove("is-warning");
   if (saveCurrentCard()) {
     showToast(`${type.label} 카드가 보관함에 저장됐습니다.`);
@@ -1857,23 +1926,10 @@ function applyFanType(typeKey) {
 }
 
 function quickStartCard() {
+  incrementEngagement("quick_start_count", { render: false });
   const typeKey = pick(fanTypeKeys);
   applyFanType(typeKey);
-}
-
-function quickStartJjal() {
-  const moodKey = pick(["pregame", "chance", "clutch", "almost", "defense", "afterglow"]);
-  jjalMoodSelect.value = moodKey;
-  jjalCustomInput.value = "";
-  applyJjal(moodKey);
-  saveCurrentCard();
-  scrollShareCardIntoView();
-  showToast("바로 공유할 라이브 짤을 만들었습니다.");
-}
-
-async function quickStartCaption() {
-  applyFanType("clutch");
-  await copyCurrentCaption();
+  showToast("새 카드가 완성됐어요. 바로 공유할 수 있어요.");
 }
 
 function renderShareCard() {
@@ -1933,6 +1989,7 @@ function renderSafetyChecklist() {
     .join(" ");
   const cardText = `${title} ${phrase} ${tags} ${timelineText}`;
   const creativeText = `${title} ${phrase} ${timelineText}`;
+  const needsReview = textLooksUnsafe(creativeText) || officialScorePattern.test(cardText);
   const safeItems = [
     textLooksUnsafe(creativeText)
       ? "위험 표현이 감지되면 기본 창작 문구로 대체됩니다."
@@ -1951,6 +2008,8 @@ function renderSafetyChecklist() {
       return item;
     }),
   );
+  safeCheckTitle.textContent = needsReview ? "확인 필요" : "공유 준비됨";
+  safeCheckMeta.textContent = needsReview ? "문구를 바꿔주세요" : "권리 안전 자동 확인";
 }
 
 function canShareCurrentCard() {
@@ -1964,7 +2023,7 @@ function canShareCurrentCard() {
     pulseLeader.textContent || "",
   ].join(" ");
   if (exportTextLooksUnsafe(exportText)) {
-    showToast("권리 보호를 위해 실존 선수·구단·중계·공식 기록 표현은 공유할 수 없습니다.");
+    showToast("실명·구단·공식 기록 표현은 공유할 수 없어요. 문구를 바꿔주세요.");
     return false;
   }
   return true;
@@ -2036,7 +2095,7 @@ function applyJjal(moodKey = jjalMoodSelect.value, forcedPhrase = "") {
       "직접 문구에 실명·권리물·중계 캡처를 떠올릴 수 있는 단어가 있어 기본 문구로 바꿨습니다.";
     safetyMessage.classList.add("is-warning");
   } else {
-    safetyMessage.textContent = "라이브 짤은 창작 배경과 짧은 반응 문구만 사용합니다.";
+    safetyMessage.textContent = "중계 캡처 없이 만든 창작 짤이에요.";
     safetyMessage.classList.remove("is-warning");
   }
 }
@@ -2175,6 +2234,7 @@ function saveCurrentCard() {
     (item) => `${item.title}|${item.phrase}|${item.ratio}` !== `${next.title}|${next.phrase}|${next.ratio}`,
   );
   const ok = writeHistory([next, ...existing]);
+  if (ok) incrementEngagement("card_created_count", { render: false });
   renderCardHistory();
   return ok;
 }
@@ -2340,34 +2400,18 @@ async function copyJjalText() {
   showToast("커뮤니티용 문구를 복사했습니다.");
 }
 
-function hashtagFromTag(tag) {
-  const compact = stripSafeDisclosureTerms(tag)
-    .replace(/[^0-9A-Za-z가-힣\s]/g, "")
-    .replace(/\s+/g, "")
-    .trim()
-    .slice(0, 18);
-  if (!compact || textLooksUnsafe(compact)) return "";
-  return `#${compact}`;
-}
-
 function buildCommunityCaption() {
   const title = cleanShareText(currentState.title || "오늘의 야구 기분", 40);
   const phrase = cleanShareText(currentState.phrase || "", 90);
   const timelineLines = timelineItemsForState().map((item) => `${item.slot}: ${item.title}`);
-  const tags = (currentState.tags || [])
-    .map(hashtagFromTag)
-    .filter(Boolean)
-    .slice(0, 3);
-  const hashtags = tags.length ? tags : ["#팬심카드", "#야구기분", "#창작상황"];
+  const lead = phrase || title;
 
   return [
-    "[9회말 연구소]",
-    title,
-    phrase ? `"${phrase}"` : "",
+    `[9회말 연구소] ${lead}`,
+    "지금 내 야구 기분은 이거. 너는?",
     timelineLines.length ? timelineLines.join(" / ") : "",
-    hashtags.join(" "),
-    SHARE_DISCLOSURE,
-    "이미지는 앱에서 직접 만든 창작 카드입니다.",
+    "#야구기분 #팬메이드",
+    "비공식 창작 카드 · 공식 기록 아님",
     shareUrl(),
   ]
     .filter(Boolean)
@@ -2386,7 +2430,8 @@ async function copyCurrentCaption() {
     return;
   }
   const ok = await copyTextToClipboard(caption);
-  showToast(ok ? "커뮤니티용 캡션을 복사했습니다." : "캡션을 복사하지 못했습니다.");
+  if (ok) incrementEngagement("caption_copy_count");
+  showToast(ok ? "단톡방용 캡션을 복사했어요." : "캡션을 복사하지 못했습니다.");
 }
 
 async function copyCurrentShareLink() {
@@ -2394,7 +2439,7 @@ async function copyCurrentShareLink() {
   const url = shareUrl();
   const ok = await copyTextToClipboard(url);
   if (ok) {
-    showToast("같은 카드로 열리는 링크를 복사했습니다.", {
+    showToast("카드 링크를 복사했어요.", {
       label: "친구에게 묻기",
       handler: () => {
         copyRelayLink().catch(() => showToast("질문 링크를 복사하지 못했습니다."));
@@ -2409,14 +2454,15 @@ async function copyCurrentShareLink() {
 async function copyRelayLink() {
   const url = relayUrl();
   const text = [
-    "[9회말 연구소] 서버 없는 비공식 팬메이드 질문 링크",
+    "[9회말 연구소] 지금 우리 단톡 분위기, 한 단어로 뭐야?",
     "답변은 각자 브라우저에만 남습니다.",
     SHARE_DISCLOSURE,
     url,
   ].join("\n");
   const ok = await copyTextToClipboard(text);
   if (ok) {
-    showToast("친구에게 보낼 덕아웃 질문 링크를 복사했습니다.");
+    incrementEngagement("relay_copy_count");
+    showToast("친구에게 보낼 질문을 복사했어요.");
   } else {
     window.history.replaceState(null, "", url);
     showToast("복사가 막혀 주소창을 질문 링크로 바꿨습니다.");
@@ -2425,9 +2471,14 @@ async function copyRelayLink() {
 
 async function shareCurrentCard() {
   if (!canShareCurrentCard()) return;
+  incrementEngagement("share_open_count");
   const url = shareUrl();
   const title = currentState.title || "9회말 연구소";
-  const text = `${currentState.phrase || "오늘의 야구 기분"} (${SHARE_DISCLOSURE})`;
+  const text = [
+    `[9회말 연구소] ${currentState.phrase || "오늘의 야구 기분"}`,
+    "지금 내 야구 기분은 이거. 너는?",
+    SHARE_DISCLOSURE,
+  ].join("\n");
 
   if (navigator.share) {
     try {
@@ -2436,7 +2487,7 @@ async function shareCurrentCard() {
         text,
         url,
       });
-      showToast("공유 창을 열었습니다.", {
+      showToast("공유 창을 열었어요. 다음 경기에도 기분 한 장 남겨봐요.", {
         label: "친구에게 묻기",
         handler: () => {
           copyRelayLink().catch(() => showToast("질문 링크를 복사하지 못했습니다."));
@@ -2486,33 +2537,32 @@ async function copyFeedbackText() {
   showToast("베타 피드백 문구를 복사했습니다.");
 }
 
-function nextBetaAction({ cardCount, reactionTotal, attendance }) {
-  if (cardCount < 1) return "첫 방문자가 바로 1장 버튼으로 카드를 만들 수 있는지 확인";
-  if (cardCount < 3) return "카드 3장까지 만들어 주간 결산 흐름 확인";
-  if (reactionTotal < 5) return "팬심 샘플 버튼을 눌러 로컬 반응 확인";
-  if (!attendance.lastDate) return "덕아웃 출석 버튼으로 재방문 흐름 확인";
-  return "초대 문구를 10명에게 보내고 피드백 문구 회수";
+function nextBetaAction({ cardCount, engagement }) {
+  if (engagement.card_created_count < 1) return "지금 기분 카드 한 장 만들기";
+  if (engagement.share_open_count < 1) return "단톡방 공유 창 열기";
+  if (engagement.relay_copy_count < 1) return "친구에게 분위기 질문 보내기";
+  if (cardCount < 3) return "카드 3장을 모아 감정 결산 만들기";
+  return "다음 경기에도 새 기분 카드 남기기";
 }
 
 async function copyBetaReportText() {
   const items = readHistory();
-  const attendance = readAttendance();
-  const reactionTotal = Object.values(readReactionVotes()).reduce((total, value) => total + Number(value || 0), 0);
-  const topReaction = getReactionTotals()[0];
+  const engagement = readEngagement();
   const report = [
-    "[9회말 연구소 로컬 베타 리포트]",
-    `생성일: ${dateKey()}`,
+    "[9회말 연구소 내 활동 요약]",
     `보관함 카드: ${items.length}장`,
-    `오늘 만든 카드: ${countCardsMadeToday(items)}장`,
-    `팬심 반응: ${reactionTotal}회`,
-    `가장 큰 감정 샘플: ${topReaction.label} ${topReaction.percent}%`,
-    `덕아웃 출석: ${attendance.streak || 0}일`,
-    `다음 액션: ${nextBetaAction({ cardCount: items.length, reactionTotal, attendance })}`,
-    "범위: 이 브라우저에만 저장된 로컬 상태 기준입니다.",
+    `빠른 시작: ${engagement.quick_start_count}회`,
+    `카드 생성: ${engagement.card_created_count}회`,
+    `공유 열기: ${engagement.share_open_count}회`,
+    `캡션 복사: ${engagement.caption_copy_count}회`,
+    `질문 공유: ${engagement.relay_copy_count}회`,
+    `재방문 세션: ${engagement.return_session_count}회`,
+    `다음 액션: ${nextBetaAction({ cardCount: items.length, engagement })}`,
+    "범위: 정수 횟수만 이 브라우저에 저장하며 서버로 전송하지 않습니다.",
   ].join("\n");
 
   const ok = await copyTextToClipboard(report);
-  showToast(ok ? "로컬 베타 리포트를 복사했습니다." : "베타 리포트를 복사하지 못했습니다.");
+  showToast(ok ? "내 활동 요약을 복사했습니다." : "활동 요약을 복사하지 못했습니다.");
 }
 
 function applyRelayAnswer(moodKey) {
@@ -3114,6 +3164,7 @@ function setBuilderPane(pane) {
     const active = tab.dataset.builderPane === activeBuilderPane;
     tab.classList.toggle("is-active", active);
     tab.setAttribute("aria-selected", String(active));
+    tab.tabIndex = active ? 0 : -1;
   });
   cardForm.classList.toggle("is-mobile-active", activeBuilderPane === "controls");
   cardPreviewPanel.classList.toggle("is-mobile-active", activeBuilderPane === "preview");
@@ -3160,6 +3211,20 @@ function setupAppTabs() {
   });
   builderPaneTabs.forEach((tab) => {
     tab.addEventListener("click", () => setBuilderPane(tab.dataset.builderPane));
+    tab.addEventListener("keydown", (event) => {
+      const tabs = Array.from(builderPaneTabs);
+      const currentIndex = tabs.indexOf(tab);
+      let nextIndex = currentIndex;
+      if (["ArrowRight", "ArrowDown"].includes(event.key)) nextIndex = (currentIndex + 1) % tabs.length;
+      if (["ArrowLeft", "ArrowUp"].includes(event.key)) nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = tabs.length - 1;
+      if (nextIndex === currentIndex && !["Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const nextTab = tabs[nextIndex];
+      setBuilderPane(nextTab.dataset.builderPane);
+      nextTab.focus();
+    });
   });
   setBuilderPane(activeBuilderPane);
   activateAppView(viewFromHash());
@@ -3171,18 +3236,6 @@ function registerServiceWorker() {
     navigator.serviceWorker.register("service-worker.js").catch(() => {});
   });
 }
-
-copyShareLinkBtn.addEventListener("click", () => {
-  copyCurrentShareLink().catch(() => {
-    showToast("링크를 복사하지 못했습니다. 다시 시도해주세요.");
-  });
-});
-
-nativeShareBtn.addEventListener("click", () => {
-  shareCurrentCard().catch(() => {
-    showToast("공유를 시작하지 못했습니다. 링크 복사를 사용해주세요.");
-  });
-});
 
 previewShareBtn.addEventListener("click", () => {
   shareCurrentCard().catch(() => {
@@ -3225,7 +3278,7 @@ makePollCardBtn.addEventListener("click", applyRelayQuestionCard);
 generateBtn.addEventListener("click", () => {
   generateCard();
   if (saveCurrentCard()) {
-    showToast("새 카드가 보관함에 저장됐습니다.");
+    showToast("새 카드가 완성됐어요. 바로 공유할 수 있어요.");
   } else {
     showToast("새 카드가 만들어졌습니다. 보관함 저장은 건너뛰었습니다.");
   }
@@ -3239,12 +3292,6 @@ rerollBtn.addEventListener("click", () => {
 });
 
 surpriseMeBtn.addEventListener("click", surpriseMe);
-
-downloadBtn.addEventListener("click", () => {
-  downloadCard().catch(() => {
-    showToast("이미지를 저장하지 못했습니다. 다시 시도해주세요.");
-  });
-});
 
 lineupBtn.addEventListener("click", () => {
   renderLineup();
@@ -3265,6 +3312,21 @@ missionChoice.addEventListener("click", (event) => {
   const button = event.target.closest("[data-mission]");
   if (!button) return;
   selectMission(button.dataset.mission);
+});
+
+missionChoice.addEventListener("keydown", (event) => {
+  if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Home", "End"].includes(event.key)) return;
+  const buttons = Array.from(missionChoice.querySelectorAll("[data-mission]"));
+  const currentIndex = buttons.indexOf(document.activeElement);
+  if (currentIndex < 0) return;
+  let nextIndex = currentIndex;
+  if (["ArrowRight", "ArrowDown"].includes(event.key)) nextIndex = (currentIndex + 1) % buttons.length;
+  if (["ArrowLeft", "ArrowUp"].includes(event.key)) nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+  if (event.key === "Home") nextIndex = 0;
+  if (event.key === "End") nextIndex = buttons.length - 1;
+  event.preventDefault();
+  selectMission(buttons[nextIndex].dataset.mission);
+  buttons[nextIndex].focus();
 });
 
 installAppBtn.addEventListener("click", () => {
@@ -3299,17 +3361,7 @@ fanTypeGrid.addEventListener("click", (event) => {
   applyFanType(button.dataset.fanType);
 });
 
-quickStartCardBtn.addEventListener("click", quickStartCard);
 mobileQuickCardBtn.addEventListener("click", quickStartCard);
-
-quickStartJjalBtn.addEventListener("click", quickStartJjal);
-mobileQuickJjalBtn.addEventListener("click", quickStartJjal);
-
-quickStartCaptionBtn.addEventListener("click", () => {
-  quickStartCaption().catch(() => {
-    showToast("캡션까지 만드는 흐름을 완료하지 못했습니다.");
-  });
-});
 
 quickJjalGrid.addEventListener("click", (event) => {
   const button = event.target.closest(".quick-jjal");
@@ -3433,7 +3485,7 @@ copyFeedbackBtn.addEventListener("click", () => {
 
 copyBetaReportBtn.addEventListener("click", () => {
   copyBetaReportText().catch(() => {
-    showToast("베타 리포트를 복사하지 못했습니다.");
+    showToast("활동 요약을 복사하지 못했습니다.");
   });
 });
 
@@ -3487,6 +3539,7 @@ nicknameInput.addEventListener("change", generateCard);
 renderLineup();
 renderQuickJjals();
 renderContentInventory();
+registerLocalSession();
 reactionVotes = readReactionVotes();
 renderReactionPulse();
 renderDailyDeck();

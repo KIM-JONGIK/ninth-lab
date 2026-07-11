@@ -2890,7 +2890,15 @@ body.app-shell-ready {
   }
 
   .app-shell-ready .fan-type-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .app-shell-ready .fan-type-grid button {
+    padding: 7px 2px;
+    font-size: 0.7rem;
+    line-height: 1.25;
+    white-space: nowrap;
   }
 
   .app-shell-ready .create-actions {
@@ -2943,11 +2951,13 @@ body.app-shell-ready {
 }
 
 @media (max-width: 880px) and (max-height: 700px) {
-  .app-shell-ready.has-generated-card .app-hero {
+  .app-shell-ready.has-generated-card .app-hero,
+  .app-shell-ready[data-builder-pane="controls"] .app-hero {
     grid-template-rows: auto minmax(0, 1fr);
   }
 
-  .app-shell-ready.has-generated-card .hero-copy {
+  .app-shell-ready.has-generated-card .hero-copy,
+  .app-shell-ready[data-builder-pane="controls"] .hero-copy {
     display: none;
   }
 

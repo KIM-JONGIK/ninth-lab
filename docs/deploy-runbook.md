@@ -1,10 +1,16 @@
-# GitHub Actions + GitHub Pages deploy runbook
+# GPT Sites primary + GitHub Pages backup deploy runbook
 
 ## Current target
 
-`9회말 연구소`는 저장소 루트의 정적 사이트입니다. 공개 파일은 `tools/build-public.mjs`가 `dist/`에 만들고, GitHub Pages 전용 워크플로가 이 폴더만 배포합니다.
+`9회말 연구소`는 저장소 루트의 정적 사이트입니다. GPT Sites를 대표 주소로 운영하고, 공개 파일은 `tools/build-public.mjs`가 `dist/`에 만든 뒤 GitHub Pages 전용 워크플로가 백업 주소에 자동 배포합니다.
 
-GitHub Pages 공개 URL:
+GPT Sites 대표 URL:
+
+```text
+https://ninth-lab.kji940428.chatgpt.site/
+```
+
+GitHub Pages 백업 URL:
 
 ```text
 https://kim-jongik.github.io/ninth-lab/
@@ -16,7 +22,7 @@ GitHub repository:
 https://github.com/KIM-JONGIK/ninth-lab
 ```
 
-프로덕션 배포는 `.github/workflows/github-pages-deploy.yml`이 `main` 푸시마다 실행합니다.
+GitHub Pages 백업 배포는 `.github/workflows/github-pages-deploy.yml`이 `main` 푸시마다 실행합니다. GPT Sites는 같은 검증된 커밋으로 별도 버전을 저장해 대표 주소에 게시합니다.
 
 ## Token policy
 

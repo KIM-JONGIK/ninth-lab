@@ -1,19 +1,24 @@
 # 9회말 연구소 무료 웹 베타 출시 가이드
 
-이 앱은 서버 없는 정적 HTML/CSS/JavaScript 웹앱입니다. 로그인, 업로드, 결제, 실시간 데이터가 없으므로 유료 기능을 붙이기 전까지 GitHub Pages 무료 정적 호스팅으로 공개 베타를 운영합니다.
+이 앱은 서버 없는 정적 HTML/CSS/JavaScript 웹앱입니다. 로그인, 업로드, 결제, 실시간 데이터가 없으므로 유료 기능을 붙이기 전까지 무료 정적 호스팅 범위에서 GPT Sites를 대표 주소로, GitHub Pages를 자동 백업으로 운영합니다.
 
 ## 현재 배포 순서
 
-1. GitHub Pages
-   - 현재 주 배포처입니다.
+1. GPT Sites
+   - 현재 대표 배포처입니다.
+   - 공개 URL은 `https://ninth-lab.kji940428.chatgpt.site/`입니다.
+   - 초대 문구와 서비스 기준 주소는 이 링크를 사용합니다.
+
+2. GitHub Pages
+   - 코드 변경을 자동 반영하는 공개 백업입니다.
    - public 저장소와 GitHub Actions 내장 권한만 사용하며 외부 배포 토큰이 필요 없습니다.
    - 공개 URL은 `https://kim-jongik.github.io/ninth-lab/`입니다.
 
-2. Cloudflare Pages
+3. Cloudflare Pages
    - 광고, 업체 홍보, 거래 중개 같은 수익 기능을 붙이기 전에 이전을 검토합니다.
    - 현재 `dist/`와 `_headers` 구조를 그대로 사용할 수 있습니다.
 
-3. Netlify
+4. Netlify
    - 자동 배포는 중지했습니다.
    - `.github/workflows/netlify-deploy.yml`의 수동 실행만 비상용으로 유지합니다.
 
@@ -36,5 +41,5 @@
 - 첫 공개는 지인과 소규모 커뮤니티의 테스트 링크 공유 수준으로 제한합니다.
 - 실제 선수명, 구단명, 로고, 중계 캡처를 유도하는 피드백이 나오면 기능을 늘리기 전에 필터와 문구를 먼저 보강합니다.
 - 카드 생성 수, 체류 시간, 공유 횟수 같은 서버 지표는 현재 수집하지 않습니다.
-- GitHub Pages 방문 과정에서 GitHub가 처리하는 기술 정보와 앱 자체의 로컬 저장을 개인정보 안내에서 구분합니다.
+- GPT Sites와 GitHub Pages 방문 과정에서 호스팅 사업자가 처리하는 기술 정보와 앱 자체의 로컬 저장을 개인정보 안내에서 구분합니다.
 - 광고·중개 등 수익 기능을 도입하기 전 Cloudflare Pages 또는 유료 상업 호스팅으로 이전하고 고지를 다시 검토합니다.

@@ -570,7 +570,7 @@ const unsafePattern =
 const officialScorePattern = /(\d+\s*[:대-]\s*\d+)|(\d+\s*(승|패|세이브|홀드|홈런|타점|안타|삼진|득점|실점))/i;
 const playerNumberPattern = /(등번호\s*\d{1,3})|(\d{1,3}\s*번\s*(선수|투수|타자|에이스|포수|외야수|내야수))/i;
 const SHARE_DISCLOSURE = "비공식 팬메이드 · 선수/구단/리그와 무관 · 중계자료 없음 · 공식 기록 아님";
-const PUBLIC_BETA_URL = "https://kim-jongik.github.io/ninth-lab/";
+const PUBLIC_BETA_URL = "https://ninth-lab.kji940428.chatgpt.site/";
 
 const jjalMoods = {
   pregame: {
@@ -840,6 +840,46 @@ const fanTypes = {
     title: "나는 오늘 퇴근등판형",
     phrase: "하루는 끝났고 마음은 이제 몸을 푼다.",
     tags: ["관전 타입", "일상 야구", "비공식", "창작 상황"],
+  },
+  cheer: {
+    label: "박수선발형",
+    scenario: "pregame",
+    tone: "hype",
+    energy: 5,
+    ratio: "square",
+    title: "나는 오늘 박수선발형",
+    phrase: "설명보다 박수가 먼저 나가는 관전 타입.",
+    tags: ["관전 타입", "박수 예열", "창작 상황", "실명 없음"],
+  },
+  sofa: {
+    label: "소파분석형",
+    scenario: "solo",
+    tone: "chaos",
+    energy: 3,
+    ratio: "square",
+    title: "나는 오늘 소파분석형",
+    phrase: "자세는 편한데 마음속 작전판은 계속 돌아가는 타입.",
+    tags: ["관전 타입", "집관 모드", "로고 없음", "창작 상황"],
+  },
+  shield: {
+    label: "멘탈수비형",
+    scenario: "crisis",
+    tone: "soft",
+    energy: 2,
+    ratio: "square",
+    title: "나는 오늘 멘탈수비형",
+    phrase: "흔들려도 마음만큼은 끝까지 자리를 지키는 타입.",
+    tags: ["관전 타입", "마음 수비", "비공식", "창작 상황"],
+  },
+  reviewer: {
+    label: "복기장인형",
+    scenario: "afterglow",
+    tone: "deadpan",
+    energy: 3,
+    ratio: "square",
+    title: "나는 오늘 복기장인형",
+    phrase: "끝난 뒤에야 혼잣말 복기가 길어지는 타입.",
+    tags: ["관전 타입", "복기 모드", "공식 기록 아님", "창작 상황"],
   },
 };
 const fanTypeKeys = Object.keys(fanTypes);
@@ -1708,12 +1748,7 @@ function relayUrl() {
 }
 
 function betaHomeUrl() {
-  const url = new URL(window.location.href);
-  if (["localhost", "127.0.0.1", ""].includes(url.hostname) || url.protocol === "file:") {
-    return PUBLIC_BETA_URL;
-  }
-  url.hash = "";
-  return url.href;
+  return PUBLIC_BETA_URL;
 }
 
 function buildInviteText() {
@@ -1739,7 +1774,8 @@ async function copyLaunchChecklist() {
     "완료: 권리·안전 검토 요청 문구 복사",
     "완료: 베타 피드백 문구 복사",
     "완료: GitHub 저장소 원격 연결",
-    "완료: GitHub Pages 자동 배포",
+    "완료: GPT Sites 대표 공개 주소",
+    "완료: GitHub Pages 자동 백업 배포",
     "완료: 공개 배포물 내부 파일 차단",
     "권장: 첫 테스트 10명에게 초대 문구 전달",
     "권장: 피드백 문구 3개 이상 회수",
@@ -3163,6 +3199,7 @@ function isMobileWorkspace() {
 function setBuilderPane(pane) {
   if (!builderPaneTabs.length) return;
   activeBuilderPane = pane === "controls" ? "controls" : "preview";
+  document.body.dataset.builderPane = activeBuilderPane;
   builderPaneTabs.forEach((tab) => {
     const active = tab.dataset.builderPane === activeBuilderPane;
     tab.classList.toggle("is-active", active);

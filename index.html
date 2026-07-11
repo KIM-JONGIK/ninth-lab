@@ -11,11 +11,13 @@
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="9회말 연구소" />
+    <meta property="og:url" content="https://ninth-lab.kji940428.chatgpt.site/" />
     <title>9회말 연구소</title>
+    <link rel="canonical" href="https://ninth-lab.kji940428.chatgpt.site/" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <script src="time-scene.js?v=44"></script>
-    <link rel="stylesheet" href="styles.css?v=44" />
+    <script src="time-scene.js?v=46"></script>
+    <link rel="stylesheet" href="styles.css?v=46" />
   </head>
   <body>
     <div class="page-shell">
@@ -85,15 +87,19 @@
                   <h2>지금 기분 고르기</h2>
                 </div>
 
-                <div class="starter-panel" aria-label="관전 타입 카드">
+                <div class="starter-panel" aria-label="빠른 관전 타입 8종">
                   <div>
-                    <strong>관전 타입</strong>
+                    <strong>빠른 관전 타입</strong>
                   </div>
                   <div class="fan-type-grid" id="fanTypeGrid">
-                    <button type="button" data-fan-type="clutch">숨참기형</button>
-                    <button type="button" data-fan-type="dugout">작전판형</button>
-                    <button type="button" data-fan-type="snack">간식응원형</button>
-                    <button type="button" data-fan-type="afterwork">퇴근등판형</button>
+                    <button type="button" data-fan-type="clutch" aria-label="숨참기형"><span aria-hidden="true">숨참기</span></button>
+                    <button type="button" data-fan-type="dugout" aria-label="작전판형"><span aria-hidden="true">작전판</span></button>
+                    <button type="button" data-fan-type="snack" aria-label="간식응원형"><span aria-hidden="true">간식응원</span></button>
+                    <button type="button" data-fan-type="afterwork" aria-label="퇴근등판형"><span aria-hidden="true">퇴근등판</span></button>
+                    <button type="button" data-fan-type="cheer" aria-label="박수선발형"><span aria-hidden="true">박수선발</span></button>
+                    <button type="button" data-fan-type="sofa" aria-label="소파분석형"><span aria-hidden="true">소파분석</span></button>
+                    <button type="button" data-fan-type="shield" aria-label="멘탈수비형"><span aria-hidden="true">멘탈수비</span></button>
+                    <button type="button" data-fan-type="reviewer" aria-label="복기장인형"><span aria-hidden="true">복기장인</span></button>
                   </div>
                 </div>
 
@@ -549,8 +555,8 @@
                   </article>
                   <article>
                     <span class="launch-status">완료</span>
-                    <h3>무료 공개 배포</h3>
-                    <p>GitHub 변경이 Pages 공개 링크에 외부 배포 토큰 없이 자동 반영됩니다.</p>
+                    <h3>GPT Sites 대표 배포</h3>
+                    <p>GPT Sites를 대표 링크로 운영하고 GitHub Pages는 공개 백업으로 유지합니다.</p>
                   </article>
                 </div>
                 <div class="launch-tool" aria-labelledby="invite-title">
@@ -697,6 +703,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=44"></script>
+    <script src="app.js?v=46"></script>
   </body>
 </html>

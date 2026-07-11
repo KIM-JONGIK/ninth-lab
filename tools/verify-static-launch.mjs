@@ -117,12 +117,14 @@ assert(index.includes("legal/terms.html"), "index.html must link to terms page")
 assert(index.includes("rights-removal.yml"), "index.html must link to the rights and removal request channel");
 assert(index.includes("비공식 팬메이드"), "index.html must keep unofficial fan-made disclosure visible");
 assert(index.includes("공식 기록 아님"), "index.html must keep official-record disclaimer visible");
-assert(index.includes("무료 공개 배포"), "launch center must show current public deploy status");
+assert(index.includes("GPT Sites 대표 배포"), "launch center must show GPT Sites as the primary deploy");
 assert(index.includes("id=\"previewRelayBtn\""), "preview relay entrypoint is missing");
 assert(index.includes("id=\"makePollCardBtn\""), "relay poll card entrypoint is missing");
 assert(index.includes("id=\"previewCaptionBtn\""), "preview caption copy entrypoint is missing");
 assert(index.includes("id=\"mobileQuickCardBtn\""), "mobile first-screen card entrypoint is missing");
 assert(index.includes("지금 기분 카드 만들기"), "first-screen card CTA copy is missing");
+assert(index.includes("빠른 관전 타입 8종"), "quick fan type group must expose its eight-option scope");
+assert((index.match(/data-fan-type=/g) || []).length === 8, "quick fan type controls must include eight presets");
 assert(!index.includes("처음 왔다면"), "first-screen controls must not rely on instructional copy");
 assert(index.includes("data-builder-pane=\"preview\""), "mobile preview workspace tab is missing");
 assert(index.includes("data-builder-pane=\"controls\""), "mobile controls workspace tab is missing");
@@ -134,11 +136,14 @@ assert(index.includes("단톡방에 보내기"), "group-chat share CTA is missin
 assert(index.includes("class=\"content-band daily-band app-view\""), "daily content must be an app view");
 assert(index.includes("id=\"today\"") && index.includes("id=\"rules\""), "app view targets are missing");
 assert(app.includes('document.body.classList.add("app-shell-ready")'), "single-screen app shell is not initialized");
+assert(app.includes("document.body.dataset.builderPane = activeBuilderPane"), "mobile workspace must expose its active pane for compact layouts");
 assert(app.includes("activateAppView"), "app view navigation is missing");
 assert((index.match(/data-view-target=/g) || []).length >= 14, "desktop and mobile app view navigation is incomplete");
 assert(styles.includes("body.app-shell-ready"), "single-screen body lock styles are missing");
 assert(styles.includes("height: 100dvh"), "app shell must stay within the viewport");
 assert(styles.includes("[data-builder-pane-panel].is-mobile-active"), "mobile builder pane switching styles are missing");
+assert(styles.includes('[data-builder-pane="controls"] .hero-copy'), "short mobile option screens must collapse the hero copy");
+assert(styles.includes("grid-template-columns: repeat(4, minmax(0, 1fr))"), "mobile quick fan types must fit in a compact four-column grid");
 assert(styles.includes(".control-scroll"), "control panel internal scrolling styles are missing");
 assert(styles.includes("container-type: size"), "mobile card stage must expose height-aware container units");
 assert(styles.includes("56.25cqh"), "story cards must be constrained by preview height");
@@ -170,7 +175,7 @@ assert(app.includes("끝난 뒤 복기 모드"), "aftergame scenario content pac
 assert(app.includes("cardFormats"), "meme grammar state map is missing");
 assert(fanTypesBlock, "quick fan type configuration is missing");
 assert(
-  (fanTypesBlock.match(/ratio: "square"/g) || []).length === 4,
+  (fanTypesBlock.match(/ratio: "square"/g) || []).length === 8,
   "all quick fan types must use the same square card size",
 );
 assert(
@@ -182,10 +187,12 @@ assert(app.includes("nextDeckPhrase"), "no-repeat phrase deck is missing");
 assert(app.includes("PHRASE_DECK_KEY"), "phrase deck session key is missing");
 assert(app.includes("PUBLIC_BETA_URL"), "invite copy must use the public beta URL outside production");
 assert(
-  app.includes("https://kim-jongik.github.io/ninth-lab/"),
-  "invite copy must use the GitHub Pages beta URL",
+  app.includes("https://ninth-lab.kji940428.chatgpt.site/"),
+  "invite copy must use the GPT Sites primary URL",
 );
-assert(app.includes("GitHub Pages 자동 배포"), "launch checklist must reflect automatic GitHub Pages deploy");
+assert(index.includes('rel="canonical" href="https://ninth-lab.kji940428.chatgpt.site/"'), "canonical URL must point to GPT Sites");
+assert(app.includes("GPT Sites 대표 공개 주소"), "launch checklist must identify GPT Sites as primary");
+assert(app.includes("GitHub Pages 자동 백업 배포"), "launch checklist must identify GitHub Pages as backup");
 assert(app.includes("단톡방 4지선다"), "relay poll card flow is missing");
 assert(app.includes("3컷 감정 타임라인"), "emotion timeline card flow is missing");
 assert(app.includes("drawTimelineDownload"), "timeline PNG renderer is missing");
@@ -245,12 +252,14 @@ assert(launchGuide.includes("_headers"), "launch guide must mention _headers dep
 assert(launchGuide.includes("dist/"), "launch guide must mention public dist deploy output");
 assert(launchGuide.includes("외부 배포 토큰이 필요 없습니다"), "launch guide must explain token-free Pages deploys");
 assert(launchGuide.includes("kim-jongik.github.io/ninth-lab"), "launch guide must include the GitHub Pages URL");
+assert(launchGuide.includes("ninth-lab.kji940428.chatgpt.site"), "launch guide must include the GPT Sites primary URL");
 assert(launchGuide.includes("비공식 팬메이드"), "launch guide must keep unofficial disclosure in checklist");
 assert(deployRunbook.includes("GitHub Actions"), "deploy runbook must describe GitHub Actions deploys");
 assert(deployRunbook.includes("dist/"), "deploy runbook must describe public dist deploy output");
 assert(deployRunbook.includes("GITHUB_TOKEN"), "deploy runbook must describe built-in GitHub authorization");
 assert(deployRunbook.includes("build_type=workflow"), "deploy runbook must explain one-time Pages setup");
 assert(deployRunbook.includes("kim-jongik.github.io/ninth-lab"), "deploy runbook must include the Pages URL");
+assert(deployRunbook.includes("ninth-lab.kji940428.chatgpt.site"), "deploy runbook must include the GPT Sites primary URL");
 assert(deployRunbook.includes("KIM-JONGIK/ninth-lab"), "deploy runbook must point at the current GitHub repo");
 assert(pagesWorkflow.includes("push:") && pagesWorkflow.includes("- main"), "Pages workflow must run from main pushes");
 assert(pagesWorkflow.includes("workflow_dispatch:"), "Pages workflow must allow manual dispatch");

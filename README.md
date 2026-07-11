@@ -18,6 +18,8 @@
 - 같은 설정의 문구만 바꾸는 `다른 문구`와 전체 설정을 섞는 `랜덤 조합`
 - 무권리 그래픽 카드 배경 선택
 - 생성 출처, 제약 조건, SHA-256을 고정한 공개 자산 매니페스트
+- 브라우저 현지 시간 06:00~17:59에는 낮 구장, 18:00~05:59에는 야간 구장을 쓰는 자동 시간 배경
+- 페이지 배경, 카드 미리보기, 보관함 썸네일, PNG 저장에 동일하게 적용되는 낮·밤 장면
 - 데스크톱에서 카드 미리보기를 고정하고 오른쪽 옵션 패널만 스크롤하는 제작 화면
 - 첫 방문자가 버튼 하나로 시작하는 `10초 관전 타입` 카드
 - 첫 방문자가 설정 없이 시작하는 `바로 1장`, `라이브 짤`, `캡션까지` 버튼
@@ -110,6 +112,7 @@ python -m http.server 4173 --bind 127.0.0.1
 node tools/verify-static-launch.mjs
 node tools/verify-content-safety.mjs
 node tools/verify-phrase-deck.mjs
+node tools/verify-time-scene.mjs
 node tools/verify-asset-provenance.mjs
 node tools/check-deploy-readiness.mjs
 ```

@@ -19,11 +19,13 @@ function assertFile(path) {
 const requiredFiles = [
   "index.html",
   "styles.css",
+  "time-scene.js",
   "app.js",
   "manifest.webmanifest",
   "service-worker.js",
   "assets/app-icon.svg",
   "assets/asset-manifest.json",
+  "assets/stadium-day.png",
   "assets/stadium-night.png",
   "legal/privacy.html",
   "legal/terms.html",
@@ -39,6 +41,7 @@ const requiredFiles = [
   "tools/build-public.mjs",
   "tools/verify-content-safety.mjs",
   "tools/verify-phrase-deck.mjs",
+  "tools/verify-time-scene.mjs",
   "tools/verify-asset-provenance.mjs",
   "tools/verify-public-build.mjs",
   "docs/free-web-launch.md",
@@ -63,30 +66,38 @@ const launchGuide = readText("docs/free-web-launch.md");
 const deployRunbook = readText("docs/deploy-runbook.md");
 const app = readText("app.js");
 const styles = readText("styles.css");
+const timeScene = readText("time-scene.js");
 
 const cssVersion = index.match(/styles\.css\?v=(\d+)/)?.[1];
+const timeSceneVersion = index.match(/time-scene\.js\?v=(\d+)/)?.[1];
 const appVersion = index.match(/app\.js\?v=(\d+)/)?.[1];
 const cacheVersion = serviceWorker.match(/CACHE_NAME\s*=\s*"ninth-lab-v(\d+)"/)?.[1];
 
 assert(cssVersion, "index.html must version styles.css with ?v=");
+assert(timeSceneVersion, "index.html must version time-scene.js with ?v=");
 assert(appVersion, "index.html must version app.js with ?v=");
 assert(cacheVersion, "service-worker.js must use nth-lab/ninth-lab versioned cache name");
 assert(cssVersion === appVersion, `CSS and JS query versions differ: css=${cssVersion}, app=${appVersion}`);
+assert(cssVersion === timeSceneVersion, `CSS and time scene query versions differ: css=${cssVersion}, scene=${timeSceneVersion}`);
 assert(cssVersion === cacheVersion, `Asset query version and service-worker cache differ: asset=${cssVersion}, cache=${cacheVersion}`);
 
 for (const file of [privacy, terms, notFound]) {
   assert(file.includes(`styles.css?v=${cssVersion}`), "All static HTML support pages must use the current CSS version");
+  assert(file.includes(`time-scene.js?v=${timeSceneVersion}`), "All static HTML support pages must use the current time scene version");
 }
 
 const cachedFiles = [
   "./",
   "./index.html",
   `./styles.css?v=${cssVersion}`,
+  "./time-scene.js",
+  `./time-scene.js?v=${timeSceneVersion}`,
   `./app.js?v=${appVersion}`,
   "./manifest.webmanifest",
   "./404.html",
   "./robots.txt",
   "./assets/app-icon.svg",
+  "./assets/stadium-day.png",
   "./assets/stadium-night.png",
   "./legal/privacy.html",
   "./legal/terms.html",
@@ -120,6 +131,12 @@ assert((index.match(/data-view-target=/g) || []).length >= 14, "desktop and mobi
 assert(styles.includes("body.app-shell-ready"), "single-screen body lock styles are missing");
 assert(styles.includes("height: 100dvh"), "app shell must stay within the viewport");
 assert(styles.includes("[data-builder-pane-panel].is-mobile-active"), "mobile builder pane switching styles are missing");
+assert(index.includes("data-time-stadium-image"), "time-aware stadium card image is missing");
+assert(timeScene.includes("DAY_START_HOUR = 6"), "day scene must begin at 06:00 local time");
+assert(timeScene.includes("NIGHT_START_HOUR = 18"), "night scene must begin at 18:00 local time");
+assert(timeScene.includes("stadium-day.png") && timeScene.includes("stadium-night.png"), "time scene image sources are incomplete");
+assert(styles.includes(':root[data-time-scene="day"]'), "day scene CSS is missing");
+assert(app.includes("loadImage(currentStadiumImageSource())"), "card export must use the current time scene");
 assert(index.includes("id=\"cardFormat\""), "meme grammar selector is missing");
 assert(index.includes("id=\"rerollBtn\""), "phrase reroll entrypoint is missing");
 assert(index.includes("id=\"surpriseMeBtn\""), "random content mix entrypoint is missing");
@@ -176,6 +193,7 @@ assert(netlifyIgnore.includes(".github/"), ".netlifyignore must exclude GitHub w
 assert(netlifyIgnore.includes(".netlify/"), ".netlifyignore must exclude local Netlify state from public upload");
 assert(netlifyIgnore.includes("tools/"), ".netlifyignore must exclude local tooling from public upload");
 assert(publicBuild.includes('"index.html"'), "public build script must copy index.html");
+assert(publicBuild.includes('"time-scene.js"'), "public build script must copy time-scene.js");
 assert(publicBuild.includes('"legal"'), "public build script must copy legal pages");
 assert(publicBuild.includes('".nojekyll"'), "public build script must create the GitHub Pages marker");
 assert(publicBuildVerify.includes("forbidden"), "public build verification must check forbidden internal files");
@@ -199,6 +217,7 @@ assert(pagesWorkflow.includes("id-token: write"), "Pages workflow must request i
 assert(pagesWorkflow.includes("tools/verify-static-launch.mjs"), "Pages workflow must verify static files");
 assert(pagesWorkflow.includes("tools/verify-content-safety.mjs"), "Pages workflow must verify content safety");
 assert(pagesWorkflow.includes("tools/verify-phrase-deck.mjs"), "Pages workflow must verify phrase decks");
+assert(pagesWorkflow.includes("tools/verify-time-scene.mjs"), "Pages workflow must verify time scene boundaries");
 assert(pagesWorkflow.includes("tools/verify-asset-provenance.mjs"), "Pages workflow must verify asset provenance");
 assert(pagesWorkflow.includes("tools/build-public.mjs"), "Pages workflow must build dist");
 assert(pagesWorkflow.includes("tools/verify-public-build.mjs"), "Pages workflow must verify dist");

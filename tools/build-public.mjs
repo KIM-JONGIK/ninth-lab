@@ -19,6 +19,7 @@ writeFileSync(join(outDir, ".nojekyll"), "");
 const files = [
   "index.html",
   "styles.css",
+  "time-scene.js",
   "app.js",
   "manifest.webmanifest",
   "service-worker.js",

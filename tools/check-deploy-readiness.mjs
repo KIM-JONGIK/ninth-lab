@@ -110,6 +110,7 @@ addCheck(
     pagesWorkflow.includes("tools/verify-static-launch.mjs") &&
     pagesWorkflow.includes("tools/verify-content-safety.mjs") &&
     pagesWorkflow.includes("tools/verify-phrase-deck.mjs") &&
+    pagesWorkflow.includes("tools/verify-time-scene.mjs") &&
     pagesWorkflow.includes("tools/verify-asset-provenance.mjs") &&
     pagesWorkflow.includes("tools/build-public.mjs") &&
     pagesWorkflow.includes("tools/verify-public-build.mjs") &&

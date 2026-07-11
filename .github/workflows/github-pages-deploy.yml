@@ -39,6 +39,9 @@ jobs:
       - name: Verify no-repeat phrase decks
         run: node tools/verify-phrase-deck.mjs
 
+      - name: Verify day and night scene boundaries
+        run: node tools/verify-time-scene.mjs
+
       - name: Verify visual asset provenance
         run: node tools/verify-asset-provenance.mjs
 

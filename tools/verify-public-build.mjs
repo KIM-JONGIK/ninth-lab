@@ -16,6 +16,7 @@ function exists(path) {
 const required = [
   "index.html",
   "styles.css",
+  "time-scene.js",
   "app.js",
   "manifest.webmanifest",
   "service-worker.js",
@@ -25,6 +26,7 @@ const required = [
   "_headers",
   "assets/app-icon.svg",
   "assets/asset-manifest.json",
+  "assets/stadium-day.png",
   "assets/stadium-night.png",
   "legal/privacy.html",
   "legal/terms.html",

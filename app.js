@@ -92,10 +92,35 @@ const surpriseMeBtn = document.querySelector("#surpriseMeBtn");
 const rerollBtn = document.querySelector("#rerollBtn");
 const appTabs = document.querySelectorAll("[data-view-target]");
 const appViews = document.querySelectorAll("main > .app-view");
-const STADIUM_IMAGE_SRC = "assets/stadium-night.png";
+const STADIUM_IMAGE_SOURCES = {
+  day: "assets/stadium-day.png",
+  night: "assets/stadium-night.png",
+};
 const smoothCenterScroll = { block: "center", behavior: "smooth" };
 let activeAppViewId = "generator";
 let activeBuilderPane = "preview";
+
+function currentTimeScene() {
+  const scene = window.NINTH_LAB_TIME_SCENE?.current();
+  if (scene === "day" || scene === "night") return scene;
+  const hour = new Date().getHours();
+  return hour >= 6 && hour < 18 ? "day" : "night";
+}
+
+function currentStadiumImageSource() {
+  const scene = currentTimeScene();
+  return (
+    window.NINTH_LAB_TIME_SCENE?.assetForScene(scene) ||
+    STADIUM_IMAGE_SOURCES[scene] ||
+    STADIUM_IMAGE_SOURCES.night
+  );
+}
+
+function syncTimeSceneCard() {
+  const image = shareCard?.querySelector("[data-time-stadium-image]");
+  const source = currentStadiumImageSource();
+  if (image && image.getAttribute("src") !== source) image.setAttribute("src", source);
+}
 
 const scenarios = {
   pregame: {
@@ -1852,6 +1877,7 @@ async function quickStartCaption() {
 }
 
 function renderShareCard() {
+  syncTimeSceneCard();
   const timelineItems = timelineItemsForState();
   const background = normalizeBackground(currentState.background);
   const format = normalizeCardFormat(currentState.format);
@@ -2893,7 +2919,7 @@ async function downloadCard() {
   canvas.height = height;
   const ctx = canvas.getContext("2d");
   const background = normalizeBackground(currentState.background);
-  const image = background === "stadium" ? await loadImage(STADIUM_IMAGE_SRC) : null;
+  const image = background === "stadium" ? await loadImage(currentStadiumImageSource()) : null;
   const scale = width / 1200;
   const scenario = scenarios[currentState.scenario] || scenarios.bottom9;
   const title = currentState.title || scenario.label;
@@ -3468,6 +3494,8 @@ renderInvitePreview();
 selectMission(readAttendance().mission);
 updateAttendanceStatus();
 setupInstallFlow();
+window.addEventListener("ninthlab:timescenechange", syncTimeSceneCard);
+syncTimeSceneCard();
 registerServiceWorker();
 const restoredCard = restoreCardFromHash();
 if (!restoredCard) {

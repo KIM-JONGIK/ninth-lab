@@ -41,6 +41,7 @@ gh api --method POST repos/KIM-JONGIK/ninth-lab/pages -f build_type=workflow
 node tools/verify-static-launch.mjs
 node tools/verify-content-safety.mjs
 node tools/verify-phrase-deck.mjs
+node tools/verify-time-scene.mjs
 node tools/verify-asset-provenance.mjs
 node tools/build-public.mjs
 node tools/verify-public-build.mjs

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-07-10",
+  "updated_at": "2026-07-11",
   "assets": [
     {
       "path": "assets/stadium-night.png",
@@ -14,6 +14,22 @@
         "fictional baseball field",
         "no identifiable people or player likenesses",
         "no team, league, or brand marks",
+        "no uniforms, readable text, or watermark",
+        "no real stadium reference"
+      ]
+    },
+    {
+      "path": "assets/stadium-day.png",
+      "sha256": "ff9761eb802d5b327e4da9169a3683266898d112cf5f8ee22dc87fe93767d6ec",
+      "dimensions": "1692x929",
+      "source_type": "ai-generated",
+      "generator": "OpenAI image generation",
+      "generation_id": "exec-6d82f407-d851-45d3-8dc0-e24fb8d57b6b",
+      "generated_at": "2026-07-11T14:17:39Z",
+      "constraints": [
+        "fictional baseball field in daylight",
+        "no identifiable people or player likenesses",
+        "no team, league, sponsor, or brand marks",
         "no uniforms, readable text, or watermark",
         "no real stadium reference"
       ]

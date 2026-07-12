@@ -2413,13 +2413,13 @@ function findHistoryItem(id) {
   return readHistory().find((item) => item.id === id);
 }
 
-function restoreDeletedHistoryItem() {
-  if (!pendingHistoryUndo) return;
-  const current = readHistory().filter((entry) => entry.id !== pendingHistoryUndo.item.id);
+function restoreDeletedHistoryItem(undo = pendingHistoryUndo) {
+  if (!undo?.item) return;
+  const current = readHistory().filter((entry) => entry.id !== undo.item.id);
   const next = [...current];
-  next.splice(Math.min(pendingHistoryUndo.index, next.length), 0, pendingHistoryUndo.item);
+  next.splice(Math.min(undo.index, next.length), 0, undo.item);
   writeHistory(next);
-  pendingHistoryUndo = null;
+  if (pendingHistoryUndo?.item.id === undo.item.id) pendingHistoryUndo = null;
   renderCardHistory();
   showToast("삭제한 카드를 되돌렸습니다.");
 }
@@ -2762,7 +2762,7 @@ function showToast(message, action = null) {
   window.clearTimeout(showToast.timer);
   showToast.timer = window.setTimeout(() => {
     toast.classList.remove("is-visible");
-  }, action ? 6000 : 2300);
+  }, action ? 12000 : 2300);
 }
 
 function loadImage(src) {
@@ -3462,15 +3462,16 @@ cardHistoryList.addEventListener("click", (event) => {
   }
   if (action === "delete") {
     const current = readHistory();
-    pendingHistoryUndo = {
+    const undo = {
       item,
       index: current.findIndex((entry) => entry.id === item.id),
     };
+    pendingHistoryUndo = undo;
     writeHistory(current.filter((entry) => entry.id !== item.id));
     renderCardHistory();
     showToast("보관함에서 삭제했습니다.", {
       label: "되돌리기",
-      handler: restoreDeletedHistoryItem,
+      handler: () => restoreDeletedHistoryItem(undo),
     });
   }
 });

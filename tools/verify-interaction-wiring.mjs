@@ -109,7 +109,8 @@ assert(app.includes("quickJjalGrid.addEventListener"), "Runtime quick-jjal butto
 const copyJjalBlock = app.match(/async function copyJjalText\(\) \{([\s\S]*?)\n\}/)?.[1] || "";
 assert(copyJjalBlock.includes("const ok = await copyTextToClipboard(text)"), "Live caption copy must inspect clipboard success");
 assert(copyJjalBlock.includes("showToast(ok ?"), "Live caption copy must report its real result");
-assert(app.includes("action ? 6000 : 2300"), "Toast actions must remain available long enough to click");
+assert(app.includes("action ? 12000 : 2300"), "Toast actions must remain available long enough to click");
+assert(app.includes("handler: () => restoreDeletedHistoryItem(undo)"), "History undo must capture the deleted card directly");
 
 for (const action of ["restore", "remix", "copy", "delete"]) {
   assert(app.includes(`historyButton("`) && app.includes(`"${action}"`), `History action is missing: ${action}`);

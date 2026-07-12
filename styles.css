@@ -2970,7 +2970,20 @@ body.app-shell-ready {
   }
 
   .app-shell-ready .preview-more {
-    display: none;
+    position: relative;
+  }
+
+  .app-shell-ready .preview-more[open] .preview-more-actions {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 6px);
+    left: 0;
+    z-index: 4;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(6, 16, 13, 0.98);
+    padding: 8px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.34);
   }
 }
 

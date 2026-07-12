@@ -2435,8 +2435,8 @@ async function copyJjalText() {
   const text = `[9회말 연구소] ${currentState.title || "오늘의 야구 짤"} - ${
     currentState.phrase
   }${leaderText} (${SHARE_DISCLOSURE})`;
-  await copyTextToClipboard(text);
-  showToast("커뮤니티용 문구를 복사했습니다.");
+  const ok = await copyTextToClipboard(text);
+  showToast(ok ? "커뮤니티용 문구를 복사했습니다." : "문구를 복사하지 못했습니다.");
 }
 
 function buildCommunityCaption() {
@@ -2762,7 +2762,7 @@ function showToast(message, action = null) {
   window.clearTimeout(showToast.timer);
   showToast.timer = window.setTimeout(() => {
     toast.classList.remove("is-visible");
-  }, 2300);
+  }, action ? 6000 : 2300);
 }
 
 function loadImage(src) {

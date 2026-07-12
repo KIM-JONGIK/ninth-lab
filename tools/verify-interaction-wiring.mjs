@@ -106,6 +106,11 @@ assert(quickJjalCount >= 21, `Expected at least 21 runtime quick-jjal buttons, f
 assert(app.includes("renderQuickJjals"), "Runtime quick-jjal button renderer is missing");
 assert(app.includes("quickJjalGrid.addEventListener"), "Runtime quick-jjal buttons are not wired");
 
+const copyJjalBlock = app.match(/async function copyJjalText\(\) \{([\s\S]*?)\n\}/)?.[1] || "";
+assert(copyJjalBlock.includes("const ok = await copyTextToClipboard(text)"), "Live caption copy must inspect clipboard success");
+assert(copyJjalBlock.includes("showToast(ok ?"), "Live caption copy must report its real result");
+assert(app.includes("action ? 6000 : 2300"), "Toast actions must remain available long enough to click");
+
 for (const action of ["restore", "remix", "copy", "delete"]) {
   assert(app.includes(`historyButton("`) && app.includes(`"${action}"`), `History action is missing: ${action}`);
 }

@@ -145,6 +145,8 @@ assert(styles.includes("height: 100dvh"), "app shell must stay within the viewpo
 assert(styles.includes("[data-builder-pane-panel].is-mobile-active"), "mobile builder pane switching styles are missing");
 assert(styles.includes('[data-builder-pane="controls"] .hero-copy'), "short mobile option screens must collapse the hero copy");
 assert(styles.includes("grid-template-columns: repeat(4, minmax(0, 1fr))"), "mobile quick fan types must fit in a compact four-column grid");
+assert(!/\.app-shell-ready \.preview-more\s*\{\s*display:\s*none/.test(styles), "mobile secondary share actions must remain reachable");
+assert(styles.includes('.app-shell-ready .preview-more[open] .preview-more-actions'), "short mobile screens need a compact secondary share menu");
 assert(styles.includes(".control-scroll"), "control panel internal scrolling styles are missing");
 assert(styles.includes("container-type: size"), "mobile card stage must expose height-aware container units");
 assert(styles.includes("56.25cqh"), "story cards must be constrained by preview height");
